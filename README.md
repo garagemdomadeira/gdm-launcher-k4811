@@ -44,7 +44,7 @@ El proyecto forma parte de **Garagem do Madeira**, un espacio sobre coches, hazl
 | 🎚️ | **Equalizer** | 10-band EQ with presets, loudness and sound field (fader/balance) |
 | 🌀 | **Fan** | Cooling fan preferences |
 | 📱 | **Apps** | Paged grid of installed apps |
-| ⚙️ | **Settings** | Language, font, theme color, default launcher, dock, sound, display, reverse camera, 360° camera, navigation app and "About the unit" |
+| ⚙️ | **Settings** | Three panels in a side column: **Main** (language, font, theme color, dock, utilities), **Assists** (reverse camera, navigation) and **System** (default launcher, beep and volume, display, "About the unit") |
 
 🔇 Opening the home screen **never** turns the radio on or interrupts what's playing.
 

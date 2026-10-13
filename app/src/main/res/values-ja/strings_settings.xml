@@ -15,7 +15,6 @@
     <string name="settings_apply">適用</string>
     <string name="settings_range_error">%1$d〜%2$d の値を入力してください</string>
     <string name="settings_enter_number">数値を入力してください</string>
-    <string name="settings_launcher_section">ランチャー</string>
     <string name="settings_default_launcher">デフォルトのランチャー</string>
     <string name="settings_use_garagem">Garagem を使用</string>
     <string name="settings_use_original">元に戻す</string>
@@ -36,7 +35,6 @@
     <string name="settings_dock_reset_hint">ラジオ、音楽、Bluetooth 音楽、電話、イコライザー</string>
     <string name="settings_reset">戻す</string>
     <string name="settings_dock_full">すでに %1$d 個です。別の項目をオンにするには、どれかをオフにしてください。</string>
-    <string name="settings_sound_section">サウンド</string>
     <string name="settings_startup_volume">エンジン始動時の音量</string>
     <string name="settings_startup_volume_hint">ユニットが前回の音量を記憶していない場合の起動時の音量</string>
     <string name="settings_remember_volume">前回の音量を記憶</string>
@@ -47,8 +45,6 @@
     <string name="settings_nav_ducking_hint">GPS の案内中は音楽の音量が下がります</string>
     <string name="settings_duck_amount">下げる量</string>
     <string name="settings_duck_amount_hint">0〜10</string>
-    <string name="settings_eq">イコライザー</string>
-    <string name="settings_eq_hint">低音、中音、高音、プリセット</string>
     <string name="settings_open">開く ›</string>
     <string name="settings_screen_section">ディスプレイ</string>
     <string name="settings_brightness">明るさ</string>
@@ -59,16 +55,11 @@
     <string name="settings_screen_off_never">しない</string>
     <string name="settings_brightness_night">現在: 夜間 (ヘッドライト点灯)</string>
     <string name="settings_brightness_day">現在: 昼間</string>
-    <string name="settings_reverse_section">バック</string>
+    <string name="settings_reverse_section">バックカメラ</string>
     <string name="settings_reverse_mute">バック時にミュート</string>
     <string name="settings_reverse_mute_hint">リバースギアに入っている間は音を消します</string>
     <string name="settings_reverse_mirror">バックカメラを左右反転</string>
     <string name="settings_reverse_mirror_hint">通常のバックカメラの映像を反転します (360 カメラは対象外)</string>
-    <string name="settings_360_section">360 カメラ</string>
-    <string name="settings_360_open">360 カメラを開く</string>
-    <string name="settings_360_open_hint">最後に使用したビューで開きます</string>
-    <string name="settings_360_options">360 カメラのオプション</string>
-    <string name="settings_360_options_hint">自動で開く条件 (ウインカー、ハザード、ドア、レーダー)、閉じる条件、ガイド線、反転表示。Garagem で保存できることを確認するまで 360 アプリで設定します。</string>
     <string name="settings_nav_section">ナビゲーション</string>
     <string name="settings_nav_app">ナビアプリ</string>
     <string name="settings_nav_app_hint">ナビのショートカットとユニットで使用されます</string>
@@ -90,7 +81,6 @@
     <string name="settings_locale_tz">言語とタイムゾーン</string>
     <string name="settings_none">なし</string>
     <string name="settings_advanced">詳細設定</string>
-    <string name="settings_advanced_hint">工場、開発者、ユニットメニューのオプション。パスワードが必要です。</string>
     <string name="settings_enter_password">パスワードを入力</string>
     <string name="settings_sign_in">入る</string>
     <string name="settings_wrong_password">パスワードが違います</string>
@@ -99,4 +89,11 @@
     <string name="settings_font_hint">ランチャー全体で使用する書体</string>
     <string name="settings_theme_color">テーマカラー</string>
     <string name="settings_theme_color_hint">上: 黒背景 · 下: 色付き背景</string>
+    <string name="settings_group_main">メイン</string>
+    <string name="settings_group_assists">アシスト</string>
+    <string name="settings_group_system">システム</string>
+    <string name="settings_utilities_section">ユーティリティ</string>
+    <string name="settings_device_section">本体</string>
+    <string name="settings_customize_dock">ドックをカスタマイズ</string>
+    <string name="settings_customize_dock_hint">ドックに表示するアイコンを選択</string>
 </resources>

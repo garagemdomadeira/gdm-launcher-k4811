@@ -15,7 +15,6 @@
     <string name="settings_apply">Aplicar</string>
     <string name="settings_range_error">Usa un valor de %1$d a %2$d</string>
     <string name="settings_enter_number">Ingresa un número</string>
-    <string name="settings_launcher_section">Launcher</string>
     <string name="settings_default_launcher">Launcher predeterminado</string>
     <string name="settings_use_garagem">Usar Garagem</string>
     <string name="settings_use_original">Volver al original</string>
@@ -36,7 +35,6 @@
     <string name="settings_dock_reset_hint">Radio, Música, Música Bluetooth, Teléfono y Ecualizador</string>
     <string name="settings_reset">Restaurar</string>
     <string name="settings_dock_full">Ya hay %1$d. Desactiva uno para activar otro.</string>
-    <string name="settings_sound_section">Sonido</string>
     <string name="settings_startup_volume">Volumen al encender el auto</string>
     <string name="settings_startup_volume_hint">Volumen inicial, cuando la central no recuerda el último</string>
     <string name="settings_remember_volume">Recordar último volumen</string>
@@ -47,8 +45,6 @@
     <string name="settings_nav_ducking_hint">La música baja mientras el GPS habla</string>
     <string name="settings_duck_amount">Cuánto bajar</string>
     <string name="settings_duck_amount_hint">0 a 10</string>
-    <string name="settings_eq">Ecualizador</string>
-    <string name="settings_eq_hint">Graves, medios, agudos y preajustes</string>
     <string name="settings_open">Abrir ›</string>
     <string name="settings_screen_section">Pantalla</string>
     <string name="settings_brightness">Brillo</string>
@@ -59,16 +55,11 @@
     <string name="settings_screen_off_never">Nunca</string>
     <string name="settings_brightness_night">Ahora: noche (faros encendidos)</string>
     <string name="settings_brightness_day">Ahora: día</string>
-    <string name="settings_reverse_section">Reversa</string>
+    <string name="settings_reverse_section">Cámara de reversa</string>
     <string name="settings_reverse_mute">Silenciar en reversa</string>
     <string name="settings_reverse_mute_hint">Corta el sonido mientras la reversa está puesta</string>
     <string name="settings_reverse_mirror">Espejar cámara de reversa</string>
     <string name="settings_reverse_mirror_hint">Invierte la imagen de la cámara de reversa simple (no la 360)</string>
-    <string name="settings_360_section">Cámara 360</string>
-    <string name="settings_360_open">Abrir cámara 360</string>
-    <string name="settings_360_open_hint">Abre en la última vista usada</string>
-    <string name="settings_360_options">Opciones de la cámara 360</string>
-    <string name="settings_360_options_hint">Cuándo se abre sola (direccional, balizas, puerta, radar), cuándo se cierra, líneas guía y espejado. Quedan en la app 360 hasta confirmar que Garagem puede guardarlas.</string>
     <string name="settings_nav_section">Navegación</string>
     <string name="settings_nav_app">App de navegación</string>
     <string name="settings_nav_app_hint">Usada por el acceso directo de navegación y por la central</string>
@@ -90,7 +81,6 @@
     <string name="settings_locale_tz">Idioma y zona horaria</string>
     <string name="settings_none">ninguno</string>
     <string name="settings_advanced">Avanzado</string>
-    <string name="settings_advanced_hint">Opciones de fábrica, desarrollador y menú de la central. Requiere contraseña.</string>
     <string name="settings_enter_password">Ingresa la contraseña</string>
     <string name="settings_sign_in">Entrar</string>
     <string name="settings_wrong_password">Contraseña incorrecta</string>
@@ -99,4 +89,11 @@
     <string name="settings_font_hint">Tipografía usada en todo el launcher</string>
     <string name="settings_theme_color">Color del tema</string>
     <string name="settings_theme_color_hint">Arriba: fondo negro · abajo: fondo teñido</string>
+    <string name="settings_group_main">Principales</string>
+    <string name="settings_group_assists">Asistencias</string>
+    <string name="settings_group_system">Sistema</string>
+    <string name="settings_utilities_section">Utilidades</string>
+    <string name="settings_device_section">Equipo</string>
+    <string name="settings_customize_dock">Personalizar dock</string>
+    <string name="settings_customize_dock_hint">Elige qué íconos aparecen en el dock</string>
 </resources>
