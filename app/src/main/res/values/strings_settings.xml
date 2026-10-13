@@ -15,7 +15,6 @@
     <string name="settings_apply">Apply</string>
     <string name="settings_range_error">Use a value from %1$d to %2$d</string>
     <string name="settings_enter_number">Enter a number</string>
-    <string name="settings_launcher_section">Launcher</string>
     <string name="settings_default_launcher">Default launcher</string>
     <string name="settings_use_garagem">Use Garagem</string>
     <string name="settings_use_original">Back to original</string>
@@ -36,7 +35,6 @@
     <string name="settings_dock_reset_hint">Radio, Music, Bluetooth Music, Phone and Equalizer</string>
     <string name="settings_reset">Restore</string>
     <string name="settings_dock_full">Already %1$d. Turn one off to turn another on.</string>
-    <string name="settings_sound_section">Sound</string>
     <string name="settings_startup_volume">Volume when starting the car</string>
     <string name="settings_startup_volume_hint">Startup volume, when the unit doesn\'t remember the last one</string>
     <string name="settings_remember_volume">Remember last volume</string>
@@ -47,8 +45,6 @@
     <string name="settings_nav_ducking_hint">Music gets quieter while the GPS speaks</string>
     <string name="settings_duck_amount">How much to lower</string>
     <string name="settings_duck_amount_hint">0 to 10</string>
-    <string name="settings_eq">Equalizer</string>
-    <string name="settings_eq_hint">Bass, mids, treble and presets</string>
     <string name="settings_open">Open ›</string>
     <string name="settings_screen_section">Display</string>
     <string name="settings_brightness">Brightness</string>
@@ -59,16 +55,11 @@
     <string name="settings_screen_off_never">Never</string>
     <string name="settings_brightness_night">Now: night (headlights on)</string>
     <string name="settings_brightness_day">Now: day</string>
-    <string name="settings_reverse_section">Reverse</string>
+    <string name="settings_reverse_section">Reverse camera</string>
     <string name="settings_reverse_mute">Mute in reverse</string>
     <string name="settings_reverse_mute_hint">Cuts the sound while reverse gear is engaged</string>
     <string name="settings_reverse_mirror">Mirror reverse camera</string>
     <string name="settings_reverse_mirror_hint">Flips the image of the plain reverse camera (not the 360 one)</string>
-    <string name="settings_360_section">360 camera</string>
-    <string name="settings_360_open">Open 360 camera</string>
-    <string name="settings_360_open_hint">Opens on the last view used</string>
-    <string name="settings_360_options">360 camera options</string>
-    <string name="settings_360_options_hint">When it opens by itself (turn signal, hazards, door, radar), when it closes, guide lines and mirroring. They stay in the 360 app until we confirm Garagem can save them.</string>
     <string name="settings_nav_section">Navigation</string>
     <string name="settings_nav_app">Navigation app</string>
     <string name="settings_nav_app_hint">Used by the navigation shortcut and by the unit</string>
@@ -90,7 +81,6 @@
     <string name="settings_locale_tz">Language and time zone</string>
     <string name="settings_none">none</string>
     <string name="settings_advanced">Advanced</string>
-    <string name="settings_advanced_hint">Factory, developer and unit menu options. Requires a password.</string>
     <string name="settings_enter_password">Enter the password</string>
     <string name="settings_sign_in">Enter</string>
     <string name="settings_wrong_password">Wrong password</string>
@@ -99,4 +89,11 @@
     <string name="settings_font_hint">Typeface used across the launcher</string>
     <string name="settings_theme_color">Theme color</string>
     <string name="settings_theme_color_hint">Top: black background · bottom: tinted background</string>
+    <string name="settings_group_main">Main</string>
+    <string name="settings_group_assists">Assists</string>
+    <string name="settings_group_system">System</string>
+    <string name="settings_utilities_section">Utilities</string>
+    <string name="settings_device_section">Head unit</string>
+    <string name="settings_customize_dock">Customize dock</string>
+    <string name="settings_customize_dock_hint">Choose which icons appear in the dock</string>
 </resources>

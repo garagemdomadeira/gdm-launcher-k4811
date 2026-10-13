@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Option rows for Settings and Advanced, built in code: upper-case title per
- * group, rows separated by thin lines, On/Off, − value + (hold repeats), pick
+ * Option rows for Settings and Advanced, built in code: upper-case
+ * title per group, rows separated by thin lines, On/Off, − value + (hold repeats), pick
  * from a list, shortcuts and read-only rows.
  *
  * Each row reads the real state in {@link #renderAll()} (the screen calls it again when the system
@@ -73,7 +73,7 @@ public final class OptionList {
     private static final long REPEAT_MS = 110;
 
     private final Activity activity;
-    private final LinearLayout container;
+    private LinearLayout container;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final List<Row> rows = new ArrayList<>();
     private final List<Section> sections = new ArrayList<>();
@@ -123,6 +123,12 @@ public final class OptionList {
             ViewGroup.LayoutParams.WRAP_CONTENT));
         current = new Section(t);
         sections.add(current);
+    }
+
+    /** From here on, groups and rows go into {@code panel} (Settings builds one panel per side tab). */
+    public void into(LinearLayout panel) {
+        container = panel;
+        current = null;
     }
 
     /** Free text (warning, explanation) inside the current group. */

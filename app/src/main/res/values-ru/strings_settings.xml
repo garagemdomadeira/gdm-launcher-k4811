@@ -15,7 +15,6 @@
     <string name="settings_apply">Применить</string>
     <string name="settings_range_error">Значение от %1$d до %2$d</string>
     <string name="settings_enter_number">Введите число</string>
-    <string name="settings_launcher_section">Лаунчер</string>
     <string name="settings_default_launcher">Лаунчер по умолчанию</string>
     <string name="settings_use_garagem">Использовать Garagem</string>
     <string name="settings_use_original">Вернуть исходный</string>
@@ -36,7 +35,6 @@
     <string name="settings_dock_reset_hint">Радио, Музыка, Музыка Bluetooth, Телефон и Эквалайзер</string>
     <string name="settings_reset">Сбросить</string>
     <string name="settings_dock_full">Уже %1$d. Выключите один, чтобы включить другой.</string>
-    <string name="settings_sound_section">Звук</string>
     <string name="settings_startup_volume">Громкость при запуске авто</string>
     <string name="settings_startup_volume_hint">Громкость при запуске, если магнитола не помнит последнюю</string>
     <string name="settings_remember_volume">Помнить громкость</string>
@@ -47,8 +45,6 @@
     <string name="settings_nav_ducking_hint">Музыка тише, пока говорит GPS</string>
     <string name="settings_duck_amount">Степень приглушения</string>
     <string name="settings_duck_amount_hint">От 0 до 10</string>
-    <string name="settings_eq">Эквалайзер</string>
-    <string name="settings_eq_hint">Басы, середина, верха и пресеты</string>
     <string name="settings_open">Открыть ›</string>
     <string name="settings_screen_section">Экран</string>
     <string name="settings_brightness">Яркость</string>
@@ -59,16 +55,11 @@
     <string name="settings_screen_off_never">Никогда</string>
     <string name="settings_brightness_night">Сейчас: ночь (фары вкл.)</string>
     <string name="settings_brightness_day">Сейчас: день</string>
-    <string name="settings_reverse_section">Задний ход</string>
+    <string name="settings_reverse_section">Камера заднего хода</string>
     <string name="settings_reverse_mute">Без звука на заднем ходу</string>
     <string name="settings_reverse_mute_hint">Отключает звук при включённой задней передаче</string>
     <string name="settings_reverse_mirror">Зеркалить камеру заднего хода</string>
     <string name="settings_reverse_mirror_hint">Отражает изображение обычной камеры заднего хода (не 360)</string>
-    <string name="settings_360_section">Камера 360</string>
-    <string name="settings_360_open">Открыть камеру 360</string>
-    <string name="settings_360_open_hint">Открывается на последнем виде</string>
-    <string name="settings_360_options">Параметры камеры 360</string>
-    <string name="settings_360_options_hint">Когда открывается сама (поворотник, аварийка, дверь, радар), когда закрывается, линии и зеркалирование. Остаются в приложении 360, пока не подтвердим, что Garagem может их сохранять.</string>
     <string name="settings_nav_section">Навигация</string>
     <string name="settings_nav_app">Приложение навигации</string>
     <string name="settings_nav_app_hint">Используется ярлыком навигации и магнитолой</string>
@@ -90,7 +81,6 @@
     <string name="settings_locale_tz">Язык и часовой пояс</string>
     <string name="settings_none">нет</string>
     <string name="settings_advanced">Расширенные</string>
-    <string name="settings_advanced_hint">Заводские параметры, опции разработчика и меню магнитолы. Нужен пароль.</string>
     <string name="settings_enter_password">Введите пароль</string>
     <string name="settings_sign_in">Войти</string>
     <string name="settings_wrong_password">Неверный пароль</string>
@@ -99,4 +89,11 @@
     <string name="settings_font_hint">Шрифт во всём лаунчере</string>
     <string name="settings_theme_color">Цвет темы</string>
     <string name="settings_theme_color_hint">Сверху: чёрный фон · снизу: цветной фон</string>
+    <string name="settings_group_main">Основные</string>
+    <string name="settings_group_assists">Помощники</string>
+    <string name="settings_group_system">Система</string>
+    <string name="settings_utilities_section">Утилиты</string>
+    <string name="settings_device_section">Устройство</string>
+    <string name="settings_customize_dock">Настроить док</string>
+    <string name="settings_customize_dock_hint">Выберите значки, которые будут в доке</string>
 </resources>

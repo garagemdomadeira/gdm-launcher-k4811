@@ -111,6 +111,14 @@
             android:launchMode="singleTop"
             android:screenOrientation="sensorLandscape" />
 
+        <!-- Dock icons (Settings › Appearance › Customize dock). -->
+        <activity
+            android:name=".DockSettingsActivity"
+            android:configChanges="fontScale|keyboard|keyboardHidden|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|density"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:screenOrientation="sensorLandscape" />
+
         <!-- Advanced (Settings, password-protected): factory, development and NWD menus. -->
         <activity
             android:name=".AdvancedActivity"

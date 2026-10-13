@@ -63,6 +63,22 @@
         <item name="android:clickable">true</item>
     </style>
 
+    <!-- Group tab in the Settings side column. -->
+    <style name="SettingsTab">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">72dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/pill</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:clickable">true</item>
+    </style>
+
     <style name="PillButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">56dp</item>

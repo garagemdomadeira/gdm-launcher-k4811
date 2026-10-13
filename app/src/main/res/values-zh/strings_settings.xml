@@ -15,7 +15,6 @@
     <string name="settings_apply">应用</string>
     <string name="settings_range_error">请输入 %1$d 到 %2$d 之间的值</string>
     <string name="settings_enter_number">请输入数字</string>
-    <string name="settings_launcher_section">启动器</string>
     <string name="settings_default_launcher">默认启动器</string>
     <string name="settings_use_garagem">使用 Garagem</string>
     <string name="settings_use_original">恢复原厂</string>
@@ -36,7 +35,6 @@
     <string name="settings_dock_reset_hint">收音机、音乐、蓝牙音乐、电话和均衡器</string>
     <string name="settings_reset">恢复</string>
     <string name="settings_dock_full">已选 %1$d 个。请先关闭一个再打开其他项。</string>
-    <string name="settings_sound_section">声音</string>
     <string name="settings_startup_volume">启动车辆时的音量</string>
     <string name="settings_startup_volume_hint">主机不记忆上次音量时使用的开机音量</string>
     <string name="settings_remember_volume">记忆上次音量</string>
@@ -47,8 +45,6 @@
     <string name="settings_nav_ducking_hint">GPS 语音播报时音乐音量降低</string>
     <string name="settings_duck_amount">降低幅度</string>
     <string name="settings_duck_amount_hint">0 到 10</string>
-    <string name="settings_eq">均衡器</string>
-    <string name="settings_eq_hint">低音、中音、高音和预设</string>
     <string name="settings_open">打开 ›</string>
     <string name="settings_screen_section">显示</string>
     <string name="settings_brightness">亮度</string>
@@ -59,16 +55,11 @@
     <string name="settings_screen_off_never">从不</string>
     <string name="settings_brightness_night">当前：夜间（大灯已开）</string>
     <string name="settings_brightness_day">当前：白天</string>
-    <string name="settings_reverse_section">倒车</string>
+    <string name="settings_reverse_section">倒车摄像头</string>
     <string name="settings_reverse_mute">倒车时静音</string>
     <string name="settings_reverse_mute_hint">挂入倒挡时关闭声音</string>
     <string name="settings_reverse_mirror">倒车影像镜像</string>
     <string name="settings_reverse_mirror_hint">翻转普通倒车摄像头的图像（不含 360 全景）</string>
-    <string name="settings_360_section">360 全景</string>
-    <string name="settings_360_open">打开 360 全景</string>
-    <string name="settings_360_open_hint">打开上次使用的视角</string>
-    <string name="settings_360_options">360 全景选项</string>
-    <string name="settings_360_options_hint">自动打开时机（转向灯、双闪、车门、雷达）、关闭时机、辅助线和镜像。在确认 Garagem 能保存这些设置之前，它们仍保留在 360 应用中。</string>
     <string name="settings_nav_section">导航</string>
     <string name="settings_nav_app">导航应用</string>
     <string name="settings_nav_app_hint">供导航快捷方式和主机使用</string>
@@ -90,7 +81,6 @@
     <string name="settings_locale_tz">语言和时区</string>
     <string name="settings_none">无</string>
     <string name="settings_advanced">高级</string>
-    <string name="settings_advanced_hint">工厂、开发者和主机菜单选项。需要密码。</string>
     <string name="settings_enter_password">请输入密码</string>
     <string name="settings_sign_in">进入</string>
     <string name="settings_wrong_password">密码错误</string>
@@ -99,4 +89,11 @@
     <string name="settings_font_hint">启动器全局使用的字体</string>
     <string name="settings_theme_color">主题颜色</string>
     <string name="settings_theme_color_hint">上排：黑色背景 · 下排：着色背景</string>
+    <string name="settings_group_main">主要</string>
+    <string name="settings_group_assists">辅助</string>
+    <string name="settings_group_system">系统</string>
+    <string name="settings_utilities_section">实用工具</string>
+    <string name="settings_device_section">主机</string>
+    <string name="settings_customize_dock">自定义 Dock</string>
+    <string name="settings_customize_dock_hint">选择 Dock 中显示的图标</string>
 </resources>

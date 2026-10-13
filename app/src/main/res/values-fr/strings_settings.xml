@@ -15,7 +15,6 @@
     <string name="settings_apply">Appliquer</string>
     <string name="settings_range_error">Valeur de %1$d à %2$d</string>
     <string name="settings_enter_number">Saisissez un nombre</string>
-    <string name="settings_launcher_section">Launcher</string>
     <string name="settings_default_launcher">Launcher par défaut</string>
     <string name="settings_use_garagem">Utiliser Garagem</string>
     <string name="settings_use_original">Revenir à l\'original</string>
@@ -36,7 +35,6 @@
     <string name="settings_dock_reset_hint">Radio, Musique, Musique Bluetooth, Téléphone et Égaliseur</string>
     <string name="settings_reset">Rétablir</string>
     <string name="settings_dock_full">Déjà %1$d. Désactivez-en un pour en activer un autre.</string>
-    <string name="settings_sound_section">Son</string>
     <string name="settings_startup_volume">Volume au démarrage</string>
     <string name="settings_startup_volume_hint">Volume au démarrage, si l\'autoradio ne mémorise pas le dernier</string>
     <string name="settings_remember_volume">Mémoriser le dernier volume</string>
@@ -47,8 +45,6 @@
     <string name="settings_nav_ducking_hint">La musique baisse pendant que le GPS parle</string>
     <string name="settings_duck_amount">Atténuation</string>
     <string name="settings_duck_amount_hint">0 à 10</string>
-    <string name="settings_eq">Égaliseur</string>
-    <string name="settings_eq_hint">Graves, médiums, aigus et préréglages</string>
     <string name="settings_open">Ouvrir ›</string>
     <string name="settings_screen_section">Écran</string>
     <string name="settings_brightness">Luminosité</string>
@@ -59,16 +55,11 @@
     <string name="settings_screen_off_never">Jamais</string>
     <string name="settings_brightness_night">Actuel : nuit (phares allumés)</string>
     <string name="settings_brightness_day">Actuel : jour</string>
-    <string name="settings_reverse_section">Marche arrière</string>
+    <string name="settings_reverse_section">Caméra de recul</string>
     <string name="settings_reverse_mute">Muet en marche arrière</string>
     <string name="settings_reverse_mute_hint">Coupe le son quand la marche arrière est engagée</string>
     <string name="settings_reverse_mirror">Miroir caméra de recul</string>
     <string name="settings_reverse_mirror_hint">Inverse l\'image de la caméra de recul simple (pas la 360)</string>
-    <string name="settings_360_section">Caméra 360</string>
-    <string name="settings_360_open">Ouvrir la caméra 360</string>
-    <string name="settings_360_open_hint">S\'ouvre sur la dernière vue utilisée</string>
-    <string name="settings_360_options">Options caméra 360</string>
-    <string name="settings_360_options_hint">Ouverture auto (clignotant, détresse, porte, radar), fermeture, lignes de guidage et miroir. Restent dans l\'app 360 tant que Garagem ne peut pas les enregistrer.</string>
     <string name="settings_nav_section">Navigation</string>
     <string name="settings_nav_app">App de navigation</string>
     <string name="settings_nav_app_hint">Utilisée par le raccourci navigation et par l\'autoradio</string>
@@ -90,7 +81,6 @@
     <string name="settings_locale_tz">Langue et fuseau horaire</string>
     <string name="settings_none">aucun</string>
     <string name="settings_advanced">Avancé</string>
-    <string name="settings_advanced_hint">Options d\'usine, développeur et menu de l\'autoradio. Mot de passe requis.</string>
     <string name="settings_enter_password">Saisissez le mot de passe</string>
     <string name="settings_sign_in">Entrer</string>
     <string name="settings_wrong_password">Mot de passe incorrect</string>
@@ -99,4 +89,11 @@
     <string name="settings_font_hint">Police utilisée dans tout le launcher</string>
     <string name="settings_theme_color">Couleur du thème</string>
     <string name="settings_theme_color_hint">Haut : fond noir · bas : fond teinté</string>
+    <string name="settings_group_main">Principal</string>
+    <string name="settings_group_assists">Assistances</string>
+    <string name="settings_group_system">Système</string>
+    <string name="settings_utilities_section">Utilitaires</string>
+    <string name="settings_device_section">Appareil</string>
+    <string name="settings_customize_dock">Personnaliser le dock</string>
+    <string name="settings_customize_dock_hint">Choisissez les icônes affichées dans le dock</string>
 </resources>
