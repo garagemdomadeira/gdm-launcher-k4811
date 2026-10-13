@@ -11,8 +11,8 @@ android {
         applicationId = "com.garagemdomadeira.nwd.launcher"
         minSdk = 17     // Android 4.2, oldest NWD head units
         targetSdk = 19  // Android 4.4, keeps legacy behavior on the head unit
-        versionCode = 4
-        versionName = "0.4.0"
+        versionCode = 5
+        versionName = "0.5.0"
     }
 
     buildFeatures {
