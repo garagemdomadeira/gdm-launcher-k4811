@@ -80,6 +80,18 @@ Deslizar o dedo de uma borda da tela para dentro, em qualquer app, abre uma píl
 - Escolha em car-setting › Principais › **Menu da borda**: Desligado, Embaixo, Esquerda ou Direita (`edge_menu_side` no `launcher.json`, 0 a 3; padrão Embaixo). O serviço confere a opção a cada 3 s, então vale na hora. O log `K4811EdgeMenu` diz em que borda e com que tamanho a área foi criada.
 - No emulador só o Início funciona (não há MCU). Ainda não testado na central.
 
+## Teclas de mídia do volante
+
+As teclas de **volume e mudo** do volante o sistema da NWD trata sozinho, por isso funcionam em qualquer app. Já **avançar e recuar** o sistema só repassa como um broadcast (`com.nwd.action.ACTION_KEY_VALUE`), e cabe ao app da fonte ativa reagir — algo que a pele de fábrica fazia e a recompilação tinha perdido.
+
+Agora o launcher é quem escuta (`media/MediaKeyReceiver` → `MediaKeyService`) e, qualquer que seja a tela aberta, manda o comando para o que está tocando:
+
+- **Rádio:** próxima/anterior estação salva da banda, ciclando (pula memórias vazias).
+- **MP3 e música Bluetooth:** próxima/anterior faixa.
+- **Nada tocando:** não faz nada (não começa a tocar sozinho).
+
+Mantém a conexão com os serviços de rádio/BT aquecida por 60 s para apertos seguidos responderem na hora. Ainda não testado na central.
+
 ## Diferenças do original
 
 Este app **não substitui** o launcher original: tem package próprio e fica instalado ao lado dele. O original roda serviços do sistema que este app não tem. Enquanto o original continuar instalado, eles seguem disponíveis; se ele for removido, somem:
@@ -113,6 +125,7 @@ launcher/src/main/
 │   │                            AppCatalog, VolumeClient, MuteClient
 │   ├── overlay/                 VolumeOverlayService + VolumeOverlayView: aviso de volume por cima dos apps;
 │   │                            EdgeMenuService: menu ao deslizar de uma borda
+│   ├── media/                   MediaKeyReceiver + MediaKeyService: teclas de avançar/recuar do volante
 │   └── (com/acloud/…/MusicBean) faixa do player da NWD
 └── res/layout/                  activity_home, activity_apps, app_cell, dialog_confirm
 ```

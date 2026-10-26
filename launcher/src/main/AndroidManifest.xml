@@ -68,5 +68,17 @@
         <service
             android:name="com.k4811.launcher.overlay.EdgeMenuService"
             android:exported="false" />
+
+        <!-- Teclas de mídia do painel/volante: decide a fonte ativa e despacha avançar/recuar. -->
+        <receiver
+            android:name="com.k4811.launcher.media.MediaKeyReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.nwd.action.ACTION_KEY_VALUE" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="com.k4811.launcher.media.MediaKeyService"
+            android:exported="false" />
     </application>
 </manifest>

@@ -20,6 +20,12 @@ public class RemoteReceiver extends BroadcastReceiver {
             return;
         }
         if (!MusicRemote.ACTION_COMMAND.equals(action)) return;
+        // Teclas do volante: só mexem na fonte ativa, então ignora se o player não está tocando
+        // (não inicia a reprodução por cima do rádio ou do BT).
+        if (intent.getBooleanExtra(MusicRemote.EXTRA_ONLY_IF_ACTIVE, false)
+            && !MusicPlaybackService.isPlayingNow()) {
+            return;
+        }
         Intent cmd = new Intent(context, MusicPlaybackService.class);
         cmd.setAction(MusicPlaybackService.ACTION_REMOTE);
         cmd.putExtra(MusicRemote.EXTRA_CMD, intent.getIntExtra(MusicRemote.EXTRA_CMD, MusicRemote.CMD_TOGGLE));
