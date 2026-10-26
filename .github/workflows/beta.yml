@@ -44,7 +44,7 @@ jobs:
             if [ -z "$name" ] || [ -z "$code" ]; then
               echo "::error::Não li versionName/versionCode de $file"; exit 1
             fi
-            printf '%s %s' "$name" "$code"
+            printf '%s %s\n' "$name" "$code"
           }
 
           # Alvo = versão na branch beta (checkout atual).
