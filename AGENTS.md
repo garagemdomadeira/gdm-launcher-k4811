@@ -76,7 +76,8 @@ Cada app tem seu package, então SharedPreferences não é compartilhável. As c
 | `com.k4811.action.PAUSE_PLAYERS` | `PlayerHandoff` (rádio, BT, launcher) | music `PauseReceiver` | `from` = package de quem pediu |
 | `com.k4811.action.MUSIC_STATE` | music `MusicPlaybackService` | launcher `HomeSession` | `has_track`, `title`, `artist`, `album`, `playing`, `position_ms`, `duration_ms`, `media_id`, `path` |
 | `com.k4811.action.MUSIC_QUERY` | launcher | music `RemoteReceiver` | — (responde com `MUSIC_STATE` se o player estiver rodando) |
-| `com.k4811.action.MUSIC_COMMAND` | launcher | music `RemoteReceiver` | `cmd`: 0 tocar/pausar, 1 próxima, 2 anterior |
+| `com.k4811.action.MUSIC_COMMAND` | launcher | music `RemoteReceiver` | `cmd`: 0 tocar/pausar, 1 próxima, 2 anterior; `only_if_active` (bool) = só reage se já estiver tocando |
+| `com.nwd.action.ACTION_KEY_VALUE` | kernel da NWD (painel/volante/controle) | launcher `MediaKeyReceiver` | `extra_key_value` (byte): 5 próxima, 6 anterior; `extra_key_type` 0 painel/1 controle/2 volante/3 toque |
 | `com.k4811.launcher.action.APPS` | `DockNavigator` (item Apps) | launcher `AppsActivity` | — |
 | `com.k4811.action.BOTTOM_BAR_QUERY` (ordenado) | `BottomBar` do app que parou | `BottomBar$Query` de todos | resultCode 1 = "tenho tela na frente" |
 
@@ -86,6 +87,7 @@ Com targetSdk 19, broadcast implícito ainda chega em receiver declarado no mani
 
 - **Fonte de áudio atual:** `Settings.System mcu_current_source` (0 = Android, 4 = rádio, 7 = AUX, 8 = DVR) e o broadcast `com.nwd.action.ACTION_CHANGE_SOURCE`.
 - **Pegar a fonte:** `com.nwd.action.ACTION_REQUEST_CHANGE_SOURCE` (`extra_source_id`, byte) e `com.nwd.action.ACTION_APP_IN_OUT` (`extra_app_id`: 2 música, 8 rádio, 10 telefone, 15 música BT; `extra_app_operation` 1, `extra_app_event` 0). Constantes em `NwdConstants`.
+- **Teclas do painel/volante:** o kernel entrega `com.nwd.action.ACTION_KEY_VALUE` (`extra_key_value` byte, `extra_key_type` 0 painel/1 controle/2 volante/3 toque). **Vol± e mudo o kernel executa sozinho** (por isso funcionam em qualquer app); **avançar (5)/recuar (6)/play (7) ele só repassa**, e cabe ao app da fonte ativa reagir. Só o launcher escuta (`MediaKeyReceiver` → `MediaKeyService`): despacha para a fonte que está tocando. Códigos em `NwdConstants.KEY_*`.
 - **Serviços:** rádio (`com.nwd.radio.service.ACTION_RADIO_SERVICE`, AIDL `RadioFeature`), Bluetooth (`BtClient`, AIDL `com.bt.BTFeature`, broadcasts `com.bt.ACTION_*`), SettingService (`com.nwd.setting.service/.SettingService`, AIDL `SettingFeature`: volume, EQ pela MCU, brilho, bits do sistema). Os `.aidl` precisam manter a **ordem exata dos métodos** do original.
 - **Props:** um app comum não faz `setprop persist.*`. Use `SystemProps.requestSet` (grava `Settings.System nwd_system_prop` e envia `com.nwd.action.ACTION_SET_SYSTEM_PROP`). Confira o resultado depois com `SystemProps.get`.
 - **Barra flutuante da NWD:** `com.nwd.statusbarbottom.removeFloat` / `createFloat` com `pagename=home_horizontal`.
