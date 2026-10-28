@@ -127,6 +127,12 @@
     <string name="settings_home_images_hint">内部ストレージの K4811 フォルダーの画像（.jpg、.png）</string>
     <string name="settings_home_images_empty">画像が見つかりません。.jpg または .png ファイルを %1$s にコピーしてください</string>
     <string name="settings_home_image_missing">選択した画像はもう存在しません</string>
+    <string name="settings_home_background">背景</string>
+    <string name="settings_home_bg_image">背景画像</string>
+    <string name="settings_home_bg_hint">ホーム画面全体の背景に表示する画像</string>
+    <string name="settings_home_no_bg">背景画像なし</string>
+    <string name="settings_home_bg_remove">削除</string>
+    <string name="settings_help_home_bg">内部ストレージの画像フォルダーから画像を選ぶと、ホーム画面の背景に表示されます。削除するとテーマの色に戻ります。</string>
     <string name="settings_home_module_speed">速度（GPS）</string>
     <string name="settings_home_module_gps">GPS データ</string>
     <string name="settings_hide_bottom_bar">NWD の下部バーを隠す</string>

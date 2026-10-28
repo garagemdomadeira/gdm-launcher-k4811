@@ -90,6 +90,28 @@ public final class HomeImage {
         LauncherConfig.setHomeImage(c, f.getAbsolutePath());
     }
 
+    // ---- Background image of the home screen (same folders, a separate choice; optional) ----
+
+    /** The chosen background image, or null if none was chosen. It may no longer exist. */
+    public static File fileBg(Context c) {
+        String path = LauncherConfig.homeBgImage(c);
+        return path == null ? null : new File(path);
+    }
+
+    public static boolean existsBg(Context c) {
+        File f = fileBg(c);
+        return f != null && f.isFile();
+    }
+
+    public static void chooseBg(Context c, File f) {
+        LauncherConfig.setHomeBgImage(c, f.getAbsolutePath());
+    }
+
+    /** Clears the background: the home screen falls back to the theme colour. */
+    public static void clearBg(Context c) {
+        LauncherConfig.setHomeBgImage(c, null);
+    }
+
     /** Name shown in Settings: the path inside {@code K4811/}, e.g. {@code fotos/carro.jpg}. */
     public static String displayName(File f) {
         String path = f.getAbsolutePath();

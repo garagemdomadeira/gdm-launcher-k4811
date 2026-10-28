@@ -133,6 +133,12 @@
     <string name="settings_home_images_hint">Images (.jpg, .png) from the images folder on internal storage</string>
     <string name="settings_home_images_empty">No images found. Copy .jpg or .png files to %1$s</string>
     <string name="settings_home_image_missing">The chosen image no longer exists</string>
+    <string name="settings_home_background">Background</string>
+    <string name="settings_home_bg_image">Background image</string>
+    <string name="settings_home_bg_hint">A picture behind the whole home screen</string>
+    <string name="settings_home_no_bg">No background chosen</string>
+    <string name="settings_home_bg_remove">Remove</string>
+    <string name="settings_help_home_bg">Choose a picture from the images folder on internal storage to show behind the home screen. Remove it to go back to the theme colour.</string>
     <string name="settings_home_module_speed">Speed (GPS)</string>
     <string name="settings_home_module_speed_hint">Current speed from the GPS</string>
     <string name="settings_home_module_gps">GPS data</string>

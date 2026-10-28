@@ -127,6 +127,12 @@
     <string name="settings_home_images_hint">Изображения (.jpg, .png) из папки K4811 во внутренней памяти</string>
     <string name="settings_home_images_empty">Изображения не найдены. Скопируйте файлы .jpg или .png в %1$s</string>
     <string name="settings_home_image_missing">Выбранное изображение больше не существует</string>
+    <string name="settings_home_background">Фон</string>
+    <string name="settings_home_bg_image">Фоновое изображение</string>
+    <string name="settings_home_bg_hint">Изображение за всем главным экраном</string>
+    <string name="settings_home_no_bg">Фон не выбран</string>
+    <string name="settings_home_bg_remove">Убрать</string>
+    <string name="settings_help_home_bg">Выберите изображение из папки с изображениями во внутренней памяти, чтобы показать его за главным экраном. Уберите, чтобы вернуть цвет темы.</string>
     <string name="settings_home_module_speed">Скорость (GPS)</string>
     <string name="settings_home_module_gps">Данные GPS</string>
     <string name="settings_hide_bottom_bar">Скрывать нижнюю панель NWD</string>

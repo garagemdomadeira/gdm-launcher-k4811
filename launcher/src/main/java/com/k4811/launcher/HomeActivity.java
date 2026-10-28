@@ -152,6 +152,8 @@ public class HomeActivity extends Activity {
     /** Image module: picture version (path, date and size) and slot on screen, to reload only on change. */
     private long imageStamp = -1;
     private HomeGrid.Slot imageSlot;
+    /** Background picture version (path, date, size), to reload only on change. */
+    private long bgStamp = -1;
     private View cardCall;
     private TextView callState;
     private TextView callName;
@@ -474,6 +476,7 @@ public class HomeActivity extends Activity {
         modules.apply(LauncherConfig.homeLayout(this));
         if (snap != null) render(snap);
         renderImage();
+        renderBackground();
         updateGps();
         handler.removeCallbacks(voltageTick);
         if (LauncherConfig.showVoltmeter(this)) {
@@ -758,6 +761,42 @@ public class HomeActivity extends Activity {
                     view.setVisibility(bmp != null ? View.VISIBLE : View.GONE);
                     empty.setVisibility(bmp != null ? View.GONE : View.VISIBLE);
                     if (bmp != null) Touch.fadeIn(view);
+                });
+            });
+        } catch (Exception ignored) {
+            // Executor already shut down (screen leaving).
+        }
+    }
+
+    /** Optional home background: (re)loads the chosen picture when it changed; hidden when none or missing. */
+    private void renderBackground() {
+        ImageView view = (ImageView) findViewById(R.id.home_bg);
+        File f = HomeImage.fileBg(this);
+        long stamp = f != null && f.isFile()
+            ? (f.getPath().hashCode() * 31L + f.lastModified()) * 31 + f.length() : 0;
+        if (stamp == bgStamp) return;
+        bgStamp = stamp;
+        if (stamp == 0) {
+            view.setImageDrawable(null);
+            view.setVisibility(View.GONE);
+            return;
+        }
+        View root = findViewById(R.id.home_root);
+        int width = root.getWidth() > 0 ? root.getWidth() : getResources().getDisplayMetrics().widthPixels;
+        int height = root.getHeight() > 0 ? root.getHeight() : getResources().getDisplayMetrics().heightPixels;
+        try {
+            artLoader.execute(() -> {
+                Bitmap bmp = HomeImage.load(f, width, height);
+                handler.post(() -> {
+                    if (isFinishing() || stamp != bgStamp) return;
+                    if (bmp != null) {
+                        view.setImageBitmap(bmp);
+                        view.setVisibility(View.VISIBLE);
+                        Touch.fadeIn(view);
+                    } else {
+                        view.setImageDrawable(null);
+                        view.setVisibility(View.GONE);
+                    }
                 });
             });
         } catch (Exception ignored) {

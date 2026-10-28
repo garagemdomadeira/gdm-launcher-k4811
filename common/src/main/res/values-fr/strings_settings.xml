@@ -127,6 +127,12 @@
     <string name="settings_home_images_hint">Images (.jpg, .png) du dossier K4811 de la mémoire interne</string>
     <string name="settings_home_images_empty">Aucune image trouvée. Copiez des fichiers .jpg ou .png dans %1$s</string>
     <string name="settings_home_image_missing">L\'image choisie n\'existe plus</string>
+    <string name="settings_home_background">Arrière-plan</string>
+    <string name="settings_home_bg_image">Image d\'arrière-plan</string>
+    <string name="settings_home_bg_hint">Une image derrière tout l\'écran d\'accueil</string>
+    <string name="settings_home_no_bg">Aucun arrière-plan choisi</string>
+    <string name="settings_home_bg_remove">Retirer</string>
+    <string name="settings_help_home_bg">Choisissez une image du dossier d\'images du stockage interne pour l\'afficher derrière l\'écran d\'accueil. Retirez-la pour revenir à la couleur du thème.</string>
     <string name="settings_home_module_speed">Vitesse (GPS)</string>
     <string name="settings_home_module_gps">Données GPS</string>
     <string name="settings_hide_bottom_bar">Masquer la barre inférieure NWD</string>
