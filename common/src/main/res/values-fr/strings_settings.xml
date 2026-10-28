@@ -21,6 +21,9 @@
     <string name="settings_show_voltmeter">Afficher le voltmètre</string>
     <string name="settings_show_voltmeter_hint">Tension batterie en haut à gauche de l\'accueil (voitures avec CAN)</string>
     <string name="settings_volume_overlay">Afficher le volume à l\'écran</string>
+    <string name="settings_media_apps">Contrôles média des apps</string>
+    <string name="settings_media_apps_hint">Afficher et contrôler Spotify, Deezer, YouTube Music… sur l\'écran d\'accueil</string>
+    <string name="settings_help_media_apps">Affiche ce que lisent d\'autres apps audio (Spotify, Deezer, YouTube Music, podcasts…) et permet de les contrôler depuis l\'écran d\'accueil et les touches au volant. À l\'activation, ouvre « Accès aux notifications » d\'Android, où vous accordez l\'autorisation une fois. Android 5+ uniquement.</string>
     <string name="settings_volume_overlay_hint">Une barre de volume en haut, par-dessus toute app, à chaque changement de volume</string>
     <string name="settings_edge_menu">Menu du bord</string>
     <string name="settings_edge_menu_hint">Balayez depuis ce bord vers l\'intérieur, dans toute app : Retour, Vol− Vol+ et Accueil</string>

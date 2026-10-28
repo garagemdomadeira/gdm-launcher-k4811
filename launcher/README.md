@@ -53,7 +53,10 @@ O módulo "Tocando agora" **só manda comandos**. Com o rádio tocando, ele most
 | Rádio | serviço de rádio da NWD (`RadioClient` do common, só observando) | memória anterior/próxima, liga/desliga | radio |
 | MP3 | broadcast `com.k4811.action.MUSIC_STATE` do music (`MusicRemote`) | broadcast `com.k4811.action.MUSIC_COMMAND` | music |
 | Bluetooth | serviço de BT da NWD (`BtClient`) e broadcasts `com.bt.*` | `playControl` do serviço de BT | bt-music |
+| App de mídia (Spotify, Deezer, YT Music…) | sessão de mídia do Android (`MediaSession`) | tocar/pausar, próxima, anterior | o próprio app |
 | Chamada | broadcasts `com.bt.ACTION_BT_*_CALL` | atender / desligar pelo serviço de BT | phone |
+
+Os **controles de mídia de apps** (Spotify e afins) são opcionais: ligue em **Configurações › Principais › Controles de mídia de apps** e conceda o **Acesso a notificações** quando a central pedir. Com isso, o launcher mostra e controla o que qualquer app de áudio está tocando — inclusive pelas teclas do volante. Sem a permissão, nada muda.
 
 A fonte atual vem de `Settings.System mcu_current_source`. Na tela inicial, o dock sempre destaca o Início; o que está tocando aparece na barra superior. Ligar o rádio pelo módulo segue a regra de uma fonte por vez (`PlayerHandoff.switchToRadio`). Também continuam valendo os broadcasts do player original da NWD (`com.android.music.metachanged`).
 

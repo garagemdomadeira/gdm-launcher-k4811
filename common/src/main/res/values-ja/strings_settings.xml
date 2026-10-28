@@ -21,6 +21,9 @@
     <string name="settings_show_voltmeter">電圧計を表示</string>
     <string name="settings_show_voltmeter_hint">ホーム画面左上にバッテリー電圧を表示 (CAN 対応車)</string>
     <string name="settings_volume_overlay">画面に音量を表示</string>
+    <string name="settings_media_apps">アプリのメディア操作</string>
+    <string name="settings_media_apps_hint">Spotify、Deezer、YouTube Music などをホーム画面で表示・操作</string>
+    <string name="settings_help_media_apps">他の音声アプリ（Spotify、Deezer、YouTube Music、ポッドキャストなど）の再生内容を表示し、ホーム画面やステアリングのキーから操作できます。オンにすると Android の「通知へのアクセス」が開き、一度だけ許可します。Android 5 以上のみ。</string>
     <string name="settings_volume_overlay_hint">音量が変わるたびに、どのアプリの上にも画面上部に音量バーを表示</string>
     <string name="settings_edge_menu">端のメニュー</string>
     <string name="settings_edge_menu_hint">どのアプリでもその端から内側へスワイプ：戻る、Vol− Vol+、ホーム</string>

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.k4811.common.audio.AudioGains;
 import com.k4811.car.setting.audio.AudioPanel;
 import com.k4811.common.config.LauncherConfig;
+import com.k4811.common.media.AppMediaClient;
 import com.k4811.common.system.BottomBar;
 import com.k4811.common.system.CrashLog;
 import com.k4811.common.system.DevMode;
@@ -246,6 +247,15 @@ public class SettingsActivity extends Activity {
             () -> LauncherConfig.showVolumeOverlay(this),
             on -> LauncherConfig.setShowVolumeOverlay(this, on))
             .local().help(getString(R.string.settings_help_volume_overlay));
+        list.toggle(getString(R.string.settings_media_apps),
+            getString(R.string.settings_media_apps_hint),
+            () -> LauncherConfig.mediaAppControls(this),
+            on -> {
+                LauncherConfig.setMediaAppControls(this, on);
+                // Ao ligar sem a permissão, leva o usuário para "Acesso a notificações".
+                if (on && !AppMediaClient.enabled(this)) openNotificationAccess();
+            })
+            .local().help(getString(R.string.settings_help_media_apps));
         String[] sides = {getString(R.string.settings_edge_menu_off), getString(R.string.settings_edge_menu_bottom),
             getString(R.string.settings_edge_menu_left), getString(R.string.settings_edge_menu_right)};
         list.choice(getString(R.string.settings_edge_menu), getString(R.string.settings_edge_menu_hint),
@@ -267,6 +277,19 @@ public class SettingsActivity extends Activity {
 
     private boolean nwd() {
         return NwdSettings.isInstalled(this);
+    }
+
+    /** Abre a tela do Android de "Acesso a notificações" (permissão dos controles de mídia de apps). */
+    private void openNotificationAccess() {
+        try {
+            startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        } catch (Exception e) {
+            try {
+                startActivity(new Intent(Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     private void buildDevice() {

@@ -80,5 +80,17 @@
         <service
             android:name="com.k4811.launcher.media.MediaKeyService"
             android:exported="false" />
+
+        <!-- Só destrava a leitura/controle das sessões de mídia (Spotify, Deezer…); o usuário liga
+             em "Acesso a notificações". Não trata notificação nenhuma. Ver AppMediaClient. -->
+        <service
+            android:name="com.k4811.launcher.media.MediaNotificationListener"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
     </application>
 </manifest>
