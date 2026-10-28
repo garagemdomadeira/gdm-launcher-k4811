@@ -49,6 +49,7 @@ public class HomeSettingsActivity extends Activity {
     private OptionList list;
     private HomeMapView map;
     private OptionList.Row imageRow;
+    private OptionList.Row bgRow;
     private final Map<HomeGrid.Module, TextView> slotButtons = new EnumMap<>(HomeGrid.Module.class);
     private Dialog dialog;
     private final ExecutorService loader = Executors.newSingleThreadExecutor();
@@ -86,6 +87,9 @@ public class HomeSettingsActivity extends Activity {
             // Subtítulo explicativo fica fixo; o nome da foto atual vai na nota.
             imageRow.setNote(image == null ? getString(R.string.settings_home_no_image)
                 : image.isFile() ? HomeImage.displayName(image) : getString(R.string.settings_home_image_missing), false);
+            File bg = HomeImage.fileBg(this);
+            bgRow.setNote(bg == null ? getString(R.string.settings_home_no_bg)
+                : bg.isFile() ? HomeImage.displayName(bg) : getString(R.string.settings_home_image_missing), false);
         });
         list.renderAll();
         Touch.install(findViewById(android.R.id.content));
@@ -103,7 +107,7 @@ public class HomeSettingsActivity extends Activity {
             if (module == HomeGrid.Module.IMAGE) {
                 imageRow = row;
                 row.help(getString(R.string.settings_help_home_pick_image));
-                row.addButton(getString(R.string.settings_home_pick_image), this::pickImage);
+                row.addButton(getString(R.string.settings_home_pick_image), () -> pickImage(false));
             }
         }
         list.action(getString(R.string.settings_home_reset), getString(R.string.settings_home_reset_hint),
@@ -111,6 +115,11 @@ public class HomeSettingsActivity extends Activity {
             LauncherConfig.resetHomeLayout(this);
             list.renderAll();
         }).help(getString(R.string.settings_help_home_reset));
+
+        list.section(getString(R.string.settings_home_background));
+        bgRow = list.plain(getString(R.string.settings_home_bg_image), getString(R.string.settings_home_bg_hint))
+            .help(getString(R.string.settings_help_home_bg));
+        bgRow.addButton(getString(R.string.settings_home_pick_image), () -> pickImage(true));
     }
 
     private int hintRes(HomeGrid.Module module) {
@@ -213,11 +222,15 @@ public class HomeSettingsActivity extends Activity {
 
     // ------------------------------------------------------------------ image
 
-    /** Grid of the images in K4811/ (thumbnails load in the background); tapping one picks it. */
-    private void pickImage() {
+    /**
+     * Grid of the images in K4811/ (thumbnails load in the background); tapping one picks it.
+     * {@code background} true picks the home background (with a Remove option); false the Image module.
+     */
+    private void pickImage(boolean background) {
         Dialog d = new Dialog(this, R.style.OverlayDialog);
         LinearLayout panel = panel(d, 56 + THUMB_COLUMNS * THUMB_WIDTH + (THUMB_COLUMNS - 1) * 16,
-            getString(R.string.settings_home_pick_image), getString(R.string.settings_home_images_hint));
+            getString(background ? R.string.settings_home_bg_image : R.string.settings_home_pick_image),
+            getString(R.string.settings_home_images_hint));
 
         ScrollView scroll = new ScrollView(this);
         LinearLayout grid = new LinearLayout(this);
@@ -231,10 +244,17 @@ public class HomeSettingsActivity extends Activity {
         buttons.setPadding(0, dp(16), 0, 0);
         panel.addView(buttons, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT));
+        if (background) {
+            addDialogButton(buttons, getString(R.string.settings_home_bg_remove), () -> {
+                d.dismiss();
+                HomeImage.clearBg(this);
+                list.renderAll();
+            });
+        }
         addDialogButton(buttons, getString(R.string.settings_home_cancel), d::dismiss);
         show(d);
 
-        File current = HomeImage.file(this);
+        File current = background ? HomeImage.fileBg(this) : HomeImage.file(this);
         loader.execute(() -> {
             List<File> files = HomeImage.list();
             runOnUiThread(() -> {
@@ -258,7 +278,7 @@ public class HomeSettingsActivity extends Activity {
                         grid.addView(row, rowLp);
                     }
                     File f = files.get(i);
-                    View cell = thumbnail(d, f, f.equals(current));
+                    View cell = thumbnail(d, f, f.equals(current), background);
                     LinearLayout.LayoutParams cellLp = new LinearLayout.LayoutParams(dp(THUMB_WIDTH),
                         ViewGroup.LayoutParams.WRAP_CONTENT);
                     if (i % THUMB_COLUMNS > 0) cellLp.leftMargin = dp(16);
@@ -277,13 +297,14 @@ public class HomeSettingsActivity extends Activity {
     }
 
     /** One image of the grid: thumbnail (loaded in the background) and its name inside K4811/. */
-    private View thumbnail(Dialog d, File f, boolean selected) {
+    private View thumbnail(Dialog d, File f, boolean selected, boolean background) {
         LinearLayout cell = new LinearLayout(this);
         cell.setOrientation(LinearLayout.VERTICAL);
         cell.setClickable(true);
         cell.setOnClickListener(v -> {
             d.dismiss();
-            HomeImage.choose(this, f);
+            if (background) HomeImage.chooseBg(this, f);
+            else HomeImage.choose(this, f);
             list.renderAll();
         });
 

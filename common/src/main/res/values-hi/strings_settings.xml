@@ -127,6 +127,12 @@
     <string name="settings_home_images_hint">आंतरिक स्टोरेज के K4811 फ़ोल्डर के चित्र (.jpg, .png)</string>
     <string name="settings_home_images_empty">कोई चित्र नहीं मिला। .jpg या .png फ़ाइलें %1$s में कॉपी करें</string>
     <string name="settings_home_image_missing">चुना गया चित्र अब मौजूद नहीं है</string>
+    <string name="settings_home_background">पृष्ठभूमि</string>
+    <string name="settings_home_bg_image">पृष्ठभूमि छवि</string>
+    <string name="settings_home_bg_hint">पूरी होम स्क्रीन के पीछे एक छवि</string>
+    <string name="settings_home_no_bg">कोई पृष्ठभूमि नहीं चुनी</string>
+    <string name="settings_home_bg_remove">हटाएँ</string>
+    <string name="settings_help_home_bg">होम स्क्रीन के पीछे दिखाने के लिए आंतरिक मेमोरी के इमेज फ़ोल्डर से एक छवि चुनें। थीम के रंग पर लौटने के लिए इसे हटाएँ।</string>
     <string name="settings_home_module_speed">गति (GPS)</string>
     <string name="settings_home_module_gps">GPS डेटा</string>
     <string name="settings_hide_bottom_bar">NWD नीचे की बार छिपाएँ</string>

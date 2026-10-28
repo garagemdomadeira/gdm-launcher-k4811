@@ -17,6 +17,7 @@ Launcher leve para a central NWD, com o visual padrão do GDM K4811 App suite, m
 - **Tela inicial em módulos:** uma grade invisível de 6 áreas (**A** a **F**: uma alta à esquerda, uma grande e uma larga no centro, três pequenas à direita). Cada módulo vai em qualquer área ou fica escondido: **Tocando agora**, **Relógio**, **Controle de volume**, **Ventoinha**, **Bluetooth**, **Imagem**, **Velocidade (GPS)** e **Dados do GPS**. Cada um se ajusta ao tamanho da área. A posição de cada módulo vem do `launcher.json` (`home_layout`) e é escolhida no car-setting, em **Customizar → Customizar tela inicial**.
 - **Barra superior:** dia/noite (lua = farol aceso), voltímetro (CAN) e o que está tocando (Rádio, MP3 ou BT).
 - **Imagem:** uma foto da pasta `K4811/` na memória interna (subpastas também, menos `K4811/radio`).
+- **Imagem de fundo:** opcional, escolhida no car-setting (mesma pasta `K4811/` do módulo Imagem). Preenche a tela inteira atrás dos módulos (recortada para caber); sem escolha, fica a cor do tema. Dá para remover a qualquer momento.
 - **GPS:** velocidade em km/h e latitude, longitude, altitude e direção. Funcionam sem internet e só ligam o GPS com a tela inicial aberta.
 - **Apagar a tela após** 5, 10 ou 30 s sem tocar na tela inicial (ou nunca).
 - **Centrais verticais (768×1024):** as colunas da grade viram linhas. A em cima; B e C no meio; D, E e F embaixo.

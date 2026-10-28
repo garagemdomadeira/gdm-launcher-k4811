@@ -42,6 +42,7 @@ Declara `READ_EXTERNAL_STORAGE` e o receiver `com.k4811.common.system.BottomBar$
 | `hide_bottom_bar` | bool | false | esconder a barra da NWD |
 | `home_layout` | string | `now_playing:left,clock:center_top,volume:center_bottom,fan:right_top,bluetooth:right_middle` | `módulo:área` separados por vírgula; ids de `HomeGrid.Module/Slot` |
 | `home_image` | string | — | caminho da imagem do módulo Imagem |
+| `home_bg_image` | string | — | caminho da imagem de fundo da tela inicial (ausente = cor do tema) |
 | `show_voltmeter`, `show_day_night` | bool | true | barra superior da tela inicial |
 | `screen_off_after` | int (s) | 0 | 0, 5, 10 ou 30 |
 | `ask_default_launcher` | bool | true | perguntar na abertura do launcher |

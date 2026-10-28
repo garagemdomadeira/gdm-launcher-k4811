@@ -133,6 +133,12 @@
     <string name="settings_home_images_hint">Imagens (.jpg, .png) da pasta de imagens na memória interna</string>
     <string name="settings_home_images_empty">Nenhuma imagem encontrada. Copie arquivos .jpg ou .png para %1$s</string>
     <string name="settings_home_image_missing">A imagem escolhida não existe mais</string>
+    <string name="settings_home_background">Fundo</string>
+    <string name="settings_home_bg_image">Imagem de fundo</string>
+    <string name="settings_home_bg_hint">Uma imagem atrás de toda a tela inicial</string>
+    <string name="settings_home_no_bg">Sem imagem de fundo</string>
+    <string name="settings_home_bg_remove">Remover</string>
+    <string name="settings_help_home_bg">Escolha uma imagem da pasta de imagens na memória interna para aparecer atrás da tela inicial. Remova para voltar à cor do tema.</string>
     <string name="settings_home_module_speed">Velocidade (GPS)</string>
     <string name="settings_home_module_speed_hint">Velocidade atual pelo GPS</string>
     <string name="settings_home_module_gps">Dados do GPS</string>

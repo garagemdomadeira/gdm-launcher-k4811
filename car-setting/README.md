@@ -21,7 +21,7 @@ As opções ficam em painéis escolhidos numa coluna lateral. Telas horizontais 
 | Painel | O que tem | Onde grava |
 |---|---|---|
 | **Principais** | idioma (8), dia/noite e voltímetro da tela inicial, apagar a tela após | `launcher.json` |
-| **Customizar** | cor do tema (14), fonte (6), **Customizar tela inicial** (mapa das 6 áreas; tocar no módulo e depois na área; "Restaurar padrão"; escolher a imagem da pasta `K4811/`), **Customizar dock** (até 5 ícones, Z-Link e o nome dele) | `launcher.json` |
+| **Customizar** | cor do tema (14), fonte (6), **Customizar tela inicial** (mapa das 6 áreas; tocar no módulo e depois na área; "Restaurar padrão"; escolher a imagem do módulo Imagem e a **imagem de fundo** da tela inicial, ambas da pasta `K4811/`), **Customizar dock** (até 5 ícones, Z-Link e o nome dele) | `launcher.json` |
 | **Assistências** | câmera de ré (som na ré, espelhar), app de navegação e abrir ao ligar | `SettingService` da NWD / `Settings.System navigation_*` |
 | **Sistema** | launcher padrão ("Usar o K4811"), esconder a barra inferior da NWD (só em centrais que têm), bipe, volume ao ligar, lembrar volume, brilho, dia/noite pelo farol, protetor de tela, "Sobre a central" | `persist.nwd.launcher.default`, `launcher.json`, `SettingService` |
 | **Áudio** (escondido até ser confirmado numa central) | volume por fonte | `AudioGains` |

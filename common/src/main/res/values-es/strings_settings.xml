@@ -127,6 +127,12 @@
     <string name="settings_home_images_hint">Imágenes (.jpg, .png) de la carpeta K4811 en la memoria interna</string>
     <string name="settings_home_images_empty">No se encontraron imágenes. Copia archivos .jpg o .png a %1$s</string>
     <string name="settings_home_image_missing">La imagen elegida ya no existe</string>
+    <string name="settings_home_background">Fondo</string>
+    <string name="settings_home_bg_image">Imagen de fondo</string>
+    <string name="settings_home_bg_hint">Una imagen detrás de toda la pantalla de inicio</string>
+    <string name="settings_home_no_bg">Sin imagen de fondo</string>
+    <string name="settings_home_bg_remove">Quitar</string>
+    <string name="settings_help_home_bg">Elige una imagen de la carpeta de imágenes del almacenamiento interno para mostrarla detrás de la pantalla de inicio. Quítala para volver al color del tema.</string>
     <string name="settings_home_module_speed">Velocidad (GPS)</string>
     <string name="settings_home_module_gps">Datos del GPS</string>
     <string name="settings_hide_bottom_bar">Ocultar la barra inferior de NWD</string>

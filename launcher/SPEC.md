@@ -28,6 +28,7 @@ Tela inicial e gaveta de apps. **Não toca nada**: rádio, MP3, BT, telefone, EQ
 
 - Grade de 6 áreas (`HomeGrid`), com o módulo de cada área vindo de `LauncherConfig.homeLayout`. `HomeModuleViews` posiciona e ajusta cada módulo ao tamanho da área.
 - Módulos: Tocando agora, Relógio, Volume (`VolumeClient`/`MuteClient`), Ventoinha (lê `mcu_smart_fan_switch`), Bluetooth (`BtClient`), Imagem (`HomeImage`, sem moldura), Velocidade e Dados do GPS (`GpsClient`, só com a tela aberta).
+- Imagem de fundo opcional (`home_bg` no layout; `renderBackground` lê `HomeImage.fileBg`, recarrega só quando muda, decodifica no tamanho da tela fora da thread principal). Sem imagem ou se o arquivo sumiu, fica escondida e vale o `@color/background`. Escolhida no car-setting (`home_bg_image`).
 - Barra superior: dia/noite (`NwdSettings.headlightsOn`), voltímetro (`com.nwd.action.ACTION_QUERY_CAN_BATTERY_VOLTAGE` → `ACTION_CAN_BATTERY_VOLTAGE`, extra `extra_voltage_value` = volts × 10), indicador da fonte.
 - Apagar a tela: `com.nwd.action.ACTION_SET_BACKLIGHT_SWITCH` (`extra_backlight_switch`); `screen_off_after` liga isso por inatividade.
 - Recria a tela no `onResume` se idioma, tema ou fonte mudaram (`lookKey`).

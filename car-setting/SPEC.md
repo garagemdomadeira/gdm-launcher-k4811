@@ -18,7 +18,7 @@ Leia antes o [`AGENTS.md`](../AGENTS.md) e o [`common/SPEC.md`](../common/SPEC.m
 | Activity | Conteúdo |
 |---|---|
 | `SettingsActivity` | painéis numa coluna lateral: Principais (idioma, dia/noite, voltímetro, apagar a tela), Customizar (tema, fonte, atalhos para as duas telas abaixo), Assistências (câmera de ré, navegação), Sistema (launcher padrão, barra da NWD, bipe, volume ao ligar, brilho, "Sobre"), Áudio (escondido), Avançado (só modo desenvolvedor, com senha) |
-| `HomeSettingsActivity` | mapa da tela inicial (`HomeMapView`): tocar no módulo e depois na área; escolher a imagem da pasta `K4811/` |
+| `HomeSettingsActivity` | mapa da tela inicial (`HomeMapView`): tocar no módulo e depois na área; escolher a imagem do módulo Imagem (`home_image`) e a imagem de fundo (`home_bg_image`), ambas da pasta `K4811/`; o fundo tem opção "Remover" (`HomeImage.clearBg`) |
 | `DockSettingsActivity` | ícones do dock (até 5) e nome do Z-Link |
 | `AdvancedActivity` | região do rádio, freio de mão, ligar com qualquer tecla, props de áudio/microfone, menus da NWD, câmera 360 |
 | `DevPropsActivity` | lista e edita props do sistema, exporta para Download/ |

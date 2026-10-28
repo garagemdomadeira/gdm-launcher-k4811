@@ -127,6 +127,12 @@
     <string name="settings_home_images_hint">内部存储中 K4811 文件夹里的图片（.jpg、.png）</string>
     <string name="settings_home_images_empty">未找到图片。请将 .jpg 或 .png 文件复制到 %1$s</string>
     <string name="settings_home_image_missing">所选图片已不存在</string>
+    <string name="settings_home_background">背景</string>
+    <string name="settings_home_bg_image">背景图片</string>
+    <string name="settings_home_bg_hint">显示在整个主屏幕后面的图片</string>
+    <string name="settings_home_no_bg">未选择背景</string>
+    <string name="settings_home_bg_remove">移除</string>
+    <string name="settings_help_home_bg">从内部存储的图片文件夹中选择一张图片作为主屏幕背景。移除后恢复为主题颜色。</string>
     <string name="settings_home_module_speed">速度（GPS）</string>
     <string name="settings_home_module_gps">GPS 数据</string>
     <string name="settings_hide_bottom_bar">隐藏 NWD 底部栏</string>
