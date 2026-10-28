@@ -74,6 +74,7 @@ public class EqActivity extends Activity {
     private final List<ChannelViews> channelViews = new ArrayList<>();
     private TextView loudChip;
     private TextView influenceChip;
+    private TextView modeChip;
     /** Band values when the finger touched a slider: Influence spreads the change from these. */
     private int[] dragBase;
     private final List<TextView> modeChips = new ArrayList<>();
@@ -186,6 +187,10 @@ public class EqActivity extends Activity {
         ButtonIcon.attach(influenceChip, ButtonIcon.Icon.INFLUENCE);
         influenceChip.setOnClickListener(v -> controller.setInfluence(!controller.state().influence));
         optionsRow.addView(influenceChip);
+        // DSP only: toggle between the simple 7-band view and all 32 bands.
+        modeChip = chip(getString(R.string.eq_advanced));
+        modeChip.setOnClickListener(v -> controller.setArmSimple(!controller.state().armSimple));
+        optionsRow.addView(modeChip);
         TextView reset = chip(getString(R.string.eq_reset));
         ButtonIcon.attach(reset, ButtonIcon.Icon.RESET);
         reset.setOnClickListener(v -> controller.resetEq());
@@ -209,14 +214,14 @@ public class EqActivity extends Activity {
     }
 
     private void ensureBands(EqModel.State s) {
-        int count = s.isArm() ? EqModel.EQ32_BANDS : 10;
+        int count = s.isArm() ? (s.armSimple ? EqModel.EQ7_BANDS : EqModel.EQ32_BANDS) : 10;
         if (bandsBuilt && bandSliders.size() == count) return;
         bandsBuilt = true;
         bandsRow.removeAllViews();
         bandTops.clear();
         bandBottoms.clear();
         bandSliders.clear();
-        int width = s.isArm() ? 48 : 96;
+        int width = (s.isArm() && !s.armSimple) ? 48 : 96;
         for (int i = 0; i < count; i++) {
             final int band = i;
             LinearLayout col = new LinearLayout(this);
@@ -276,6 +281,11 @@ public class EqActivity extends Activity {
      */
     private void moveBand(int band, int value) {
         EqModel.State s = controller.state();
+        // Simple 7-band view: the band is an anchor; interpolation fills the rest (no Influence).
+        if (s.isArm() && s.armSimple) {
+            controller.setArmAnchor(band, value);
+            return;
+        }
         int[] base = dragBase;
         if (!s.influence || base == null || band >= base.length) {
             if (s.isArm()) controller.setArmBand(band, value);
@@ -436,10 +446,26 @@ public class EqActivity extends Activity {
             presetChips.get(i).setActivated(EqModel.Preset.values()[i] == s.preset);
         }
         if (loudChip != null) loudChip.setActivated(s.loudness);
-        if (influenceChip != null) influenceChip.setActivated(s.influence);
+        if (influenceChip != null) {
+            // Influence is per-band smoothing; the simple view already smooths by interpolation.
+            influenceChip.setVisibility(s.isArm() && s.armSimple ? View.GONE : View.VISIBLE);
+            influenceChip.setActivated(s.influence);
+        }
+        if (modeChip != null) {
+            modeChip.setVisibility(s.isArm() ? View.VISIBLE : View.GONE);
+            modeChip.setActivated(!s.armSimple);
+        }
 
         ensureBands(s);
-        if (s.isArm()) {
+        if (s.isArm() && s.armSimple) {
+            for (int i = 0; i < bandSliders.size(); i++) {
+                int anchor = EqModel.EQ7_ANCHORS[i];
+                bandSliders.get(i).configure(EqModel.EQ32_MIN_DB, EqModel.EQ32_MAX_DB, 0);
+                bandSliders.get(i).setValue(s.armGainsDb[anchor]);
+                bandTops.get(i).setText(signed(s.armGainsDb[anchor]));
+                bandBottoms.get(i).setText(EqModel.freqLabel(s.armFrequencies[anchor]));
+            }
+        } else if (s.isArm()) {
             for (int i = 0; i < bandSliders.size(); i++) {
                 bandSliders.get(i).configure(EqModel.EQ32_MIN_DB, EqModel.EQ32_MAX_DB, 0);
                 bandSliders.get(i).setValue(s.armGainsDb[i]);

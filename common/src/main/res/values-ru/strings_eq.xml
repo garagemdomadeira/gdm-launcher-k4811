@@ -19,6 +19,7 @@
     <string name="eq_loudness">Тонкомпенсация</string>
     <string name="eq_reset">Сброс</string>
     <string name="eq_influence">Влияние</string>
+    <string name="eq_advanced">Расширенный</string>
 
     <!-- Seats -->
     <string name="eq_seat_driver">Водитель</string>

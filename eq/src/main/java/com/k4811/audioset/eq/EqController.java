@@ -412,6 +412,24 @@ public final class EqController {
         persistAndPublish();
     }
 
+    /** ARM DSP: switch between the simple 7-band view and the full 32-band view. */
+    public void setArmSimple(boolean simple) {
+        state.armSimple = simple;
+        persistAndPublish();
+    }
+
+    /**
+     * ARM DSP simple view: one of the 7 anchor bands moved to {@code db}. Rebuilds the 32-band gains
+     * by linear interpolation between the anchors and sends only the bands that changed.
+     */
+    public void setArmAnchor(int anchor, int db) {
+        int g = clamp(db, EqModel.EQ32_MIN_DB, EqModel.EQ32_MAX_DB);
+        int[] gains7 = EqModel.anchorGains(state.armGainsDb);
+        if (gains7[anchor] == g && state.preset == EqModel.Preset.CUSTOM) return;
+        gains7[anchor] = g;
+        setArmBands(EqModel.interp7to32(gains7));
+    }
+
     public void setApplyOnBoot(boolean on) {
         state.applyOnBoot = on;
         persistAndPublish();
@@ -583,6 +601,7 @@ public final class EqController {
         for (EqModel.Channel c : s.channels) state.channels.add(c.copy());
         state.applyOnBoot = s.applyOnBoot;
         state.influence = s.influence;
+        state.armSimple = s.armSimple;
     }
 
     private void persistAndPublish() {
