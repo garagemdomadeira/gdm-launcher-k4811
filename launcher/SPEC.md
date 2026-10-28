@@ -23,6 +23,7 @@ Tela inicial e gaveta de apps. **Não toca nada**: rádio, MP3, BT, telefone, EQ
 | `overlay/EdgeMenuService` | Service | menu Voltar \| Vol− Vol+ \| Início ao deslizar de uma borda (`McuKeys`) |
 | `media/MediaKeyReceiver` | Receiver (exportado) | teclas do painel/volante `com.nwd.action.ACTION_KEY_VALUE` |
 | `media/MediaKeyService` | Service | despacha avançar/recuar para a fonte ativa |
+| `media/MediaNotificationListener` | NotificationListenerService (exportado) | só destrava as sessões de mídia; ligado em "Acesso a notificações" |
 
 ## Tela inicial
 
@@ -43,9 +44,12 @@ Tela inicial e gaveta de apps. **Não toca nada**: rádio, MP3, BT, telefone, EQ
 | Rádio | `RadioClient` (só observando) | memória ±, liga/desliga via `PlayerHandoff.switchToRadio` |
 | MP3 | `com.k4811.action.MUSIC_STATE` (e `com.android.music.metachanged/playstatechanged` do player da NWD, com `MusicBean`) | `MusicRemote.send` (`MUSIC_COMMAND`) |
 | BT | `BtClient.query` + `com.bt.ACTION_BT_MUSIC_PLAY/PAUSE`, `ACTION_AVRCP_MUSIC_ID3` | `BtClient.playControl` |
+| App (Spotify…) | `common/media/AppMediaClient` (MediaSession via o `MediaNotificationListener`) | `getTransportControls()` |
 | Chamada | `com.bt.ACTION_BT_*_CALL/NUMBER/NAME` | `BtClient.answer/hangup` |
 
-A fonte vem de `mcu_current_source`. Tocar no cartão abre o app da fonte (`DockNavigator.navigate`, sem Splash).
+A fonte vem de `mcu_current_source`. Tocar no cartão abre o app da fonte (`DockNavigator.navigate`, sem Splash; para o app de mídia, abre o próprio app).
+
+**Mídia de app (`Kind.APP`):** na fonte Android, se `media_app_controls` está ligado e há uma sessão de mídia de terceiro (não da suíte) **tocando**, o cartão mostra o app (nome, capa, faixa) e controla por `AppMediaClient`. Uma sessão pausada só aparece quando nada nosso está tocando. As teclas do volante (`MediaKeyService.androidStep`) dão prioridade a essa sessão. Precisa de `SDK_INT ≥ 21` e do Acesso a notificações (senão o `AppMediaClient` fica inerte e nada muda).
 
 ## Botões
 

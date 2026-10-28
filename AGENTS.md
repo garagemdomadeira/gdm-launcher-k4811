@@ -66,7 +66,7 @@ Cada app tem seu package, então SharedPreferences não é compartilhável. As c
 
 - **Só o car-setting grava** (`LauncherConfig.set…`). O launcher e os apps só leem. Não chame `LauncherConfig.set…` fora do car-setting.
 - Gravação atômica (`NwdConfigs.write`: `.tmp` + `renameTo`). Leitura com cache por `lastModified()`.
-- Chaves (versão 2): `language`, `theme`, `dark_mode`, `font`, `dock_toggles`, `zlink_name`, `hide_bottom_bar`, `home_layout`, `home_image`, `home_bg_image`, `show_voltmeter`, `show_day_night`, `screen_off_after`, `ask_default_launcher`. Detalhes em `common/SPEC.md`.
+- Chaves (versão 2): `language`, `theme`, `dark_mode`, `font`, `dock_toggles`, `zlink_name`, `hide_bottom_bar`, `home_layout`, `home_image`, `home_bg_image`, `media_app_controls`, `show_voltmeter`, `show_day_night`, `screen_off_after`, `ask_default_launcher`. Detalhes em `common/SPEC.md`.
 - Preferência que só um app usa fica no SharedPreferences dele (ex.: o EQ em `EqStore`). Rádio e MP3 guardam as delas em JSON editável em `K4811/<app>/` (`PresetStore`, `MusicConfig`).
 
 ## Contratos entre os apps (broadcasts da suíte)

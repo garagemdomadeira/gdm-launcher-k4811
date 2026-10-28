@@ -1,6 +1,7 @@
 package com.k4811.launcher.media;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -10,6 +11,8 @@ import android.provider.Settings;
 import android.util.Log;
 
 import com.k4811.common.bt.BtClient;
+import com.k4811.common.config.LauncherConfig;
+import com.k4811.common.media.AppMediaClient;
 import com.k4811.common.music.MusicRemote;
 import com.k4811.common.radio.RadioClient;
 import com.k4811.common.radio.RadioState;
@@ -105,6 +108,11 @@ public class MediaKeyService extends Service {
     }
 
     private void androidStep(boolean next) {
+        // Um app de mídia (Spotify, Deezer…) tocando tem prioridade, se o recurso estiver ligado.
+        if (LauncherConfig.mediaAppControls(this)
+            && AppMediaClient.sendKey(this, new ComponentName(this, MediaNotificationListener.class), next)) {
+            return;
+        }
         ensureBt();
         bt.query((callState, musicPlaying, a2dp) -> {
             if (musicPlaying) {

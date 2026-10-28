@@ -21,6 +21,9 @@
     <string name="settings_show_voltmeter">वोल्टमीटर दिखाएँ</string>
     <string name="settings_show_voltmeter_hint">होम स्क्रीन के ऊपर बाएँ कोने में बैटरी वोल्टेज (CAN वाली कारों में)</string>
     <string name="settings_volume_overlay">स्क्रीन पर वॉल्यूम दिखाएँ</string>
+    <string name="settings_media_apps">ऐप्स के मीडिया नियंत्रण</string>
+    <string name="settings_media_apps_hint">Spotify, Deezer, YouTube Music… को होम स्क्रीन पर दिखाएँ और नियंत्रित करें</string>
+    <string name="settings_help_media_apps">अन्य ऑडियो ऐप्स (Spotify, Deezer, YouTube Music, पॉडकास्ट…) क्या चला रहे हैं यह दिखाता है और उन्हें होम स्क्रीन व स्टीयरिंग बटन से नियंत्रित करने देता है। चालू करने पर Android का "सूचना पहुँच" खुलता है, जहाँ आप एक बार अनुमति देते हैं। केवल Android 5+ पर।</string>
     <string name="settings_volume_overlay_hint">वॉल्यूम बदलने पर किसी भी ऐप के ऊपर, सबसे ऊपर एक वॉल्यूम बार</string>
     <string name="settings_edge_menu">किनारे का मेनू</string>
     <string name="settings_edge_menu_hint">किसी भी ऐप में उस किनारे से अंदर की ओर स्वाइप करें: पीछे, Vol− Vol+ और होम</string>

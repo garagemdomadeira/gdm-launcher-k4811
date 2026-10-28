@@ -613,6 +613,7 @@ public class HomeActivity extends Activity {
         if (s.source == SOURCE_RADIO) label = getString(R.string.home_radio);
         else if (s.kind == HomeSession.Kind.USB && s.playing) label = "MP3";
         else if (s.kind == HomeSession.Kind.BT && s.btPlaying) label = "BT";
+        else if (s.kind == HomeSession.Kind.APP && s.appPlaying) label = s.appLabel;
         if (label != null) sourceBadgeText.setText(label);
         show(sourceBadge, label != null);
     }
@@ -663,6 +664,14 @@ public class HomeActivity extends Activity {
                 setPlay(s.btPlaying);
                 break;
             }
+            case APP: {
+                // Spotify, Deezer, YouTube Music… — o nome do app vai no rótulo de cima.
+                npLabel.setText(s.appLabel);
+                npLine1.setText(s.appTitle.isEmpty() ? getString(R.string.home_music) : s.appTitle);
+                sub = s.appArtist;
+                setPlay(s.appPlaying);
+                break;
+            }
             default:
                 npLabel.setText(""); // nothing playing: no source to show
                 npLine1.setText(R.string.home_nothing_playing);
@@ -686,6 +695,23 @@ public class HomeActivity extends Activity {
      * screen); otherwise, or without a picture, the source icon in the frame.
      */
     private void renderArt(HomeSession.Snapshot s) {
+        // Mídia de app (Spotify…): a capa vem pronta no snapshot (bitmap do MediaMetadata).
+        if (s.kind == HomeSession.Kind.APP) {
+            npArtIcon.set(IconView.Icon.MUSIC, IconView.Style.NONE);
+            npArtIcon.color(Ui.TEXT_DIM);
+            String key = "app:" + s.appPackage + ":" + s.appTitle;
+            if (s.appArt == null) {
+                clearArt();
+            } else if (!key.equals(artKey)) {
+                artGen++;
+                artKey = key;
+                npArt.setImageBitmap(s.appArt);
+                npArt.setVisibility(View.VISIBLE);
+                npArtIcon.setVisibility(View.GONE);
+                Touch.fadeIn(npArt);
+            }
+            return;
+        }
         IconView.Icon icon = s.kind == HomeSession.Kind.RADIO ? IconView.Icon.RADIO
             : s.kind == HomeSession.Kind.BT ? IconView.Icon.BLUETOOTH : IconView.Icon.MUSIC;
         npArtIcon.set(icon, IconView.Style.NONE);
@@ -992,6 +1018,9 @@ public class HomeActivity extends Activity {
                 else if (what > 0) session.btTransport(HomeSession.BT_NEXT);
                 else session.btTransport(snap.btPlaying ? HomeSession.BT_PAUSE : HomeSession.BT_PLAY);
                 break;
+            case APP:
+                session.appTransport(what);
+                break;
             default:
                 break;
         }
@@ -1008,6 +1037,9 @@ public class HomeActivity extends Activity {
                 break;
             case BT:
                 openDock(DockView.Item.BT_MUSIC);
+                break;
+            case APP:
+                if (snap.appPackage != null) openApp(snap.appPackage);
                 break;
             default:
                 break;
