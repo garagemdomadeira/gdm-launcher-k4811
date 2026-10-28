@@ -19,6 +19,7 @@
     <string name="eq_loudness">लाउडनेस</string>
     <string name="eq_reset">रीसेट</string>
     <string name="eq_influence">प्रभाव</string>
+    <string name="eq_advanced">उन्नत</string>
 
     <!-- Seats -->
     <string name="eq_seat_driver">ड्राइवर</string>
