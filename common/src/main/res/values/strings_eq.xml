@@ -70,4 +70,13 @@
     <string name="eq_info_path">Path: %1$s</string>
     <string name="eq_info_chip">Chip: %1$s · DTS %2$s</string>
     <string name="eq_info_method">Method: %1$s · max %2$d/%3$d</string>
+    <string name="eq_tab_gain">Volume per source</string>
+    <string name="eq_gain_hint">Evens out the volume of each source in the DSP. Takes effect after restarting the head unit.</string>
+    <string name="eq_gain_radio">Radio</string>
+    <string name="eq_gain_android">Android (Spotify, apps, navigation)</string>
+    <string name="eq_gain_others">Bluetooth, AUX, SYNC and others</string>
+    <string name="eq_gain_save">Save</string>
+    <string name="eq_gain_reset">All at maximum (10)</string>
+    <string name="eq_gain_saved">Saved. Restart the head unit to apply.</string>
+    <string name="eq_gain_failed">Could not write the factory file.</string>
 </resources>

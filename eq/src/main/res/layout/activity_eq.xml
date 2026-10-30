@@ -63,6 +63,20 @@
             android:visibility="gone" />
 
         <TextView
+            android:id="@+id/tab_gain"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/pill"
+            android:gravity="center"
+            android:text="@string/eq_tab_gain"
+            android:textColor="@color/text"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/tab_diag"
             android:layout_width="match_parent"
             android:layout_height="72dp"
@@ -285,6 +299,23 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal" />
         </HorizontalScrollView>
+
+        <!-- Volume por fonte: ganho de cada fonte no DSP (/cache/FactoryConfig.ini; montado pelo SourceGainPanel) -->
+        <ScrollView
+            android:id="@+id/panel_gain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/panel"
+            android:padding="16dp"
+            android:scrollbars="none"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/gain_root"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </ScrollView>
 
         <!-- Diagnostics -->
         <LinearLayout

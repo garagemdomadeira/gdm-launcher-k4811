@@ -70,4 +70,13 @@
     <string name="eq_info_path">通路：%1$s</string>
     <string name="eq_info_chip">芯片：%1$s · DTS %2$s</string>
     <string name="eq_info_method">方式：%1$s · 最大 %2$d/%3$d</string>
+    <string name="eq_tab_gain">按音源音量</string>
+    <string name="eq_gain_hint">在 DSP 中平衡各音源的音量。重启主机后生效。</string>
+    <string name="eq_gain_radio">收音机</string>
+    <string name="eq_gain_android">Android（Spotify、应用、导航）</string>
+    <string name="eq_gain_others">蓝牙、AUX、SYNC 及其他</string>
+    <string name="eq_gain_save">保存</string>
+    <string name="eq_gain_reset">全部最大（10）</string>
+    <string name="eq_gain_saved">已保存。重启主机后生效。</string>
+    <string name="eq_gain_failed">无法写入出厂配置文件。</string>
 </resources>

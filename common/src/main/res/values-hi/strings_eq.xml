@@ -70,4 +70,13 @@
     <string name="eq_info_path">पाथ: %1$s</string>
     <string name="eq_info_chip">चिप: %1$s · DTS %2$s</string>
     <string name="eq_info_method">तरीका: %1$s · अधिकतम %2$d/%3$d</string>
+    <string name="eq_tab_gain">स्रोत अनुसार वॉल्यूम</string>
+    <string name="eq_gain_hint">DSP में हर स्रोत का वॉल्यूम बराबर करता है। हेड यूनिट रीस्टार्ट करने के बाद लागू होता है।</string>
+    <string name="eq_gain_radio">रेडियो</string>
+    <string name="eq_gain_android">Android (Spotify, ऐप, नेविगेशन)</string>
+    <string name="eq_gain_others">Bluetooth, AUX, SYNC और अन्य</string>
+    <string name="eq_gain_save">सहेजें</string>
+    <string name="eq_gain_reset">सब अधिकतम (10)</string>
+    <string name="eq_gain_saved">सहेजा गया। लागू करने के लिए हेड यूनिट रीस्टार्ट करें।</string>
+    <string name="eq_gain_failed">फ़ैक्टरी फ़ाइल नहीं लिखी जा सकी।</string>
 </resources>

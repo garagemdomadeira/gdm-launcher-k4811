@@ -70,4 +70,13 @@
     <string name="eq_info_path">Тракт: %1$s</string>
     <string name="eq_info_chip">Чип: %1$s · DTS %2$s</string>
     <string name="eq_info_method">Метод: %1$s · макс. %2$d/%3$d</string>
+    <string name="eq_tab_gain">Громкость по источникам</string>
+    <string name="eq_gain_hint">Выравнивает громкость каждого источника в DSP. Действует после перезапуска магнитолы.</string>
+    <string name="eq_gain_radio">Радио</string>
+    <string name="eq_gain_android">Android (Spotify, приложения, навигация)</string>
+    <string name="eq_gain_others">Bluetooth, AUX, SYNC и другие</string>
+    <string name="eq_gain_save">Сохранить</string>
+    <string name="eq_gain_reset">Всё на максимум (10)</string>
+    <string name="eq_gain_saved">Сохранено. Перезапустите магнитолу.</string>
+    <string name="eq_gain_failed">Не удалось записать заводской файл.</string>
 </resources>
