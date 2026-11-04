@@ -70,4 +70,13 @@
     <string name="eq_info_path">経路: %1$s</string>
     <string name="eq_info_chip">チップ: %1$s · DTS %2$s</string>
     <string name="eq_info_method">方式: %1$s · 最大 %2$d/%3$d</string>
+    <string name="eq_tab_gain">ソース別音量</string>
+    <string name="eq_gain_hint">DSP で各ソースの音量をそろえます。ヘッドユニットの再起動後に有効になります。</string>
+    <string name="eq_gain_radio">ラジオ</string>
+    <string name="eq_gain_android">Android（Spotify、アプリ、ナビ）</string>
+    <string name="eq_gain_others">Bluetooth、AUX、SYNC ほか</string>
+    <string name="eq_gain_save">保存</string>
+    <string name="eq_gain_reset">すべて最大（10）</string>
+    <string name="eq_gain_saved">保存しました。再起動して適用してください。</string>
+    <string name="eq_gain_failed">工場設定ファイルを書き込めませんでした。</string>
 </resources>

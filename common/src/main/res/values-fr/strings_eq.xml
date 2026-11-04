@@ -70,4 +70,13 @@
     <string name="eq_info_path">Chemin : %1$s</string>
     <string name="eq_info_chip">Puce : %1$s · DTS %2$s</string>
     <string name="eq_info_method">Méthode : %1$s · max %2$d/%3$d</string>
+    <string name="eq_tab_gain">Volume par source</string>
+    <string name="eq_gain_hint">Égalise le volume de chaque source dans le DSP. Effectif après le redémarrage de l\'autoradio.</string>
+    <string name="eq_gain_radio">Radio</string>
+    <string name="eq_gain_android">Android (Spotify, apps, navigation)</string>
+    <string name="eq_gain_others">Bluetooth, AUX, SYNC et autres</string>
+    <string name="eq_gain_save">Enregistrer</string>
+    <string name="eq_gain_reset">Tout au maximum (10)</string>
+    <string name="eq_gain_saved">Enregistré. Redémarrez l\'autoradio pour appliquer.</string>
+    <string name="eq_gain_failed">Impossible d\'écrire le fichier d\'usine.</string>
 </resources>

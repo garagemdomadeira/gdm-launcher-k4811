@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.k4811.audioset.eq.EqController;
+import com.k4811.audioset.eq.FactoryGains;
 import com.k4811.common.ui.ButtonIcon;
 import com.k4811.common.eq.EqModel;
 import com.k4811.common.system.DevMode;
@@ -35,6 +36,7 @@ public class EqActivity extends Activity {
     private static final int TAB_SITE = 1;
     private static final int TAB_CHANNELS = 2;
     private static final int TAB_DIAG = 3;
+    private static final int TAB_GAIN = 4;
     /** Height of the band sliders (shorter than the column: the rest is for dragging sideways). */
     private static final float SLIDER_HEIGHT_DP = 250;
     /** Share of a band's change that goes to its neighbours: [itself, ±1, ±2]. */
@@ -50,11 +52,14 @@ public class EqActivity extends Activity {
     private TextView tabSite;
     private TextView tabChannels;
     private TextView tabDiag;
+    private TextView tabGain;
     private TextView badge;
     private View panelEq;
     private View panelSite;
     private View panelChannels;
     private View panelDiag;
+    private View panelGain;
+    private SourceGainPanel gainPanel;
     private LinearLayout presetsRow;
     private LinearLayout optionsRow;
     private LinearLayout bandsRow;
@@ -133,6 +138,8 @@ public class EqActivity extends Activity {
         panelEq = findViewById(R.id.panel_eq);
         panelSite = findViewById(R.id.panel_site);
         panelChannels = findViewById(R.id.panel_channels);
+        panelGain = findViewById(R.id.panel_gain);
+        tabGain = (TextView) findViewById(R.id.tab_gain);
         panelDiag = findViewById(R.id.panel_diag);
         presetsRow = (LinearLayout) findViewById(R.id.eq_presets);
         optionsRow = (LinearLayout) findViewById(R.id.eq_options);
@@ -148,6 +155,7 @@ public class EqActivity extends Activity {
         tabEq.setOnClickListener(v -> showTab(TAB_EQ));
         tabSite.setOnClickListener(v -> showTab(TAB_SITE));
         tabChannels.setOnClickListener(v -> showTab(TAB_CHANNELS));
+        tabGain.setOnClickListener(v -> showTab(TAB_GAIN));
         tabDiag.setOnClickListener(v -> showTab(TAB_DIAG));
         // Diagnostics tab and backend badge are developer-mode only.
         boolean dev = DevMode.enabled();
@@ -403,20 +411,31 @@ public class EqActivity extends Activity {
         panelSite.setVisibility(tab == TAB_SITE ? View.VISIBLE : View.GONE);
         panelChannels.setVisibility(tab == TAB_CHANNELS ? View.VISIBLE : View.GONE);
         panelDiag.setVisibility(tab == TAB_DIAG ? View.VISIBLE : View.GONE);
+        panelGain.setVisibility(tab == TAB_GAIN ? View.VISIBLE : View.GONE);
         Touch.fadeIn(tab == TAB_EQ ? panelEq : tab == TAB_SITE ? panelSite
-            : tab == TAB_CHANNELS ? panelChannels : panelDiag);
+            : tab == TAB_CHANNELS ? panelChannels : tab == TAB_GAIN ? panelGain : panelDiag);
         tabEq.setActivated(tab == TAB_EQ);
         tabSite.setActivated(tab == TAB_SITE);
         tabChannels.setActivated(tab == TAB_CHANNELS);
         tabDiag.setActivated(tab == TAB_DIAG);
+        tabGain.setActivated(tab == TAB_GAIN);
         if (tab == TAB_CHANNELS) ensureChannels();
+        if (tab == TAB_GAIN) {
+            if (gainPanel == null) {
+                gainPanel = new SourceGainPanel(this, (LinearLayout) findViewById(R.id.gain_root));
+            } else {
+                gainPanel.refresh();
+            }
+        }
         if (tab == TAB_DIAG) ensureDiag();
         render(controller.state());
     }
 
     private void render(EqModel.State s) {
         tabChannels.setVisibility(s.isArm() ? View.VISIBLE : View.GONE);
-        if (!s.isArm() && tab == TAB_CHANNELS) showTab(TAB_EQ);
+        // Volume por fonte: o ganho de cada fonte no DSP do ARM, lido pelo serviço da NWD ao ligar.
+        tabGain.setVisibility(s.isArm() && FactoryGains.available() ? View.VISIBLE : View.GONE);
+        if (!s.isArm() && (tab == TAB_CHANNELS || tab == TAB_GAIN)) showTab(TAB_EQ);
 
         if (s.isArm()) {
             badge.setText("DSP " + s.detection.chipLabel());

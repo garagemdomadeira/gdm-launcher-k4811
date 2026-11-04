@@ -69,4 +69,13 @@
     <string name="eq_info_path">Caminho: %1$s</string>
     <string name="eq_info_chip">Chip: %1$s · DTS %2$s</string>
     <string name="eq_info_method">Método: %1$s · máx %2$d/%3$d</string>
+    <string name="eq_tab_gain">Volume por fonte</string>
+    <string name="eq_gain_hint">Iguala o volume de cada fonte no DSP. Vale depois de reiniciar a central.</string>
+    <string name="eq_gain_radio">Rádio</string>
+    <string name="eq_gain_android">Android (Spotify, apps, navegação)</string>
+    <string name="eq_gain_others">Bluetooth, AUX, SYNC e outras</string>
+    <string name="eq_gain_save">Salvar</string>
+    <string name="eq_gain_reset">Tudo no máximo (10)</string>
+    <string name="eq_gain_saved">Salvo. Reinicie a central para aplicar.</string>
+    <string name="eq_gain_failed">Não foi possível gravar o arquivo de fábrica.</string>
 </resources>

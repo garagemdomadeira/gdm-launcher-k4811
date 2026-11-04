@@ -70,4 +70,13 @@
     <string name="eq_info_path">Ruta: %1$s</string>
     <string name="eq_info_chip">Chip: %1$s · DTS %2$s</string>
     <string name="eq_info_method">Método: %1$s · máx. %2$d/%3$d</string>
+    <string name="eq_tab_gain">Volumen por fuente</string>
+    <string name="eq_gain_hint">Iguala el volumen de cada fuente en el DSP. Se aplica al reiniciar la unidad.</string>
+    <string name="eq_gain_radio">Radio</string>
+    <string name="eq_gain_android">Android (Spotify, apps, navegación)</string>
+    <string name="eq_gain_others">Bluetooth, AUX, SYNC y otras</string>
+    <string name="eq_gain_save">Guardar</string>
+    <string name="eq_gain_reset">Todo al máximo (10)</string>
+    <string name="eq_gain_saved">Guardado. Reinicia la unidad para aplicar.</string>
+    <string name="eq_gain_failed">No se pudo escribir el archivo de fábrica.</string>
 </resources>
