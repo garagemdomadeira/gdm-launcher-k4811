@@ -28,6 +28,7 @@ import tempfile
 import zipfile
 
 REPO = 'guarienteherbert-ux/gdm-k4811-ota'
+DRIVE_PASTA = 'GDM-OTA-ROMs'
 README_TITULO = '# GDM K4811: atualizações'
 README_TEXTO = 'Apps da suíte GDM e ROMs comunidade GDM para a central K4811, lidos pelo app **GDM Atualizações** (procura uma vez por semana).'
 KEY = os.path.expanduser(os.environ.get('OTA_KEY', '~/Downloads/K4811_mod/ota_keys_gdm/ota.key.pem'))
@@ -82,6 +83,30 @@ def previous():
             return json.load(f)
 
 
+DRIVE = 'gdrive:' + DRIVE_PASTA
+
+
+def drive_upload(path, asset):
+    """Sobe a ROM para o Google Drive (rclone, remoto gdrive:), compartilha "qualquer pessoa com o link" e devolve
+    o endereço de download direto (drive.usercontent, sem a página de aviso de arquivo grande). O SHA-256 no ota.json
+    assinado garante o arquivo, venha de onde vier."""
+    if 'gdrive:' not in run(['rclone', 'listremotes']):
+        sys.exit('sem o remoto gdrive: no rclone (rclone config create gdrive drive scope=drive.file)')
+    dest = DRIVE + '/' + asset
+    print('enviando para o Google Drive:', dest)
+    run(['rclone', 'copyto', '--progress', path, dest])
+    link = run(['rclone', 'link', dest]).strip()
+    m = re.search(r'id=([A-Za-z0-9_-]+)', link) or re.search(r'/d/([A-Za-z0-9_-]+)', link)
+    if not m:
+        sys.exit('não li o id do Drive em ' + link)
+    url = 'https://drive.usercontent.google.com/download?id=%s&export=download&confirm=t' % m.group(1)
+    # confere que baixa sem login (o começo do zip é "PK")
+    head = subprocess.run(['curl', '-sL', '-r', '0-1', url], capture_output=True).stdout
+    if head[:2] != b'PK':
+        sys.exit('o link do Drive não entrega o arquivo sem login: ' + url)
+    return url
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--apps', nargs='*', default=[])
@@ -89,6 +114,8 @@ def main():
     ap.add_argument('--notas', action='append', default=[])
     ap.add_argument('--notas-rom', default='')
     ap.add_argument('--simular', action='store_true')
+    ap.add_argument('--drive', action='store_true',
+                    help='ROMs no Google Drive (rclone, remoto "gdrive:"), não na release do GitHub')
     ap.add_argument('--republicar', action='store_true',
                     help='nova release com todos os apps já publicados (sem app novo)')
     a = ap.parse_args()
@@ -132,10 +159,12 @@ def main():
             sys.exit(path + ': maior que 2 GB (limite do GitHub por arquivo)')
         asset = 'rom-%s-%s.zip' % (canal, versao)
         print('SHA-256 da ROM (demora)…')
-        roms[canal] = {'canal': canal, 'versao': versao, 'codigo': int(codigo), 'url': base + asset,
+        url = drive_upload(path, asset) if a.drive else base + asset
+        roms[canal] = {'canal': canal, 'versao': versao, 'codigo': int(codigo), 'url': url,
                        'sha256': sha256(path), 'tamanho': os.path.getsize(path), 'novidades': a.notas_rom,
                        'plataforma': mark}
-        assets.append((path, asset))
+        if not a.drive:
+            assets.append((path, asset))
         changelog.append('- ROM %s (%s)%s' % (versao, canal, (': ' + a.notas_rom) if a.notas_rom else ''))
 
     # Cada release leva TODOS os apps atuais (não só os novos): quem abre a release no GitHub acha tudo junto. Os que
