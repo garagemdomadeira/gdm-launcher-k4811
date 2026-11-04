@@ -60,6 +60,8 @@ public final class LauncherConfig {
     /** Formato dos ícones dos apps (0 original, 1 redondo, 2 quadrado arredondado) e tamanho na gaveta (0–2). */
     private static final String KEY_ICON_SHAPE = "icon_shape";
     private static final String KEY_ICON_SIZE = "icon_size";
+    /** Tela inicial espelhada: esquerda ⇄ direita (em pé, cima ⇄ baixo). */
+    private static final String KEY_HOME_MIRROR = "home_mirror";
     /** Botões do dock trocados por um app: {"eq": "com.waze", ...}. */
     private static final String KEY_DOCK_APPS = "dock_apps";
 
@@ -365,6 +367,14 @@ public final class LauncherConfig {
             sb.append(e.getKey().id).append(':').append(e.getValue().id);
         }
         return put(KEY_HOME_LAYOUT, sb.toString());
+    }
+
+    public static boolean homeMirrored(Context c) {
+        return bool(KEY_HOME_MIRROR, false);
+    }
+
+    public static boolean setHomeMirrored(Context c, boolean on) {
+        return put(KEY_HOME_MIRROR, on);
     }
 
     public static int iconShape(Context c) {

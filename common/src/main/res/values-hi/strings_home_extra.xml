@@ -100,4 +100,6 @@
     <string name="home_obd_rpm">%1$d rpm</string>
     <string name="home_obd_off">OBD2 नहीं</string>
     <string name="ota_open">खोलें</string>
+    <string name="settings_home_mirror">तरफ़ें बदलें</string>
+    <string name="settings_home_mirror_hint">होम उलटा: बाएँ वाला दाएँ जाता है (खड़ी स्क्रीन: ऊपर वाला नीचे)</string>
 </resources>

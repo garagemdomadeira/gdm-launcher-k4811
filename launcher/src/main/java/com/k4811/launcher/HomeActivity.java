@@ -1011,7 +1011,7 @@ public class HomeActivity extends Activity {
     private String lookKey() {
         return LauncherConfig.language(this) + "|" + LauncherConfig.theme(this)
             + "|" + LauncherConfig.darkMode(this) + "|" + LauncherConfig.font(this)
-            + "|" + com.k4811.common.system.BottomBar.reservedPx(this);
+            + "|" + com.k4811.common.system.BottomBar.reservedPx(this) + "|" + LauncherConfig.homeMirrored(this);
     }
 
     private void openDateSettings() {

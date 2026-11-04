@@ -113,6 +113,22 @@ public final class HomeGrid {
         public Frame frame(Slot slot) {
             return frames[slot.ordinal()];
         }
+
+        /**
+         * A mesma grade espelhada (Configurações › "Inverter os lados"): deitada, o que estava à esquerda vai para a
+         * direita (o "tocando agora" à direita e o PIP à esquerda); em pé, o de cima vai para baixo.
+         */
+        Layout mirrored() {
+            Frame[] out = new Frame[frames.length];
+            int areaEnd = contentHeight - BOTTOM;
+            for (int i = 0; i < frames.length; i++) {
+                Frame f = frames[i];
+                out[i] = portrait
+                    ? new Frame(f.x, TOP_BAR + areaEnd - f.y - f.height, f.width, f.height, f.size)
+                    : new Frame(screenWidth - f.x - f.width, f.y, f.width, f.height, f.size);
+            }
+            return new Layout(portrait, screenWidth, screenHeight, out);
+        }
     }
 
     /**
@@ -135,7 +151,8 @@ public final class HomeGrid {
         float density = a.getResources().getDisplayMetrics().density;
         int w = Math.round(wPx / density);
         int h = Math.round(hPx / density);
-        return h > w ? portrait(w, h) : landscape();
+        Layout l = h > w ? portrait(w, h) : landscape();
+        return com.k4811.common.config.LauncherConfig.homeMirrored(a) ? l.mirrored() : l;
     }
 
     private static Layout landscape() {

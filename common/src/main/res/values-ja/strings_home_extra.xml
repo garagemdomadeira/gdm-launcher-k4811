@@ -99,4 +99,6 @@
     <string name="home_obd_rpm">%1$d rpm</string>
     <string name="home_obd_off">OBD2 なし</string>
     <string name="ota_open">開く</string>
+    <string name="settings_home_mirror">左右を入れ替え</string>
+    <string name="settings_home_mirror_hint">ホームを反転：左のものが右へ（縦向きでは上が下へ）</string>
 </resources>

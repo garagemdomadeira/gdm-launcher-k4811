@@ -103,4 +103,6 @@
     <string name="home_obd_rpm">%1$d rpm</string>
     <string name="home_obd_off">No OBD2</string>
     <string name="ota_open">Open</string>
+    <string name="settings_home_mirror">Swap sides</string>
+    <string name="settings_home_mirror_hint">Home mirrored: what is on the left goes to the right (standing up: top goes to bottom)</string>
 </resources>

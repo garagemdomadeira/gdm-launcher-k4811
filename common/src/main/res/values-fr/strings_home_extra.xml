@@ -100,4 +100,6 @@
     <string name="home_obd_rpm">%1$d tr/min</string>
     <string name="home_obd_off">Sans OBD2</string>
     <string name="ota_open">Ouvrir</string>
+    <string name="settings_home_mirror">Inverser les côtés</string>
+    <string name="settings_home_mirror_hint">Accueil en miroir : la gauche passe à droite (en portrait : le haut passe en bas)</string>
 </resources>

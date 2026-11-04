@@ -102,4 +102,6 @@
     <string name="home_obd_rpm">%1$d об/мин</string>
     <string name="home_obd_off">Нет OBD2</string>
     <string name="ota_open">Открыть</string>
+    <string name="settings_home_mirror">Поменять стороны</string>
+    <string name="settings_home_mirror_hint">Зеркальный главный экран: левое уходит вправо (вертикально: верх вниз)</string>
 </resources>

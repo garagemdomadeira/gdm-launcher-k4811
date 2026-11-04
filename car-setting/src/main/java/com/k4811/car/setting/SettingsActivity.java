@@ -246,6 +246,9 @@ public class SettingsActivity extends Activity {
 
     private void buildMainHome() {
         list.section(getString(R.string.settings_home_section));
+        list.toggle(getString(R.string.settings_home_mirror), getString(R.string.settings_home_mirror_hint),
+            () -> LauncherConfig.homeMirrored(this),
+            on -> LauncherConfig.setHomeMirrored(this, on));
         list.toggle(getString(R.string.settings_show_day_night),
             getString(R.string.settings_show_day_night_hint),
             () -> LauncherConfig.showDayNight(this),
