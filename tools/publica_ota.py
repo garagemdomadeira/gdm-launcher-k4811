@@ -28,6 +28,8 @@ import tempfile
 import zipfile
 
 REPO = 'guarienteherbert-ux/gdm-k4811-ota'
+README_TITULO = '# GDM K4811: atualizações'
+README_TEXTO = 'Apps da suíte GDM e ROMs comunidade GDM para a central K4811, lidos pelo app **GDM Atualizações** (procura uma vez por semana).'
 KEY = os.path.expanduser(os.environ.get('OTA_KEY', '~/Downloads/K4811_mod/ota_keys_gdm/ota.key.pem'))
 SDK = os.path.expanduser(os.environ.get('ANDROID_HOME', '~/Android/Sdk'))
 
@@ -77,9 +79,11 @@ def main():
     ap.add_argument('--notas', action='append', default=[])
     ap.add_argument('--notas-rom', default='')
     ap.add_argument('--simular', action='store_true')
+    ap.add_argument('--republicar', action='store_true',
+                    help='nova release com todos os apps já publicados (sem app novo)')
     a = ap.parse_args()
-    if not a.apps and not a.rom:
-        sys.exit('nada para publicar (--apps / --rom)')
+    if not a.apps and not a.rom and not a.republicar:
+        sys.exit('nada para publicar (--apps / --rom / --republicar)')
     if not os.path.isfile(KEY):
         sys.exit('sem a chave ' + KEY)
 
@@ -123,6 +127,22 @@ def main():
         assets.append((path, asset))
         changelog.append('- ROM %s (%s)%s' % (versao, canal, (': ' + a.notas_rom) if a.notas_rom else ''))
 
+    # Cada release leva TODOS os apps atuais (não só os novos): quem abre a release no GitHub acha tudo junto. Os que
+    # não mudaram são baixados da release anterior (conferindo o SHA-256) e anexados de novo. As ROMs ficam onde estão.
+    carry = tempfile.mkdtemp(prefix='ota-carry-')
+    novos = {asset for _, asset in assets}
+    for pkg, x in sorted(apps.items()):
+        asset = '%s-%d.apk' % (pkg, x['versionCode'])
+        if asset in novos:
+            continue
+        old_tag = x['url'].rstrip('/').split('/')[-2]
+        run(['gh', 'release', 'download', old_tag, '--repo', REPO, '--pattern', asset, '-D', carry, '--clobber'])
+        path = os.path.join(carry, asset)
+        if sha256(path) != x['sha256']:
+            sys.exit(asset + ': SHA-256 da release anterior não confere')
+        x['url'] = base + asset
+        assets.append((path, asset))
+
     ota = {'formato': 1, 'gerado': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
            'apps': sorted(apps.values(), key=lambda x: x['pacote']),
            'roms': sorted(roms.values(), key=lambda x: x['canal'])}
@@ -157,9 +177,40 @@ def main():
         os.symlink(os.path.abspath(path), dst)
         files.append(dst)
     files += [j, j + '.sig']
+    if not changelog:
+        changelog.append('- Mesmos apps da release anterior, todos juntos nesta.')
     run(['gh', 'release', 'create', tag, '--repo', REPO, '--latest', '--title', tag,
          '--notes', '\n'.join(changelog)] + files)
     print('publicado: https://github.com/%s/releases/tag/%s' % (REPO, tag))
+    atualiza_readme(ota, tag)
+
+
+def atualiza_readme(ota, tag):
+    """README da página do repositório: as versões atuais com o link de cada arquivo."""
+    import base64
+    linhas = [README_TITULO, '', README_TEXTO, '',
+              'Última publicação: [%s](https://github.com/%s/releases/tag/%s)' % (tag, REPO, tag), '',
+              '## Apps', '', '| App | Versão | Pacote | Baixar |', '|---|---|---|---|']
+    for x in ota['apps']:
+        linhas.append('| %s | %s | `%s` | [APK](%s) |' % (x['nome'], x['versionName'], x['pacote'], x['url']))
+    linhas += ['', '## ROMs', '']
+    if ota['roms']:
+        linhas += ['| Canal | Versão | Baixar |', '|---|---|---|']
+        for r in ota['roms']:
+            linhas.append('| %s | %s | [ROM](%s) |' % (r['canal'], r['versao'], r['url']))
+    else:
+        linhas.append('Nenhuma ROM publicada por aqui ainda (a ROM é gravada pelo pen drive na primeira vez).')
+    linhas += ['', 'Tudo é conferido pela central: o `ota.json` tem assinatura (`ota.json.sig`) e cada arquivo o seu '
+               'SHA-256. Nada é instalado sem tocar em **Confirmar update**.', '']
+    conteudo = base64.b64encode('\n'.join(linhas).encode()).decode()
+    sha = subprocess.run(['gh', 'api', 'repos/%s/contents/README.md' % REPO, '--jq', '.sha'],
+                         text=True, capture_output=True).stdout.strip()
+    cmd = ['gh', 'api', '-X', 'PUT', 'repos/%s/contents/README.md' % REPO, '-f', 'message=README: versões atuais',
+           '-f', 'content=' + conteudo]
+    if sha:
+        cmd += ['-f', 'sha=' + sha]
+    run(cmd)
+    print('README atualizado')
 
 
 if __name__ == '__main__':
