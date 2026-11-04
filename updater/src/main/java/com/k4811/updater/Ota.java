@@ -191,8 +191,8 @@ final class Ota {
                     String line;
                     while ((line = in.readLine()) != null) {
                         line = line.trim();
-                        if (line.startsWith("k4811_ota_canal=")) r.channel = line.substring(14).trim();
-                        else if (line.startsWith("k4811_ota_rom=")) r.code = Integer.parseInt(line.substring(12).trim());
+                        if (line.startsWith("k4811_ota_canal=")) r.channel = line.substring("k4811_ota_canal=".length()).trim();
+                        else if (line.startsWith("k4811_ota_rom=")) r.code = Integer.parseInt(line.substring("k4811_ota_rom=".length()).trim());
                     }
                 } catch (Exception ignored) {
                 }
