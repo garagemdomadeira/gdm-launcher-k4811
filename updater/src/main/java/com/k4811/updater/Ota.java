@@ -58,6 +58,8 @@ final class Ota {
         String sha256;
         long size;
         String notes;
+        /** SHA-256 do certificado do APK publicado ("" em listas antigas = não confere). */
+        String cert;
         /** Versão instalada (versionName) ou null. */
         String installedName;
     }
@@ -92,6 +94,7 @@ final class Ota {
             x.sha256 = j.getString("sha256").toLowerCase();
             x.size = j.optLong("tamanho", 0);
             x.notes = j.optString("novidades", "");
+            x.cert = j.optString("certificado", "").toLowerCase();
             apps.add(x);
         }
         JSONArray r = o.optJSONArray("roms");
@@ -144,6 +147,8 @@ final class Ota {
                 continue; // só atualiza o que a pessoa tem
             }
             if (a.versionCode <= pi.versionCode) continue;
+            // Mesmo pacote de outro dono (ex.: a ventoinha da NWD numa central sem a suíte): o Android recusaria.
+            if (!a.cert.isEmpty() && !a.cert.equals(certOf(c, a.pkg))) continue;
             a.installedName = pi.versionName;
             if (a.pkg.equals(c.getPackageName())) self = a;
             else out.add(a);
@@ -244,6 +249,19 @@ final class Ota {
     }
 
     /** SHA-256 do certificado de plataforma da ROM instalada (o do pacote "android"). */
+    /** SHA-256 do certificado do app instalado, ou null. */
+    static String certOf(Context c, String pkg) {
+        try {
+            @SuppressWarnings("deprecation")
+            android.content.pm.Signature[] s = c.getPackageManager()
+                .getPackageInfo(pkg, PackageManager.GET_SIGNATURES).signatures;
+            if (s == null || s.length != 1) return null;
+            return hex(MessageDigest.getInstance("SHA-256").digest(s[0].toByteArray()));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     static String platform(Context c) {
         try {
             @SuppressWarnings("deprecation")
