@@ -51,6 +51,16 @@ def sha256(path):
     return h.hexdigest()
 
 
+def cert_sha256(path):
+    """SHA-256 do certificado que assina o APK (o atualizador só oferece a quem tem o mesmo dono)."""
+    bt = os.path.dirname(aapt())
+    out = run([os.path.join(bt, 'apksigner'), 'verify', '--print-certs', path])
+    m = re.search(r'certificate SHA-256 digest: ([0-9a-f]{64})', out)
+    if not m:
+        sys.exit('não li o certificado de ' + path)
+    return m.group(1)
+
+
 def apk_info(path):
     out = run([aapt(), 'dump', 'badging', path])
     m = re.search(r"package: name='([^']+)' versionCode='(\d+)' versionName='([^']*)'", out)
@@ -103,7 +113,8 @@ def main():
             sys.exit('%s: versionCode %d não é maior que o publicado (%d)' % (pkg, code, old['versionCode']))
         asset = '%s-%d.apk' % (pkg, code)
         apps[pkg] = {'pacote': pkg, 'nome': label, 'versionCode': code, 'versionName': name, 'url': base + asset,
-                     'sha256': sha256(path), 'tamanho': os.path.getsize(path), 'novidades': notes.get(pkg, '')}
+                     'sha256': sha256(path), 'tamanho': os.path.getsize(path), 'novidades': notes.get(pkg, ''),
+                     'certificado': cert_sha256(path)}
         assets.append((path, asset))
         changelog.append('- %s %s%s' % (label, name, (': ' + notes[pkg]) if pkg in notes else ''))
 
@@ -141,6 +152,8 @@ def main():
         if sha256(path) != x['sha256']:
             sys.exit(asset + ': SHA-256 da release anterior não confere')
         x['url'] = base + asset
+        if not x.get('certificado'):
+            x['certificado'] = cert_sha256(path)
         assets.append((path, asset))
 
     ota = {'formato': 1, 'gerado': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
