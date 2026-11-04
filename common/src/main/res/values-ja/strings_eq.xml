@@ -19,6 +19,7 @@
     <string name="eq_loudness">ラウドネス</string>
     <string name="eq_reset">リセット</string>
     <string name="eq_influence">連動</string>
+    <string name="eq_advanced">詳細</string>
 
     <!-- Seats -->
     <string name="eq_seat_driver">運転席</string>

@@ -55,6 +55,7 @@ public final class EqStore {
         if (channels != null) d.channels = channels;
         d.applyOnBoot = prefs.getBoolean("apply_on_boot", false);
         d.influence = prefs.getBoolean("influence", true);
+        d.armSimple = prefs.getBoolean("arm_simple", true);
         return d;
     }
 
@@ -72,6 +73,7 @@ public final class EqStore {
             .putString("channels", joinChannels(s.channels))
             .putBoolean("apply_on_boot", s.applyOnBoot)
             .putBoolean("influence", s.influence)
+            .putBoolean("arm_simple", s.armSimple)
             .apply();
     }
 

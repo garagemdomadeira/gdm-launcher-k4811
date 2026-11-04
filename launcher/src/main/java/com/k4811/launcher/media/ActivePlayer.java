@@ -42,7 +42,7 @@ public final class ActivePlayer {
 
     /**
      * Sessões de mídia ativas: como app privilegiado (MEDIA_CONTENT_CONTROL) ou pelo leitor de
-     * notificações ({@link MediaListener}); null sem nenhum dos dois.
+     * notificações ({@link MediaNotificationListener}); null sem nenhum dos dois.
      */
     public static List<MediaController> sessions(Context c) {
         MediaSessionManager m = (MediaSessionManager) c.getSystemService(Context.MEDIA_SESSION_SERVICE);
@@ -52,7 +52,7 @@ public final class ActivePlayer {
         } catch (Exception ignored) {
         }
         try {
-            return m.getActiveSessions(new ComponentName(c, MediaListener.class));
+            return m.getActiveSessions(new ComponentName(c, MediaNotificationListener.class));
         } catch (Exception ignored) {
             return null;
         }

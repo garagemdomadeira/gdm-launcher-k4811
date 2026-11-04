@@ -1,5 +1,6 @@
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import java.util.Properties
 
 plugins {
@@ -58,6 +59,21 @@ subprojects {
                 keyPassword = signing.getProperty("keyPassword")
             }
             buildTypes.getByName("release").signingConfig = key ?: signingConfigs.getByName("debug")
+        }
+        // Beta: o workflow beta.yml injeta a versão via -PbetaVersionName / -PbetaVersionCode.
+        // Sobrescreve na API de variantes (depois do android{} de cada app), senão o valor fixo vence.
+        // Sem essas props (build normal/release), vale o que está no build.gradle.kts de cada app.
+        val betaName = (findProperty("betaVersionName") as String?)?.takeIf { it.isNotBlank() }
+        val betaCode = (findProperty("betaVersionCode") as String?)?.toIntOrNull()
+        if (betaName != null || betaCode != null) {
+            extensions.configure<ApplicationAndroidComponentsExtension> {
+                onVariants { variant ->
+                    variant.outputs.forEach { output ->
+                        if (betaName != null) output.versionName.set(betaName)
+                        if (betaCode != null) output.versionCode.set(betaCode)
+                    }
+                }
+            }
         }
     }
     plugins.withId("com.android.library") {

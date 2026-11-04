@@ -17,6 +17,7 @@ Launcher leve para a central NWD, com o visual padrão do GDM K4811 App suite, m
 - **Tela inicial em módulos:** uma grade invisível de 6 áreas (**A** a **F**: uma alta à esquerda, uma grande e uma larga no centro, três pequenas à direita). Cada módulo vai em qualquer área ou fica escondido: **Tocando agora**, **Relógio**, **Controle de volume**, **Ventoinha**, **Bluetooth**, **Imagem**, **Velocidade (GPS)** e **Dados do GPS**. Cada um se ajusta ao tamanho da área. A posição de cada módulo vem do `launcher.json` (`home_layout`) e é escolhida no car-setting, em **Customizar → Customizar tela inicial**.
 - **Barra superior:** dia/noite (lua = farol aceso), voltímetro (CAN) e o que está tocando (Rádio, MP3 ou BT).
 - **Imagem:** uma foto da pasta `K4811/` na memória interna (subpastas também, menos `K4811/radio`).
+- **Imagem de fundo:** opcional, escolhida no car-setting (mesma pasta `K4811/` do módulo Imagem). Preenche a tela inteira atrás dos módulos (recortada para caber); sem escolha, fica a cor do tema. Dá para remover a qualquer momento.
 - **GPS:** velocidade em km/h e latitude, longitude, altitude e direção. Funcionam sem internet e só ligam o GPS com a tela inicial aberta.
 - **Apagar a tela após** 5, 10 ou 30 s sem tocar na tela inicial (ou nunca).
 - **Centrais verticais (768×1024):** as colunas da grade viram linhas. A em cima; B e C no meio; D, E e F embaixo.
@@ -52,7 +53,10 @@ O módulo "Tocando agora" **só manda comandos**. Com o rádio tocando, ele most
 | Rádio | serviço de rádio da NWD (`RadioClient` do common, só observando) | memória anterior/próxima, liga/desliga | radio |
 | MP3 | broadcast `com.k4811.action.MUSIC_STATE` do music (`MusicRemote`) | broadcast `com.k4811.action.MUSIC_COMMAND` | music |
 | Bluetooth | serviço de BT da NWD (`BtClient`) e broadcasts `com.bt.*` | `playControl` do serviço de BT | bt-music |
+| App de mídia (Spotify, Deezer, YT Music…) | sessão de mídia do Android (`MediaSession`) | tocar/pausar, próxima, anterior | o próprio app |
 | Chamada | broadcasts `com.bt.ACTION_BT_*_CALL` | atender / desligar pelo serviço de BT | phone |
+
+Os **controles de mídia de apps** (Spotify e afins) são opcionais: ligue em **Configurações › Principais › Controles de mídia de apps** e conceda o **Acesso a notificações** quando a central pedir. Com isso, o launcher mostra e controla o que qualquer app de áudio está tocando — inclusive pelas teclas do volante. Sem a permissão, nada muda.
 
 A fonte atual vem de `Settings.System mcu_current_source`. Na tela inicial, o dock sempre destaca o Início; o que está tocando aparece na barra superior. Ligar o rádio pelo módulo segue a regra de uma fonte por vez (`PlayerHandoff.switchToRadio`). Também continuam valendo os broadcasts do player original da NWD (`com.android.music.metachanged`).
 
@@ -79,6 +83,18 @@ Deslizar o dedo de uma borda da tela para dentro, em qualquer app, abre uma píl
 - Início abre a tela inicial direto pelo Android (com a tecla da MCU como reserva).
 - Escolha em car-setting › Principais › **Menu da borda**: Desligado, Embaixo, Esquerda ou Direita (`edge_menu_side` no `launcher.json`, 0 a 3; padrão Embaixo). O serviço confere a opção a cada 3 s, então vale na hora. O log `K4811EdgeMenu` diz em que borda e com que tamanho a área foi criada.
 - No emulador só o Início funciona (não há MCU). Ainda não testado na central.
+
+## Teclas de mídia do volante
+
+As teclas de **volume e mudo** do volante o sistema da NWD trata sozinho, por isso funcionam em qualquer app. Já **avançar e recuar** o sistema só repassa como um broadcast (`com.nwd.action.ACTION_KEY_VALUE`), e cabe ao app da fonte ativa reagir — algo que a pele de fábrica fazia e a recompilação tinha perdido.
+
+Agora o launcher é quem escuta (`media/MediaKeyReceiver` → `MediaKeyService`) e, qualquer que seja a tela aberta, manda o comando para o que está tocando:
+
+- **Rádio:** próxima/anterior estação salva da banda, ciclando (pula memórias vazias).
+- **MP3 e música Bluetooth:** próxima/anterior faixa.
+- **Nada tocando:** não faz nada (não começa a tocar sozinho).
+
+Mantém a conexão com os serviços de rádio/BT aquecida por 60 s para apertos seguidos responderem na hora. Ainda não testado na central.
 
 ## Diferenças do original
 
@@ -113,6 +129,7 @@ launcher/src/main/
 │   │                            AppCatalog, VolumeClient, MuteClient
 │   ├── overlay/                 VolumeOverlayService + VolumeOverlayView: aviso de volume por cima dos apps;
 │   │                            EdgeMenuService: menu ao deslizar de uma borda
+│   ├── media/                   MediaKeyReceiver + MediaKeyService: teclas de avançar/recuar do volante
 │   └── (com/acloud/…/MusicBean) faixa do player da NWD
 └── res/layout/                  activity_home, activity_apps, app_cell, dialog_confirm
 ```

@@ -3,10 +3,12 @@ package com.k4811.launcher.home;
 import com.k4811.common.audio.PlayerHandoff;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,8 +17,11 @@ import android.util.Log;
 
 import com.acloud.newinterface.MusicBean;
 import com.k4811.common.bt.BtClient;
+import com.k4811.common.config.LauncherConfig;
+import com.k4811.common.media.AppMediaClient;
 import com.k4811.common.music.MusicRemote;
 import com.k4811.common.system.NwdConstants;
+import com.k4811.launcher.media.MediaNotificationListener;
 
 /**
  * Current source, USB/SD track, Bluetooth music and call. Only publishes state:
@@ -26,7 +31,7 @@ import com.k4811.common.system.NwdConstants;
  */
 public final class HomeSession {
 
-    public enum Kind { NONE, RADIO, USB, BT }
+    public enum Kind { NONE, RADIO, USB, BT, APP }
 
     public enum CallPhase { NONE, INCOMING, OUTGOING, ACTIVE }
 
@@ -50,12 +55,23 @@ public final class HomeSession {
         public final boolean btPlaying;
         public final boolean a2dpKnown;
         public final boolean a2dpConnected;
+        /** App de mídia de terceiro (Spotify, Deezer…) na fonte Android; ver AppMediaClient. */
+        public final String appPackage;
+        public final String appLabel;
+        public final String appTitle;
+        public final String appArtist;
+        public final boolean appPlaying;
+        public final boolean appHasNext;
+        public final boolean appHasPrev;
+        public final Bitmap appArt;
 
         Snapshot(int source, Kind kind, CallPhase call, String callName, String callNumber,
                  String title, String artist, String album, boolean playing,
                  int positionMs, int durationMs, String mediaId, String path,
                  String btTitle, String btArtist, boolean btPlaying,
-                 boolean a2dpKnown, boolean a2dpConnected) {
+                 boolean a2dpKnown, boolean a2dpConnected,
+                 String appPackage, String appLabel, String appTitle, String appArtist,
+                 boolean appPlaying, boolean appHasNext, boolean appHasPrev, Bitmap appArt) {
             this.source = source;
             this.kind = kind;
             this.call = call;
@@ -74,6 +90,14 @@ public final class HomeSession {
             this.btPlaying = btPlaying;
             this.a2dpKnown = a2dpKnown;
             this.a2dpConnected = a2dpConnected;
+            this.appPackage = appPackage;
+            this.appLabel = appLabel;
+            this.appTitle = appTitle;
+            this.appArtist = appArtist;
+            this.appPlaying = appPlaying;
+            this.appHasNext = appHasNext;
+            this.appHasPrev = appHasPrev;
+            this.appArt = appArt;
         }
     }
 
@@ -126,6 +150,8 @@ public final class HomeSession {
 
     private final Context context;
     private final BtClient bt;
+    private final AppMediaClient appMedia;
+    private AppMediaClient.Info appInfo;
     private final Handler main = new Handler(Looper.getMainLooper());
     private Listener listener;
     private boolean ourMusic;
@@ -162,6 +188,12 @@ public final class HomeSession {
     public HomeSession(Context context) {
         this.context = context.getApplicationContext();
         this.bt = new BtClient(context);
+        this.appMedia = new AppMediaClient(this.context,
+            new ComponentName(this.context, MediaNotificationListener.class));
+        this.appMedia.setListener(info -> {
+            appInfo = info;
+            publish();
+        });
     }
 
     public void setListener(Listener listener) {
@@ -174,6 +206,7 @@ public final class HomeSession {
         started = true;
         register();
         bt.connect();
+        appMedia.start();
         MusicRemote.query(context);
         readSource();
         publish();
@@ -189,6 +222,7 @@ public final class HomeSession {
             Log.d(TAG, "music refresh: " + e.getMessage());
         }
         MusicRemote.query(context);
+        appMedia.refresh();
         requestQuery();
     }
 
@@ -207,6 +241,7 @@ public final class HomeSession {
         } catch (Exception ignored) {
         }
         bt.release();
+        appMedia.stop();
     }
 
     /** The screen set the source early (power, tuning, play) before the head unit's broadcast. */
@@ -319,12 +354,22 @@ public final class HomeSession {
     }
 
     private Kind musicKind() {
+        boolean appOn = appInfo != null && LauncherConfig.mediaAppControls(context);
+        if (appOn && appInfo.playing) return Kind.APP;   // um app de terceiro (Spotify…) está tocando
         if (btPlaying && !ourMusic) return Kind.BT;
         if (ourMusic || usbOverrides) return Kind.USB;
         if (btPlaying) return Kind.BT;
+        if (appOn) return Kind.APP;                       // sessão de app presente (pausada), nada nosso tocando
         if (sawBt) return Kind.BT;
         if (sawUsb) return Kind.USB;
         return Kind.NONE;
+    }
+
+    /** Controla o app de mídia da fonte Android: {@code what} < 0 anterior, 0 tocar/pausar, > 0 próxima. */
+    public void appTransport(int what) {
+        if (what < 0) appMedia.prev();
+        else if (what > 0) appMedia.next();
+        else appMedia.playPause();
     }
 
     private void noteUsb() {
@@ -528,10 +573,19 @@ public final class HomeSession {
     private void publish() {
         Listener l = listener;
         if (l == null) return;
+        boolean appOn = appInfo != null && LauncherConfig.mediaAppControls(context);
         l.onChanged(new Snapshot(
             source, resolveKind(), call, callName, callNumber,
             title, artist, album, playing, positionMs, durationMs, mediaId, path,
-            btTitle, btArtist, btPlaying, a2dpKnown, a2dpConnected));
+            btTitle, btArtist, btPlaying, a2dpKnown, a2dpConnected,
+            appOn ? appInfo.pkg : null,
+            appOn ? appInfo.appLabel : "",
+            appOn ? appInfo.title : "",
+            appOn ? appInfo.artist : "",
+            appOn && appInfo.playing,
+            appOn && appInfo.hasNext,
+            appOn && appInfo.hasPrev,
+            appOn ? appInfo.art : null));
     }
 
     private static int readSourceExtra(Intent intent) {

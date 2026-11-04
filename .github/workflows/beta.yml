@@ -1,0 +1,188 @@
+name: Beta
+
+# Publica um pre-release (beta) a cada push na branch `beta`.
+#
+# Versão carimbada no APK:
+#   - versionName = <alvo>-beta.<N>        (ex.: 2.1.0-beta.3)
+#   - versionCode = <piso> + N             (fica acima do estável atual e abaixo do alvo)
+# "Alvo" = a versão em launcher/build.gradle.kts na branch beta. Se ela ainda não foi subida
+# acima do estável da main, o workflow assume o próximo minor (ex.: 2.0.7 -> 2.1.0). Assim o
+# estável, quando sair, sempre tem versionCode maior que o dos betas e instala por cima deles.
+#
+# Requer os secrets NWD_KEYSTORE_BASE64, NWD_KEYSTORE_PASSWORD, NWD_KEY_ALIAS, NWD_KEY_PASSWORD
+# (os mesmos do release.yml).
+
+on:
+  push:
+    branches:
+      - beta
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-prerelease:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute beta version
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          extract() {
+            local file="$1" name code
+            name="$(sed -n 's/.*versionName = "\([^"]*\)".*/\1/p' "$file" | head -1)"
+            code="$(sed -n 's/.*versionCode = \([0-9][0-9]*\).*/\1/p' "$file" | head -1)"
+            if [ -z "$name" ] || [ -z "$code" ]; then
+              echo "::error::Não li versionName/versionCode de $file"; exit 1
+            fi
+            printf '%s %s\n' "$name" "$code"
+          }
+
+          # Alvo = versão na branch beta (checkout atual).
+          read -r TARGET_NAME TARGET_CODE < <(extract launcher/build.gradle.kts)
+
+          # Estável = versão na main.
+          git fetch origin main --quiet
+          git show origin/main:launcher/build.gradle.kts > /tmp/main-launcher.kts
+          read -r STABLE_NAME STABLE_CODE < <(extract /tmp/main-launcher.kts)
+
+          # Se a branch beta ainda não subiu a versão acima do estável, deriva o próximo minor.
+          if [ "$TARGET_CODE" -le "$STABLE_CODE" ]; then
+            MAJOR="${STABLE_NAME%%.*}"
+            REST="${STABLE_NAME#*.}"
+            MINOR="${REST%%.*}"
+            TARGET_NAME="${MAJOR}.$((MINOR + 1)).0"
+            TARGET_CODE="$(( (STABLE_CODE / 100 + 1) * 100 ))"
+          fi
+
+          # Piso dos códigos de beta: logo acima do estável atual.
+          FLOOR="$STABLE_CODE"
+          if [ "$((TARGET_CODE - 100))" -gt "$FLOOR" ]; then
+            FLOOR="$((TARGET_CODE - 100))"
+          fi
+
+          # N = primeiro número de beta ainda sem tag.
+          N=1
+          while gh api "repos/${GITHUB_REPOSITORY}/releases/tags/v${TARGET_NAME}-beta.${N}" >/dev/null 2>&1; do
+            N="$((N + 1))"
+          done
+
+          BETA_NAME="${TARGET_NAME}-beta.${N}"
+          BETA_CODE="$((FLOOR + N))"
+          TAG="v${BETA_NAME}"
+
+          if [ "$BETA_CODE" -ge "$TARGET_CODE" ]; then
+            echo "::error::Acabou a faixa de versionCode para betas de ${TARGET_NAME} (chegou a ${BETA_CODE}, teto ${TARGET_CODE}). Lance o estável ${TARGET_NAME} ou suba a versão alvo na branch beta."
+            exit 1
+          fi
+
+          echo "Estável (main): ${STABLE_NAME} (${STABLE_CODE})"
+          echo "Alvo:           ${TARGET_NAME} (${TARGET_CODE})"
+          echo "Beta:           ${BETA_NAME} (${BETA_CODE})"
+          {
+            echo "target_name=${TARGET_NAME}"
+            echo "beta_name=${BETA_NAME}"
+            echo "beta_code=${BETA_CODE}"
+            echo "tag=${TAG}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Write NWD signing key
+        env:
+          NWD_KEYSTORE_BASE64: ${{ secrets.NWD_KEYSTORE_BASE64 }}
+          NWD_KEYSTORE_PASSWORD: ${{ secrets.NWD_KEYSTORE_PASSWORD }}
+          NWD_KEY_ALIAS: ${{ secrets.NWD_KEY_ALIAS }}
+          NWD_KEY_PASSWORD: ${{ secrets.NWD_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "${NWD_KEYSTORE_BASE64}" ]; then
+            echo "::error::Configure os secrets NWD_KEYSTORE_BASE64, NWD_KEYSTORE_PASSWORD, NWD_KEY_ALIAS e NWD_KEY_PASSWORD."
+            exit 1
+          fi
+          mkdir -p keys
+          echo "${NWD_KEYSTORE_BASE64}" | base64 --decode > keys/nwd.jks
+          printf '%s\n' \
+            "storeFile=keys/nwd.jks" \
+            "storePassword=${NWD_KEYSTORE_PASSWORD}" \
+            "keyAlias=${NWD_KEY_ALIAS}" \
+            "keyPassword=${NWD_KEY_PASSWORD}" \
+            > keystore.properties
+
+      - name: Build beta APKs
+        run: |
+          ./gradlew assembleRelease \
+            -PbetaVersionName="${{ steps.version.outputs.beta_name }}" \
+            -PbetaVersionCode="${{ steps.version.outputs.beta_code }}" \
+            --no-daemon --stacktrace
+
+      - name: Collect APKs
+        run: |
+          set -euo pipefail
+          BETA_NAME="${{ steps.version.outputs.beta_name }}"
+          mkdir -p dist
+          for apk in */build/outputs/apk/release/*-release.apk; do
+            [ -f "$apk" ] || continue
+            app="$(basename "$apk" -release.apk)"
+            cp "$apk" "dist/${app}-${BETA_NAME}.apk"
+          done
+          count="$(find dist -name '*.apk' | wc -l | tr -d ' ')"
+          echo "APKs em dist/: ${count}"
+          ls -la dist/
+          if [ "${count}" -lt 8 ]; then
+            echo "::error::Esperava 8 APKs de release, achei ${count}"; exit 1
+          fi
+          ( cd dist && zip -9 "../updateApk-${BETA_NAME}.zip" *.apk )
+
+      - name: Build release notes
+        run: |
+          set -euo pipefail
+          TARGET_NAME="${{ steps.version.outputs.target_name }}"
+          BETA_NAME="${{ steps.version.outputs.beta_name }}"
+          NOTES="beta-notes.md"
+          {
+            echo "> ⚠️ **Pré-release (beta):** \`${BETA_NAME}\`, caminho para a versão ${TARGET_NAME}. Para teste — pode conter instabilidades e não foi validado na central."
+            echo
+            if [ -f "releases/${TARGET_NAME}.md" ]; then
+              cat "releases/${TARGET_NAME}.md"
+            else
+              echo "### Mudanças nesta branch beta (em relação à \`main\`)"
+              echo
+              git log --pretty='- %s' origin/main..HEAD || true
+            fi
+          } > "$NOTES"
+          cat "$NOTES"
+
+      - name: Create GitHub pre-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.beta_name }}
+          body_path: beta-notes.md
+          prerelease: true
+          files: |
+            dist/*.apk
+            updateApk-*.zip
+          fail_on_unmatched_files: true

@@ -88,29 +88,8 @@ public final class StationLogos {
             synchronized (running) {
                 if (triedWithoutPlace.contains(base)) return false;
             }
-            boolean fm = Band.isFm(band);
-            String freq = Band.formatValue(frequency, fm);
-            Place here = place(c);
-            List<JSONObject> found = search(freq, fm);
-            JSONObject pick = choose(found, here, psName, freq, fm);
-            if (pick != null) {
-                Bitmap logo = download(pick.optString("favicon"));
-                if (logo != null && save(dir, base, logo)) {
-                    Log.i(TAG, base + ": logo de \"" + pick.optString("name") + "\"");
-                    return true;
-                }
-            }
-            Log.i(TAG, base + ": sem logo (" + found.size() + " no catálogo"
-                + (here == null ? ", sem localização" : ", " + here.state) + ")");
-            if (here != null) {
-                markMiss(dir, base);
-            } else {
-                // Sem localização não dá para saber: não anota por 7 dias, tenta na próxima abertura.
-                synchronized (running) {
-                    triedWithoutPlace.add(base);
-                }
-            }
-            return false;
+            // Dial da cidade/região no TudoRádio (frequência + localização), com o Radio Browser de reserva.
+            return DialLogos.fetch(c, new DialLogos.Station(Band.isFm(band), frequency, psName));
         } catch (Exception e) {
             // Sem internet: tenta de novo na próxima vez que sintonizar (não anota).
             Log.w(TAG, base + ": " + e);

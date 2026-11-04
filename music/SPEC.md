@@ -20,7 +20,7 @@ Player local de MP3 (memória interna, pendrive, cartão SD). Continua tocando c
 | `music/MusicPlaybackService` | MediaPlayer, lista, foco de áudio, `claimSource` (fonte 0 + `ACTION_APP_IN_OUT` app 2) | actions `…music.ui.PAUSE`, `…REMOTE` (extra `cmd`), `…RESUME` |
 | `music/MusicClient` | liga a tela ao serviço (bind local) | — |
 | `music/PauseReceiver` | pausa **síncrona** (`MusicPlaybackService.pauseRunning`) | `com.k4811.action.PAUSE_PLAYERS` (ignora o próprio `from`) |
-| `music/RemoteReceiver` | comandos e pedido de estado do launcher | `com.k4811.action.MUSIC_COMMAND`, `MUSIC_QUERY` |
+| `music/RemoteReceiver` | comandos e pedido de estado do launcher | `com.k4811.action.MUSIC_COMMAND` (extra `only_if_active` = só se já estiver tocando), `MUSIC_QUERY` |
 | `music/BackgroundPlayReceiver` | retomar ao ligar o carro | `com.nwd.ACTION_BACKGROUND_MEDIA_PLAY` com `extra_app_id` = 2 |
 | `music/MusicLibrary` | músicas da pasta escolhida e subpastas, agrupadas por pasta | — |
 | `music/MusicConfig` | últimas configurações em `K4811/mp3player/mp3player.config.json`: pasta (padrão `/sdcard/music`), última faixa e posição, aleatório, repetir | — |

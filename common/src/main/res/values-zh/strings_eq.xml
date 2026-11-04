@@ -19,6 +19,7 @@
     <string name="eq_loudness">响度</string>
     <string name="eq_reset">重置</string>
     <string name="eq_influence">联动</string>
+    <string name="eq_advanced">高级</string>
 
     <!-- 座位 -->
     <string name="eq_seat_driver">驾驶员</string>

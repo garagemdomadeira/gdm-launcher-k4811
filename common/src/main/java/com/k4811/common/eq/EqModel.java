@@ -143,6 +143,15 @@ public final class EqModel {
         800, 1000, 1250, 1600, 2000, 2500, 3150, 4000, 5000, 6300, 8000, 10000, 12500, 16000, 18000, 20000
     };
 
+    /**
+     * Simple 7-band view over the 32-band ARM DSP. The 7 sliders sit on these 32-band indices
+     * (the grid bands nearest 60/150/400/1k/2.5k/6k/15k Hz); the physical frequency shown is the one
+     * at that index in {@code armFrequencies}. The 25 bands between anchors follow by linear
+     * interpolation of the gains (see {@link #interp7to32}); the DSP keeps its full resolution.
+     */
+    public static final int EQ7_BANDS = 7;
+    public static final int[] EQ7_ANCHORS = {5, 9, 13, 17, 21, 25, 29};
+
     private static final int[][] EQ10_CURVES = {
         {3, 3, 3, 3, 3, 3, 3, 3, 3, 3}, // standard
         {2, 3, 2, 3, 4, 4, 5, 3, 2, 2}, // pop
@@ -214,6 +223,40 @@ public final class EqModel {
         return out;
     }
 
+    /** The gains of the 7 anchor bands, read from a full 32-band gain array. */
+    public static int[] anchorGains(int[] gains32) {
+        int[] out = new int[EQ7_BANDS];
+        for (int i = 0; i < EQ7_BANDS; i++) out[i] = gains32[EQ7_ANCHORS[i]];
+        return out;
+    }
+
+    /**
+     * Spreads 7 anchor gains over the 32 DSP bands: each anchor keeps its value and the bands between
+     * two anchors ramp linearly from one to the other (the midpoint is their average). Bands below the
+     * first anchor and above the last repeat the end value.
+     */
+    public static int[] interp7to32(int[] gains7) {
+        int[] out = new int[EQ32_BANDS];
+        int first = EQ7_ANCHORS[0];
+        int last = EQ7_ANCHORS[EQ7_BANDS - 1];
+        for (int i = 0; i < EQ32_BANDS; i++) {
+            if (i <= first) {
+                out[i] = gains7[0];
+            } else if (i >= last) {
+                out[i] = gains7[EQ7_BANDS - 1];
+            } else {
+                int seg = 0;
+                while (seg < EQ7_BANDS - 1 && EQ7_ANCHORS[seg + 1] < i) seg++;
+                int a = EQ7_ANCHORS[seg];
+                int b = EQ7_ANCHORS[seg + 1];
+                int ga = gains7[seg];
+                int gb = gains7[seg + 1];
+                out[i] = Math.round(ga + (gb - ga) * (float) (i - a) / (b - a));
+            }
+        }
+        return out;
+    }
+
     public static String freqLabel(int freq) {
         if (freq >= 1000) {
             float k = freq / 1000f;
@@ -266,6 +309,8 @@ public final class EqModel {
         public boolean applyOnBoot;
         /** Moving a band also moves its 2 neighbours on each side (50% and 25% of the change). */
         public boolean influence = true;
+        /** ARM DSP only: show the simple 7-band view (default) instead of all 32 bands. */
+        public boolean armSimple = true;
 
         public State() {
             Arrays.fill(armQ, EQ32_DEFAULT_Q);

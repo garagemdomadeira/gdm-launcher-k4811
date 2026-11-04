@@ -69,7 +69,7 @@ A pasta, a última faixa e onde ela parou, o aleatório e o repetir ficam em `K4
 ## "O que está tocando" no launcher (`MusicRemote` do common)
 
 - A cada mudança, o serviço envia o broadcast `com.k4811.action.MUSIC_STATE` com faixa, artista, álbum, play/pause, posição, duração, `media_id` e caminho. Troca de faixa e play/pause saem na hora; só a posição, no máximo 1×/s.
-- O `RemoteReceiver` atende `com.k4811.action.MUSIC_QUERY` (reenvia o estado, se o player estiver rodando) e `com.k4811.action.MUSIC_COMMAND` (`cmd`: 0 tocar/pausar, 1 próxima, 2 anterior). O comando inicia o player se preciso e carrega a lista antes de tocar.
+- O `RemoteReceiver` atende `com.k4811.action.MUSIC_QUERY` (reenvia o estado, se o player estiver rodando) e `com.k4811.action.MUSIC_COMMAND` (`cmd`: 0 tocar/pausar, 1 próxima, 2 anterior). O comando inicia o player se preciso e carrega a lista antes de tocar. Com o extra `only_if_active` (teclas do volante, pelo launcher), o comando só vale se o player já estiver tocando — se nada estiver tocando, é ignorado, para não começar a tocar MP3 por cima do rádio ou do BT.
 
 ## Diferenças do original
 

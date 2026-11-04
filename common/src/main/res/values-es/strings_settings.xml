@@ -21,6 +21,9 @@
     <string name="settings_show_voltmeter">Mostrar voltímetro</string>
     <string name="settings_show_voltmeter_hint">Voltaje de la batería en la esquina superior izquierda del inicio (autos con CAN)</string>
     <string name="settings_volume_overlay">Mostrar volumen en pantalla</string>
+    <string name="settings_media_apps">Controles de medios de apps</string>
+    <string name="settings_media_apps_hint">Muestra y controla Spotify, Deezer, YouTube Music… en la pantalla de inicio</string>
+    <string name="settings_help_media_apps">Muestra lo que reproducen otras apps de audio (Spotify, Deezer, YouTube Music, pódcasts…) y permite controlarlas desde la pantalla de inicio y los botones del volante. Al activarlo, abre el "Acceso a notificaciones" de Android, donde concedes el permiso una vez. Solo en Android 5+.</string>
     <string name="settings_volume_overlay_hint">Una barra de volumen arriba, sobre cualquier app, cada vez que cambie el volumen</string>
     <string name="settings_edge_menu">Menú del borde</string>
     <string name="settings_edge_menu_hint">Desliza desde ese borde hacia dentro, en cualquier app: Atrás, Vol− Vol+ e Inicio</string>
@@ -127,6 +130,12 @@
     <string name="settings_home_images_hint">Imágenes (.jpg, .png) de la carpeta K4811 en la memoria interna</string>
     <string name="settings_home_images_empty">No se encontraron imágenes. Copia archivos .jpg o .png a %1$s</string>
     <string name="settings_home_image_missing">La imagen elegida ya no existe</string>
+    <string name="settings_home_background">Fondo</string>
+    <string name="settings_home_bg_image">Imagen de fondo</string>
+    <string name="settings_home_bg_hint">Una imagen detrás de toda la pantalla de inicio</string>
+    <string name="settings_home_no_bg">Sin imagen de fondo</string>
+    <string name="settings_home_bg_remove">Quitar</string>
+    <string name="settings_help_home_bg">Elige una imagen de la carpeta de imágenes del almacenamiento interno para mostrarla detrás de la pantalla de inicio. Quítala para volver al color del tema.</string>
     <string name="settings_home_module_speed">Velocidad (GPS)</string>
     <string name="settings_home_module_gps">Datos del GPS</string>
     <string name="settings_hide_bottom_bar">Ocultar la barra inferior de NWD</string>

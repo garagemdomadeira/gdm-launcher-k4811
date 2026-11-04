@@ -19,6 +19,7 @@
     <string name="eq_loudness">Loudness</string>
     <string name="eq_reset">Reset</string>
     <string name="eq_influence">Influência</string>
+    <string name="eq_advanced">Avançado</string>
 
     <!-- Seats -->
     <string name="eq_seat_driver">Motorista</string>

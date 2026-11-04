@@ -46,6 +46,8 @@ public final class LauncherConfig {
     private static final String KEY_VOLUME = "show_volume_controls";
     private static final String KEY_HOME_LAYOUT = "home_layout";
     private static final String KEY_HOME_IMAGE = "home_image";
+    private static final String KEY_HOME_BG_IMAGE = "home_bg_image";
+    private static final String KEY_MEDIA_APPS = "media_app_controls";
     private static final String KEY_HIDE_BOTTOM_BAR = "hide_bottom_bar";
     private static final String KEY_ZLINK_NAME = "zlink_name";
     /** Package do app de navegação do botão Navegação do dock ("" = o primeiro instalado). */
@@ -285,6 +287,15 @@ public final class LauncherConfig {
         return put(KEY_VOLTMETER, on);
     }
 
+    /** Mostrar e controlar no launcher o que apps de áudio (Spotify, Deezer…) estão tocando. */
+    public static boolean mediaAppControls(Context c) {
+        return bool(KEY_MEDIA_APPS, false);
+    }
+
+    public static boolean setMediaAppControls(Context c, boolean on) {
+        return put(KEY_MEDIA_APPS, on);
+    }
+
     /** Sol/lua ao lado do voltímetro (lua = farol aceso). */
     public static boolean showDayNight(Context c) {
         return bool(KEY_DAY_NIGHT, true);
@@ -408,6 +419,15 @@ public final class LauncherConfig {
 
     public static boolean setHomeImage(Context c, String path) {
         return put(KEY_HOME_IMAGE, path);
+    }
+
+    /** Caminho da imagem de fundo da tela inicial (ver HomeImage); null se nenhuma foi escolhida. */
+    public static String homeBgImage(Context c) {
+        return string(KEY_HOME_BG_IMAGE, null);
+    }
+
+    public static boolean setHomeBgImage(Context c, String path) {
+        return put(KEY_HOME_BG_IMAGE, path);
     }
 
     /**

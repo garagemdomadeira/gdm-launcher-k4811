@@ -26,6 +26,13 @@ public final class MusicRemote {
     public static final int CMD_NEXT = 1;
     public static final int CMD_PREV = 2;
 
+    /**
+     * Com {@code true}, o comando só vale se o player já estiver tocando; se nada estiver tocando,
+     * o music ignora (não inicia a reprodução). Usado pelas teclas do volante, que só mexem na
+     * fonte ativa. Ausente/false mantém o comportamento antigo (o comando inicia o player).
+     */
+    public static final String EXTRA_ONLY_IF_ACTIVE = "only_if_active";
+
     public static final String EXTRA_HAS_TRACK = "has_track";
     public static final String EXTRA_TITLE = "title";
     public static final String EXTRA_ARTIST = "artist";
@@ -43,9 +50,14 @@ public final class MusicRemote {
     }
 
     public static void send(Context c, int cmd) {
+        send(c, cmd, false);
+    }
+
+    public static void send(Context c, int cmd, boolean onlyIfActive) {
         Intent i = new Intent(ACTION_COMMAND);
         i.setPackage(Apps.MUSIC);
         i.putExtra(EXTRA_CMD, cmd);
+        if (onlyIfActive) i.putExtra(EXTRA_ONLY_IF_ACTIVE, true);
         c.sendBroadcast(i);
     }
 }

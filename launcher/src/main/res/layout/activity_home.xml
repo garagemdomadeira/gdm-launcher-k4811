@@ -12,6 +12,15 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
+    <!-- Optional background picture chosen in Settings; hidden when none, falling back to @color/background. -->
+    <ImageView
+        android:id="@+id/home_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/settings_home_bg_image"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
+
     <!-- Free area: holding ~1 s opens Android Settings (emergency exit). -->
     <View
         android:id="@+id/home_space"

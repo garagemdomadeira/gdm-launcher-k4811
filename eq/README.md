@@ -35,9 +35,10 @@ eq/src/main/
 
 ## Tela do equalizador
 
-- Em cima, **Loudness**, **Influência**, **Reset** e **Aplicar ao ligar**, cada um com ícone. Embaixo, as predefinições (Padrão, Pop, Rock…).
-- Os sliders das bandas têm altura fixa (250dp), menor que a coluna. O valor em cima e a frequência embaixo ocupam o resto, e é ali que se arrasta para rolar as 32 bandas do DSP de lado.
-- **Influência** (ligada por padrão, gravada com o resto do som): ao mexer numa banda, as 2 vizinhas de cada lado acompanham, as mais próximas com 50% da mudança e as seguintes com 25%. A conta parte dos valores de quando o dedo encostou no slider, então arrastar para cima e para baixo não acumula erro de arredondamento.
+- Em cima, **Loudness**, **Influência**, **Reset** e **Aplicar ao ligar**, cada um com ícone. No DSP aparece também o chip **Avançado**. Embaixo, as predefinições (Padrão, Pop, Rock…).
+- **Quantas bandas:** no caminho MCU são **10**. No **DSP** o equalizador abre no **modo simples, com 7 bandas** (60, 150, 400 Hz, 1, 2.5, 6 e 15 kHz — na verdade as frequências do DSP mais próximas: 63/160/400/1k/2.5k/6.3k/16k). Ao mexer numa delas, as frequências intermediárias do DSP seguem por uma **rampa (interpolação linear)** entre as duas bandas vizinhas — no meio do caminho dá a média das duas. O chip **Avançado** troca para a vista completa de **32 bandas**. O ajuste é o mesmo por baixo: o modo simples só controla as 32 bandas em 7 pontos.
+- Os sliders das bandas têm altura fixa (250dp), menor que a coluna. O valor em cima e a frequência embaixo ocupam o resto, e é ali que se arrasta para rolar as bandas de lado (no modo avançado, as 32).
+- **Influência** (ligada por padrão, gravada com o resto do som): ao mexer numa banda, as 2 vizinhas de cada lado acompanham, as mais próximas com 50% da mudança e as seguintes com 25%. A conta parte dos valores de quando o dedo encostou no slider, então arrastar para cima e para baixo não acumula erro de arredondamento. No **modo simples** do DSP a Influência fica oculta, porque a interpolação das 7 bandas já suaviza a curva.
 
 ## Diferenças do original
 
