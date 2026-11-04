@@ -99,4 +99,5 @@
     <string name="home_obd_kmh">%1$d km/h</string>
     <string name="home_obd_rpm">%1$d rpm</string>
     <string name="home_obd_off">Sin OBD2</string>
+    <string name="ota_open">Abrir</string>
 </resources>

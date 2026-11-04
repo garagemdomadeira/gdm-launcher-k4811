@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GDM Atualizações (updater) e a linha dele nas configurações do launcher. -->
+<resources>
+    <string name="ota_app_name">GDM अपडेट</string>
+    <string name="ota_check_now">अभी जाँचें</string>
+    <string name="ota_checking">अपडेट जाँचे जा रहे हैं…</string>
+    <string name="ota_last_check">पिछली जाँच: %1$s</string>
+    <string name="ota_never">कभी नहीं</string>
+    <string name="ota_up_to_date">सब कुछ अपडेटेड है।</string>
+    <string name="ota_offline">इंटरनेट नहीं है। अगली जाँच में फिर कोशिश होगी।</string>
+    <string name="ota_bad_sig">अपडेट सूची पर GDM का हस्ताक्षर नहीं है। कुछ भी इंस्टॉल नहीं हुआ।</string>
+    <string name="ota_app_line">%1$s: %2$s → %3$s</string>
+    <string name="ota_confirm">अपडेट की पुष्टि करें</string>
+    <string name="ota_later">अभी नहीं</string>
+    <string name="ota_installing">%1$s इंस्टॉल हो रहा है…</string>
+    <string name="ota_downloading">%1$s डाउनलोड हो रहा है… %2$d%%</string>
+    <string name="ota_done">हो गया: %1$d ऐप अपडेट हुए।</string>
+    <string name="ota_failed">%1$s: %2$s</string>
+    <string name="ota_prompt_title">GDM अपडेट</string>
+    <string name="ota_rom_line">ROM %1$s (%2$d MB)</string>
+    <string name="ota_rom_install">ROM इंस्टॉल करें</string>
+    <string name="ota_rom_confirm_title">ROM %1$s इंस्टॉल करें?</string>
+    <string name="ota_rom_confirm_msg">%1$d MB डाउनलोड होगा, फिर यूनिट रीस्टार्ट होकर ROM लिखेगा (लगभग 10 मिनट)। आपका डेटा और ऐप बने रहेंगे। लिखते समय कार बंद न करें।</string>
+    <string name="ota_rom_metered">ध्यान दें: आप मोबाइल डेटा पर हैं।</string>
+    <string name="ota_rom_no_channel">यह ROM अपडेट चैनल नहीं बताती: यहाँ केवल ऐप अपडेट होते हैं।</string>
+    <string name="ota_rom_blocked_key">इस ROM की कुंजी अलग है और यह डेटा मिटा देगी: इसे USB ड्राइव से इंस्टॉल करें।</string>
+    <string name="ota_rom_blocked_cache">/cache तक पहुँच नहीं: USB ड्राइव से इंस्टॉल करें।</string>
+    <string name="ota_rom_blocked_system">ROM यहाँ केवल ROM में आने वाले GDM अपडेट से इंस्टॉल होती है।</string>
+    <string name="ota_rom_no_space">/cache में ROM के लिए जगह नहीं है।</string>
+    <string name="ota_rom_rebooting">ROM तैयार है। यूनिट रीस्टार्ट होकर इसे लिखेगी।</string>
+    <string name="home_dash_updates">अपडेट</string>
+    <string name="home_dash_updates_sub">GitHub से ऐप और ROM, हफ़्ते में एक बार जाँच</string>
+</resources>

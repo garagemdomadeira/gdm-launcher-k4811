@@ -314,6 +314,13 @@ public class SettingsActivity extends Activity {
             .local()
             .visibleWhen(() -> BottomBar.available(this))
             .help(getString(R.string.settings_help_hide_bottom_bar));
+        // GDM Atualizações (vem na ROM): apps da suíte e a ROM pelo GitHub, sempre perguntando antes.
+        list.action(getString(R.string.home_dash_updates), getString(R.string.home_dash_updates_sub),
+            getString(R.string.ota_open), () -> {
+                Intent i = getPackageManager().getLaunchIntentForPackage(com.k4811.common.Apps.UPDATER);
+                if (i != null) startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            })
+            .visibleWhen(() -> com.k4811.common.system.ExternalApps.installed(this, com.k4811.common.Apps.UPDATER));
     }
 
     private String yesNo(boolean v) {

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GDM Atualizações (updater) e a linha dele nas configurações do launcher. -->
+<resources>
+    <string name="ota_app_name">GDM Atualizações</string>
+    <string name="ota_check_now">Procurar agora</string>
+    <string name="ota_checking">Procurando atualizações…</string>
+    <string name="ota_last_check">Última procura: %1$s</string>
+    <string name="ota_never">nunca</string>
+    <string name="ota_up_to_date">Tudo atualizado.</string>
+    <string name="ota_offline">Sem internet. Tenta de novo na próxima procura.</string>
+    <string name="ota_bad_sig">A lista de atualizações não tem a assinatura da GDM. Nada foi instalado.</string>
+    <string name="ota_app_line">%1$s: %2$s → %3$s</string>
+    <string name="ota_confirm">Confirmar update</string>
+    <string name="ota_later">Agora não</string>
+    <string name="ota_installing">Instalando %1$s…</string>
+    <string name="ota_downloading">Baixando %1$s… %2$d%%</string>
+    <string name="ota_done">Pronto: %1$d app(s) atualizado(s).</string>
+    <string name="ota_failed">%1$s: %2$s</string>
+    <string name="ota_prompt_title">Atualizações da GDM</string>
+    <string name="ota_rom_line">ROM %1$s (%2$d MB)</string>
+    <string name="ota_rom_install">Instalar ROM</string>
+    <string name="ota_rom_confirm_title">Instalar a ROM %1$s?</string>
+    <string name="ota_rom_confirm_msg">Baixa %1$d MB e depois a central reinicia e grava a ROM (uns 10 minutos). Os dados e os apps ficam. Não desligue o carro durante a gravação.</string>
+    <string name="ota_rom_metered">Atenção: você está na internet do celular.</string>
+    <string name="ota_rom_no_channel">Esta ROM não informa o canal de atualização: por aqui só os apps são atualizados.</string>
+    <string name="ota_rom_blocked_key">Essa ROM tem outra chave e apagaria os dados: instale pelo pen drive.</string>
+    <string name="ota_rom_blocked_cache">Sem acesso ao /cache: instale pelo pen drive.</string>
+    <string name="ota_rom_blocked_system">A ROM só é instalada por aqui pelo GDM Atualizações que vem na ROM.</string>
+    <string name="ota_rom_no_space">Sem espaço no /cache para a ROM.</string>
+    <string name="ota_rom_rebooting">ROM pronta. A central vai reiniciar e gravar.</string>
+    <string name="home_dash_updates">Atualizações</string>
+    <string name="home_dash_updates_sub">Apps e ROM pelo GitHub, procura uma vez por semana</string>
+</resources>

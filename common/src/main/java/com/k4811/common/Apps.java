@@ -17,6 +17,8 @@ public final class Apps {
     public static final String EQ = BuildConfig.PKG_EQ;
     /** Ventoinha. Aberta pelo bloco da ventoinha na tela inicial (fora do dock). */
     public static final String FAN = BuildConfig.PKG_FAN;
+    /** GDM Atualizações (OTA da suíte e da ROM pelo GitHub). */
+    public static final String UPDATER = BuildConfig.PKG_UPDATER;
     /** Configurações (launcher, dock, idioma e central). Aberto pela engrenagem da tela inicial. */
     public static final String SETTINGS = BuildConfig.PKG_CAR_SETTING;
 

@@ -101,4 +101,5 @@
     <string name="home_obd_kmh">%1$d км/ч</string>
     <string name="home_obd_rpm">%1$d об/мин</string>
     <string name="home_obd_off">Нет OBD2</string>
+    <string name="ota_open">Открыть</string>
 </resources>

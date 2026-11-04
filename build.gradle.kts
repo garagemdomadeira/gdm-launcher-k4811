@@ -28,6 +28,8 @@ val packages = linkedMapOf(
     "phone" to "com.nwd.android.phone",
     "eq" to "com.nwd.audioset",
     "fan" to "com.nwd.cpumonitor",
+    // GDM Atualizações: busca semanal no GitHub (gdm-k4811-ota); sharedUserId de sistema, chave de plataforma da ROM.
+    "updater" to "com.garagemdomadeira.nwd.updater",
 )
 
 /** Nome do campo no BuildConfig do common para cada módulo (PKG_RADIO, PKG_BT_MUSIC…). */
