@@ -116,10 +116,12 @@ def main():
     ap.add_argument('--simular', action='store_true')
     ap.add_argument('--drive', action='store_true',
                     help='ROMs no Google Drive (rclone, remoto "gdrive:"), não na release do GitHub')
+    ap.add_argument('--remover', action='append', default=[],
+                    help='tira um app da lista (pacote); as centrais param de receber atualização dele')
     ap.add_argument('--republicar', action='store_true',
                     help='nova release com todos os apps já publicados (sem app novo)')
     a = ap.parse_args()
-    if not a.apps and not a.rom and not a.republicar:
+    if not a.apps and not a.rom and not a.republicar and not a.remover:
         sys.exit('nada para publicar (--apps / --rom / --republicar)')
     if not os.path.isfile(KEY):
         sys.exit('sem a chave ' + KEY)
@@ -166,6 +168,12 @@ def main():
         if not a.drive:
             assets.append((path, asset))
         changelog.append('- ROM %s (%s)%s' % (versao, canal, (': ' + a.notas_rom) if a.notas_rom else ''))
+
+    for pkg in a.remover:
+        if apps.pop(pkg, None) is not None:
+            changelog.append('- %s saiu da lista de atualizações' % pkg)
+        else:
+            print('aviso: %s não estava na lista' % pkg)
 
     # Cada release leva TODOS os apps atuais (não só os novos): quem abre a release no GitHub acha tudo junto. Os que
     # não mudaram são baixados da release anterior (conferindo o SHA-256) e anexados de novo. As ROMs ficam onde estão.
