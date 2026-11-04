@@ -48,6 +48,13 @@ public final class DockNavigator {
         DockView dock = new DockView(activity);
         column.addView(dock, new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, Math.round(Ui.dp(activity, DockView.HEIGHT_DP))));
+        // Central vertical com a barra da NWD à vista: ela fica por cima da parte de baixo, então o dock sobe.
+        int reserved = com.k4811.common.system.BottomBar.reservedPx(activity);
+        if (reserved > 0) {
+            View spacer = new View(activity);
+            spacer.setBackgroundColor(Ui.BG);
+            column.addView(spacer, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, reserved));
+        }
         root.addView(column, new ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 

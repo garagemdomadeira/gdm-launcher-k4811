@@ -62,6 +62,25 @@ public final class BottomBar implements Application.ActivityLifecycleCallbacks {
         return ExternalApps.installed(c, PACKAGE);
     }
 
+    /** Altura da barra da NWD na tela vertical: 140 px numa largura de 768 (layout home_horizontal do app dela). */
+    private static final int BAR_HEIGHT_PX = 140;
+    private static final int BAR_WIDTH_PX = 768;
+
+    /**
+     * Espaço (px reais) que as telas da suíte deixam livre embaixo para a barra da NWD: nas centrais verticais que
+     * têm a barra e com "Ocultar a barra" desligado ela fica por cima dos apps, então o dock da suíte sobe e fica
+     * logo acima dela. 0 nas horizontais (sem a barra) ou com a barra oculta.
+     */
+    public static int reservedPx(Context c) {
+        if (!available(c) || LauncherConfig.hideBottomBar(c)) return 0;
+        android.util.DisplayMetrics dm = new android.util.DisplayMetrics();
+        android.view.WindowManager wm = (android.view.WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
+        if (wm == null) return 0;
+        wm.getDefaultDisplay().getRealMetrics(dm);
+        if (dm.heightPixels <= dm.widthPixels) return 0; // a barra é da tela vertical
+        return Math.round(BAR_HEIGHT_PX * (dm.widthPixels / (float) BAR_WIDTH_PX));
+    }
+
     /** Settings switch. Applies at once: K4811 is in front while it's toggled. */
     public static void setEnabled(Context c, boolean on) {
         LauncherConfig.setHideBottomBar(c, on);

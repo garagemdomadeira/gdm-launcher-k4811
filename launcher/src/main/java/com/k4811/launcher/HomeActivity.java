@@ -1010,7 +1010,8 @@ public class HomeActivity extends Activity {
     /** Idioma, tema, modo escuro e fonte em uso nesta tela; se mudarem nas Configurações (outro app), recria. */
     private String lookKey() {
         return LauncherConfig.language(this) + "|" + LauncherConfig.theme(this)
-            + "|" + LauncherConfig.darkMode(this) + "|" + LauncherConfig.font(this);
+            + "|" + LauncherConfig.darkMode(this) + "|" + LauncherConfig.font(this)
+            + "|" + com.k4811.common.system.BottomBar.reservedPx(this);
     }
 
     private void openDateSettings() {

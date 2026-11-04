@@ -131,6 +131,7 @@ public final class HomeGrid {
             wPx = size.x;
             hPx = size.y;
         }
+        hPx -= com.k4811.common.system.BottomBar.reservedPx(a); // barra da NWD na vertical (o dock fica acima dela)
         float density = a.getResources().getDisplayMetrics().density;
         int w = Math.round(wPx / density);
         int h = Math.round(hPx / density);

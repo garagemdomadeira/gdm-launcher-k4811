@@ -444,7 +444,8 @@ public final class HomeModuleViews {
      */
     private void fitObd(HomeGrid.Frame slot) {
         boolean small = slot.size == HomeGrid.Size.SMALL;
-        boolean stacked = slot.size == HomeGrid.Size.TALL || (grid.portrait && slot.size == HomeGrid.Size.LARGE);
+        // Relógio em cima dos vitais só onde há altura (área alta); nas faixas do retrato fica ao lado, como na paisagem.
+        boolean stacked = slot.size == HomeGrid.Size.TALL || slot.height >= 300;
         LinearLayout root = (LinearLayout) activity.findViewById(R.id.obd_block);
         root.setOrientation(stacked ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
         root.setGravity(stacked ? Gravity.CENTER : Gravity.CENTER_VERTICAL);
