@@ -11,8 +11,8 @@ android {
         // applicationId: definido na tabela de packages do build.gradle.kts da raiz
         minSdk = 17     // como os outros apps da suíte
         targetSdk = 19  // permissões concedidas na instalação (ver AGENTS.md)
-        versionCode = 4  // GDM Atualizações 1.3
-        versionName = "1.3"
+        versionCode = 5  // GDM Atualizações 1.4
+        versionName = "1.4"
     }
 
     buildFeatures {

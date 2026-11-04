@@ -23,7 +23,24 @@ public final class CheckReceiver extends BroadcastReceiver {
             return;
         }
         // ligou, ou este app foi atualizado (o alarme antigo some junto)
+        if (Intent.ACTION_BOOT_COMPLETED.equals(a) || "android.intent.action.LOCKED_BOOT_COMPLETED".equals(a)) {
+            cleanCache();
+        }
         schedule(c);
+    }
+
+    /**
+     * Depois de gravar, o recovery deixa a ROM no /cache (1,6 GB): ao ligar ela já foi usada (ou a gravação falhou e o
+     * download começa de novo). Apaga para o /cache ficar livre para a próxima.
+     */
+    private static void cleanCache() {
+        try {
+            java.io.File zip = Installer.CACHE_ZIP;
+            java.io.File part = new java.io.File(zip.getPath() + ".part");
+            if (zip.isFile() && zip.delete()) android.util.Log.i("OtaLimpeza", "apagado " + zip);
+            if (part.isFile() && part.delete()) android.util.Log.i("OtaLimpeza", "apagado " + part);
+        } catch (Exception ignored) {
+        }
     }
 
     static void schedule(Context c) {
