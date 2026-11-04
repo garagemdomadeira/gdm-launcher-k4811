@@ -49,11 +49,13 @@ public class SettingsActivity extends Activity {
     private static final int PANEL_CUSTOMIZE = 1;
     private static final int PANEL_SYSTEM = 2;
     private static final int PANEL_AUDIO = 3;
+    private static final int PANEL_CONNECTIONS = 4;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private final LinearLayout[] panels = new LinearLayout[4];
-    private final TextView[] tabs = new TextView[4];
+    private final LinearLayout[] panels = new LinearLayout[5];
+    private final TextView[] tabs = new TextView[5];
     private AudioPanel audio;
+    private ConnectionsPanel connections;
     private OptionList list;
     private Dialog dialog;
 
@@ -90,6 +92,9 @@ public class SettingsActivity extends Activity {
         list.into(panels[PANEL_CUSTOMIZE]);
         buildAppearance();
         buildHomeScreen();
+        list.into(panels[PANEL_CONNECTIONS]);
+        connections = new ConnectionsPanel(this, list);
+        connections.build();
         list.into(panels[PANEL_SYSTEM]);
         buildDevice();
         buildAbout();
@@ -114,7 +119,7 @@ public class SettingsActivity extends Activity {
         findViewById(R.id.settings_sidebar).setVisibility(View.VISIBLE);
         findViewById(R.id.settings_tab_assists).setVisibility(View.GONE);
         int[] ids = {R.id.settings_tab_main, R.id.settings_tab_customize,
-            R.id.settings_tab_system, R.id.settings_tab_audio};
+            R.id.settings_tab_system, R.id.settings_tab_audio, R.id.settings_tab_connections};
         for (int i = 0; i < tabs.length; i++) {
             int panel = i;
             tabs[i] = (TextView) findViewById(ids[i]);
@@ -363,6 +368,7 @@ public class SettingsActivity extends Activity {
         handler.removeCallbacksAndMessages(null);
         list.release();
         if (audio != null) audio.release();
+        if (connections != null) connections.release();
         if (dialog != null) dialog.dismiss();
         super.onDestroy();
     }

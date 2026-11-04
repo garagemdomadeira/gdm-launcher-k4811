@@ -41,6 +41,10 @@ import java.util.concurrent.Executors;
  * Every installed app in a 5-column grid that scrolls down until the last one (no pages). The
  * icons come in with a short cascade the first time, sink a little under the finger and the app
  * opens zooming out of its icon. Back returns to the home screen.
+ *
+ * <p>Abas Todos / Favoritos e filtro por categoria ({@link AppCatalog#groupOf}). Tocar e segurar um
+ * app abre o menu (adicionar ou tirar dos favoritos, informações do app). Os favoritos e a última aba
+ * ficam no SharedPreferences do launcher (só ele usa).
  */
 public class AppsActivity extends Activity {
 
@@ -50,7 +54,26 @@ public class AppsActivity extends Activity {
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final ExecutorService loader = Executors.newSingleThreadExecutor();
+    /** Todos os apps carregados (donos dos ícones). */
+    private final List<AppCatalog.Entry> all = new ArrayList<>();
+    /** O que a grade mostra: a aba e o filtro aplicados sobre {@link #all}. */
     private final List<AppCatalog.Entry> apps = new ArrayList<>();
+    private static final String PREFS = "apps_drawer";
+    private static final String KEY_FAVORITES = "favorites";
+    private static final String KEY_TAB = "tab";
+    private static final int TAB_ALL = 0;
+    private static final int TAB_FAV = 1;
+    private static final int[] GROUP_NAMES = {R.string.home_apps_cat_all, R.string.home_apps_cat_car,
+        R.string.home_apps_cat_nav, R.string.home_apps_cat_media, R.string.home_apps_cat_social,
+        R.string.home_apps_cat_tools, R.string.home_apps_cat_games, R.string.home_apps_cat_other};
+    private final java.util.Set<String> favorites = new java.util.LinkedHashSet<>();
+    private int tab;
+    private int group = AppCatalog.GROUP_ALL;
+    private TextView tabAll;
+    private TextView tabFav;
+    private View filters;
+    private android.widget.LinearLayout filterRow;
+    private android.app.Dialog menu;
 
     private GridView grid;
     private TextView countView;
@@ -84,6 +107,24 @@ public class AppsActivity extends Activity {
         adapter = new AppsAdapter();
         grid.setAdapter(adapter);
         grid.setOnItemClickListener((parent, view, position, id) -> open(view, position));
+        grid.setOnItemLongClickListener((parent, view, position, id) -> {
+            if (position < 0 || position >= apps.size()) return false;
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            showMenu(apps.get(position));
+            return true;
+        });
+
+        android.content.SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+        favorites.addAll(prefs.getStringSet(KEY_FAVORITES, new java.util.HashSet<>()));
+        tab = prefs.getInt(KEY_TAB, TAB_ALL);
+        tabAll = (TextView) findViewById(R.id.apps_tab_all);
+        tabFav = (TextView) findViewById(R.id.apps_tab_fav);
+        tabAll.setTypeface(Ui.medium(this));
+        tabFav.setTypeface(Ui.medium(this));
+        tabAll.setOnClickListener(v -> setTab(TAB_ALL));
+        tabFav.setOnClickListener(v -> setTab(TAB_FAV));
+        filters = findViewById(R.id.apps_filters);
+        filterRow = (android.widget.LinearLayout) findViewById(R.id.apps_filter_row);
         // Row height follows the area the grid really got.
         grid.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
             int h = b - t;
@@ -96,6 +137,8 @@ public class AppsActivity extends Activity {
             }
         });
         Touch.install(findViewById(R.id.apps_back));
+        Touch.install(tabAll);
+        Touch.install(tabFav);
     }
 
     @Override
@@ -110,9 +153,11 @@ public class AppsActivity extends Activity {
         loadGen++;
         loader.shutdownNow();
         handler.removeCallbacksAndMessages(null);
+        if (menu != null) menu.dismiss();
         grid.setAdapter(null);
-        AppCatalog.recycle(new ArrayList<>(apps));
         apps.clear();
+        AppCatalog.recycle(new ArrayList<>(all));
+        all.clear();
         super.onDestroy();
     }
 
@@ -138,9 +183,10 @@ public class AppsActivity extends Activity {
                     AppCatalog.recycle(loaded);
                     return;
                 }
-                List<AppCatalog.Entry> previous = new ArrayList<>(apps);
-                apps.clear();
-                apps.addAll(loaded);
+                List<AppCatalog.Entry> previous = new ArrayList<>(all);
+                all.clear();
+                all.addAll(loaded);
+                buildFilters();
                 show();
                 // The grid redraws on the next frames: free the old icons only after that.
                 handler.postDelayed(() -> AppCatalog.recycle(previous), 1500);
@@ -149,15 +195,131 @@ public class AppsActivity extends Activity {
     }
 
     private void show() {
+        apps.clear();
+        for (AppCatalog.Entry e : all) {
+            if (tab == TAB_FAV ? favorites.contains(e.key()) : group == AppCatalog.GROUP_ALL || e.group == group) apps.add(e);
+        }
+        tabAll.setActivated(tab == TAB_ALL);
+        tabFav.setActivated(tab == TAB_FAV);
+        filters.setVisibility(tab == TAB_ALL && filterRow.getChildCount() > 2 ? View.VISIBLE : View.GONE);
+        for (int i = 0; i < filterRow.getChildCount(); i++) {
+            View chip = filterRow.getChildAt(i);
+            chip.setActivated(Integer.valueOf(group).equals(chip.getTag()));
+        }
         boolean none = apps.isEmpty();
         grid.setVisibility(none ? View.GONE : View.VISIBLE);
         empty.setVisibility(none ? View.VISIBLE : View.GONE);
+        empty.setText(tab == TAB_FAV && !all.isEmpty() ? R.string.home_apps_fav_empty : R.string.home_apps_empty);
         countView.setText(none ? "" : getResources().getQuantityString(R.plurals.home_apps_count, apps.size(), apps.size()));
         adapter.notifyDataSetChanged();
         if (!none && !animatedIn) {
             animatedIn = true;
             grid.scheduleLayoutAnimation();
         }
+    }
+
+    private void setTab(int t) {
+        if (t == tab) return;
+        tab = t;
+        getSharedPreferences(PREFS, MODE_PRIVATE).edit().putInt(KEY_TAB, tab).apply();
+        show();
+        grid.setSelection(0);
+        grid.scheduleLayoutAnimation();
+    }
+
+    /** Um botão por categoria que tem apps, mais "Todos"; com só uma categoria a linha some. */
+    private void buildFilters() {
+        int[] count = new int[AppCatalog.GROUPS];
+        for (AppCatalog.Entry e : all) count[e.group]++;
+        if (group != AppCatalog.GROUP_ALL && count[group] == 0) group = AppCatalog.GROUP_ALL;
+        filterRow.removeAllViews();
+        for (int g = 0; g < AppCatalog.GROUPS; g++) {
+            if (g != AppCatalog.GROUP_ALL && count[g] == 0) continue;
+            TextView chip = new TextView(this);
+            chip.setText(GROUP_NAMES[g]);
+            chip.setTextColor(Ui.TEXT);
+            chip.setTextSize(18);
+            chip.setTypeface(Ui.medium(this));
+            chip.setGravity(android.view.Gravity.CENTER);
+            int h = Math.round(Ui.dp(this, 18));
+            chip.setPadding(h, 0, h, 0);
+            com.k4811.common.ui.ThemeDrawables.setBackground(chip, R.drawable.pill);
+            chip.setTag(g);
+            int target = g;
+            chip.setOnClickListener(v -> {
+                group = target;
+                show();
+                grid.setSelection(0);
+            });
+            android.widget.LinearLayout.LayoutParams lp = new android.widget.LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, Math.round(Ui.dp(this, 44)));
+            lp.rightMargin = Math.round(Ui.dp(this, 10));
+            filterRow.addView(chip, lp);
+            Touch.install(chip);
+        }
+    }
+
+    /** Tocar e segurar: favoritos e informações do app, num painel no meio da tela. */
+    private void showMenu(AppCatalog.Entry entry) {
+        if (menu != null) menu.dismiss();
+        boolean fav = favorites.contains(entry.key());
+        android.widget.LinearLayout panel = new android.widget.LinearLayout(this);
+        panel.setOrientation(android.widget.LinearLayout.VERTICAL);
+        int p = Math.round(Ui.dp(this, 22));
+        panel.setPadding(p, p, p, p);
+        com.k4811.common.ui.ThemeDrawables.setBackground(panel, R.drawable.panel);
+        TextView title = new TextView(this);
+        title.setText(entry.label);
+        title.setTextColor(Ui.TEXT);
+        title.setTextSize(26);
+        title.setTypeface(Ui.semiBold(this));
+        title.setSingleLine(true);
+        panel.addView(title);
+        menuButton(panel, fav ? R.string.home_apps_fav_remove : R.string.home_apps_fav_add, () -> {
+            if (fav) favorites.remove(entry.key());
+            else favorites.add(entry.key());
+            getSharedPreferences(PREFS, MODE_PRIVATE).edit()
+                .putStringSet(KEY_FAVORITES, new java.util.HashSet<>(favorites)).apply();
+            show();
+        });
+        menuButton(panel, R.string.home_apps_info, () -> {
+            try {
+                startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    android.net.Uri.fromParts("package", entry.packageName, null)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            } catch (Exception e) {
+                Toast.makeText(this, R.string.home_apps_not_found, Toast.LENGTH_SHORT).show();
+            }
+        });
+        Ui.applyFont(panel);
+        menu = new android.app.Dialog(this);
+        menu.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+        menu.setContentView(panel, new ViewGroup.LayoutParams(Math.round(Ui.dp(this, 460)), ViewGroup.LayoutParams.WRAP_CONTENT));
+        if (menu.getWindow() != null) {
+            menu.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(0));
+        }
+        menu.show();
+        if (menu.getWindow() != null) Ui.hideSystemBars(menu.getWindow());
+    }
+
+    private void menuButton(android.widget.LinearLayout panel, int text, Runnable action) {
+        TextView b = new TextView(this);
+        b.setText(text);
+        b.setTextColor(Ui.TEXT);
+        b.setTextSize(22);
+        b.setTypeface(Ui.medium(this));
+        b.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        int h = Math.round(Ui.dp(this, 20));
+        b.setPadding(h, 0, h, 0);
+        com.k4811.common.ui.ThemeDrawables.setBackground(b, R.drawable.pill);
+        b.setOnClickListener(v -> {
+            if (menu != null) menu.dismiss();
+            action.run();
+        });
+        android.widget.LinearLayout.LayoutParams lp = new android.widget.LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, Math.round(Ui.dp(this, 64)));
+        lp.topMargin = Math.round(Ui.dp(this, 14));
+        panel.addView(b, lp);
+        Touch.install(b);
     }
 
     /** Each icon rises a little, grows from 92% and fades in, one shortly after the other. */

@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ import com.k4811.common.config.LauncherConfig;
 import com.k4811.common.config.NwdConfigs;
 import com.k4811.common.system.BottomBar;
 import com.k4811.launcher.home.MuteClient;
+import com.k4811.launcher.home.StatusStrip;
 import com.k4811.common.audio.PlayerHandoff;
 import com.k4811.launcher.home.VolumeClient;
 import com.k4811.common.music.AlbumArt;
@@ -111,6 +113,8 @@ public class HomeActivity extends Activity {
     private int volumeValue;
     private boolean muted;
     private boolean fanOn;
+    /** Ícones de estado no alto (ventoinha, Wi-Fi, rede móvel, GPS, Bluetooth, tempo lá fora). */
+    private StatusStrip strip;
     private boolean btHfp;
     private String btDevice = "";
 
@@ -383,6 +387,17 @@ public class HomeActivity extends Activity {
         fanIcon.setClickable(false);
         fanIcon.color(Ui.TEXT_MUTED);
         findViewById(R.id.fan_status).setOnClickListener(v -> openApp(Apps.FAN));
+        strip = new StatusStrip(this, (LinearLayout) findViewById(R.id.status_bar), new StatusStrip.Actions() {
+            @Override
+            public void openFan() {
+                openApp(Apps.FAN);
+            }
+
+            @Override
+            public void openBluetooth() {
+                openDock(DockView.Item.PHONE);
+            }
+        });
 
         npLabel = text(R.id.np_label);
         npLine1 = text(R.id.np_line1);
@@ -467,6 +482,9 @@ public class HomeActivity extends Activity {
         readFan();
         queryBt();
         applyPrefs();
+        strip.resume();
+        resumed = true;
+        if (snap != null) announceCallCard(snap.call != HomeSession.CallPhase.NONE);
     }
 
     /** Settings screen options: home modules and voltmeter. */
@@ -493,6 +511,9 @@ public class HomeActivity extends Activity {
         handler.removeCallbacks(voltageTick);
         handler.removeCallbacks(autoScreenOff);
         gps.stop();
+        strip.pause();
+        resumed = false;
+        announceCallCard(false);
         super.onPause();
     }
 
@@ -502,6 +523,7 @@ public class HomeActivity extends Activity {
         handler.removeCallbacksAndMessages(null);
         gps.stop();
         gps.setListener(null);
+        strip.pause();
         try {
             unregisterReceiver(btReceiver);
         } catch (Exception ignored) {
@@ -567,12 +589,29 @@ public class HomeActivity extends Activity {
         boolean calling = s.call != HomeSession.CallPhase.NONE;
         show(cardCall, calling);
         if (modules.slotOf(HomeGrid.Module.NOW_PLAYING) != null) {
-            findViewById(R.id.now_playing).setVisibility(calling ? View.INVISIBLE : View.VISIBLE);
+            // Com o cartão na coluna da direita, o "tocando agora" continua à vista.
+            boolean covered = calling && !modules.callOnRight();
+            findViewById(R.id.now_playing).setVisibility(covered ? View.INVISIBLE : View.VISIBLE);
         }
+        announceCallCard(calling && resumed);
         renderNowPlaying();
         renderSourceBadge(s);
         renderCall(s);
         renderBt();
+    }
+
+    private boolean resumed;
+    private boolean cardAnnounced;
+
+    /** Avisa o telefone se o cartão da ligação está à vista, para ele esconder a janela flutuante. */
+    private void announceCallCard(boolean shown) {
+        if (shown == cardAnnounced) return;
+        cardAnnounced = shown;
+        Intent i = new Intent(Apps.ACTION_HOME_CALL_CARD).setPackage(Apps.PHONE).putExtra(Apps.EXTRA_SHOWN, shown);
+        try {
+            sendBroadcast(i);
+        } catch (Exception ignored) {
+        }
     }
 
     private void renderClock() {
@@ -869,6 +908,7 @@ public class HomeActivity extends Activity {
     }
 
     private void renderFan() {
+        if (strip != null) strip.setFan(fanOn);
         if (fanText == null) return;
         fanDot.setActivated(fanOn);
         fanText.setText(fanOn ? R.string.home_fan_on : R.string.home_fan_off);
@@ -889,6 +929,7 @@ public class HomeActivity extends Activity {
         if (btText == null) return;
         boolean a2dp = snap != null && snap.a2dpKnown && snap.a2dpConnected;
         boolean connected = btHfp || a2dp;
+        if (strip != null) strip.setBluetooth(connected);
         btText.setText(connected ? R.string.home_bt_connected : R.string.home_bt_disconnected);
         btText.setTextColor(Ui.TEXT);
         btIcon.color(connected ? Ui.TEXT : Ui.TEXT_MUTED);

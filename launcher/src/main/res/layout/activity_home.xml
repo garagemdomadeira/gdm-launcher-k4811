@@ -37,6 +37,16 @@
         android:layout_marginTop="14dp"
         android:contentDescription="@string/home_settings" />
 
+    <!-- ===== Barra de ícones de estado (StatusStrip): no alto, no centro, acima do relógio ===== -->
+    <LinearLayout
+        android:id="@+id/status_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="72dp"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="14dp"
+        android:gravity="center"
+        android:orientation="horizontal" />
+
     <!-- ===== Clock module ===== -->
     <LinearLayout
         android:id="@+id/clock_block"

@@ -25,6 +25,7 @@ import com.k4811.common.radio.PresetStore;
 import com.k4811.common.radio.RadioClient;
 import com.k4811.common.radio.RadioState;
 import com.k4811.common.radio.StationArt;
+import com.k4811.common.radio.StationLogos;
 import com.k4811.common.system.DevMode;
 import com.k4811.common.ui.IconView;
 import com.k4811.common.ui.IconView.Icon;
@@ -62,6 +63,8 @@ public class RadioActivity extends Activity implements RadioClient.Listener {
     private String artKey;
     private int artGen;
     private final ExecutorService artLoader = Executors.newSingleThreadExecutor();
+    /** Logos baixados da internet (StationLogos): fila própria, a rede não segura a arte local. */
+    private final ExecutorService logoLoader = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
     private TunerDialView dial;
     private View toggleSt, toggleLoc;
@@ -143,6 +146,7 @@ public class RadioActivity extends Activity implements RadioClient.Listener {
         radio.release();
         artGen++;
         artLoader.shutdownNow();
+        logoLoader.shutdownNow();
         super.onDestroy();
     }
 
@@ -354,6 +358,20 @@ public class RadioActivity extends Activity implements RadioClient.Listener {
                 // The square always stays; without a picture, the radio icon shows through.
                 stationArt.setImageBitmap(bmp);
                 show(stationArtPlaceholder, bmp == null);
+                if (bmp == null) fetchLogo(band, frequency, key);
+            });
+        });
+    }
+
+    /** Sem arquivo para a estação: tenta baixar o logo e, se chegar, mostra (se ainda for a mesma estação). */
+    private void fetchLogo(int band, int frequency, String key) {
+        String ps = state.psName;
+        logoLoader.execute(() -> {
+            if (!StationLogos.fetch(getApplicationContext(), band, frequency, ps)) return;
+            handler.post(() -> {
+                if (!key.equals(artKey)) return;
+                artKey = null;
+                bindArt(band, frequency);
             });
         });
     }

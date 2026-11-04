@@ -83,6 +83,11 @@ public final class HomeGrid {
         }
     }
 
+    /** Área que vai do alto de {@code top} ao pé de {@code bottom} (mesma coluna), tratada como alta. */
+    public static Frame span(Frame top, Frame bottom) {
+        return new Frame(top.x, top.y, top.width, bottom.y + bottom.height - top.y, Size.TALL);
+    }
+
     /** The grid for one screen: its size in dp and each slot's frame. */
     public static final class Layout {
         public final boolean portrait;

@@ -22,6 +22,12 @@ public final class Apps {
 
     /** Gaveta de apps do launcher. */
     public static final String ACTION_APPS = "com.k4811.launcher.action.APPS";
+    /**
+     * Launcher → telefone: a tela inicial está mostrando o cartão da ligação ({@link #EXTRA_SHOWN}
+     * true) ou deixou de mostrar. Enquanto mostra, a janela flutuante da ligação fica escondida.
+     */
+    public static final String ACTION_HOME_CALL_CARD = "com.k4811.action.HOME_CALL_CARD";
+    public static final String EXTRA_SHOWN = "shown";
 
     /**
      * Enviado por um app antes de virar a fonte de áudio. Os players do suíte pausam ao receber,

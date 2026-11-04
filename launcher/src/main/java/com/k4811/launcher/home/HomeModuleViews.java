@@ -93,15 +93,38 @@ public final class HomeModuleViews {
             }
             root.setVisibility(View.VISIBLE);
         }
-        HomeGrid.Slot callSlot = slotOf(HomeGrid.Module.NOW_PLAYING);
-        if (callSlot == null) callSlot = HomeGrid.Slot.LEFT;
+        // Ligação: com a coluna da direita livre (padrão), o cartão aparece nela inteira e o "tocando
+        // agora" continua à vista; senão, por cima do "tocando agora", como antes. Some sem ligação.
+        HomeGrid.Frame callFrame;
+        if (!grid.portrait && free(HomeGrid.Slot.RIGHT_TOP) && free(HomeGrid.Slot.RIGHT_MIDDLE)
+            && free(HomeGrid.Slot.RIGHT_BOTTOM)) {
+            callFrame = HomeGrid.span(grid.frame(HomeGrid.Slot.RIGHT_TOP), grid.frame(HomeGrid.Slot.RIGHT_BOTTOM));
+        } else {
+            HomeGrid.Slot callSlot = slotOf(HomeGrid.Module.NOW_PLAYING);
+            if (callSlot == null) callSlot = HomeGrid.Slot.LEFT;
+            callFrame = grid.frame(callSlot);
+        }
+        callOnRight = !grid.portrait && free(HomeGrid.Slot.RIGHT_TOP) && free(HomeGrid.Slot.RIGHT_MIDDLE)
+            && free(HomeGrid.Slot.RIGHT_BOTTOM);
         View card = activity.findViewById(R.id.card_call);
-        place(card, grid.frame(callSlot));
-        fitCall(grid.frame(callSlot));
+        place(card, callFrame);
+        fitCall(callFrame);
         card.bringToFront();
     }
 
     /** Slot of {@code m}, or null when it's hidden. */
+    private boolean callOnRight;
+
+    /** O cartão da ligação aparece na coluna da direita (o "tocando agora" continua à vista). */
+    public boolean callOnRight() {
+        return callOnRight;
+    }
+
+    /** Nenhum módulo ocupa {@code slot}. */
+    private boolean free(HomeGrid.Slot slot) {
+        return layout == null || !layout.containsValue(slot);
+    }
+
     public HomeGrid.Slot slotOf(HomeGrid.Module m) {
         return layout == null ? null : layout.get(m);
     }

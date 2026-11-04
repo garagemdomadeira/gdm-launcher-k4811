@@ -42,6 +42,8 @@ public class DockView extends LinearLayout {
         VIDEO("video", R.string.home_dock_video, R.string.home_dock_video_title, IconView.Icon.VIDEO, true, ExternalApps.PKG_VIDEO),
         /** Z-Link (CarPlay / Android Auto); its dock label is chosen in Settings (see LauncherConfig.ZLINK_NAMES). */
         ZLINK("zlink", R.string.home_dock_zlink, R.string.home_dock_zlink_title, IconView.Icon.PHONE_LINK, true, null),
+        /** App de navegação escolhido nas Configurações (Waze, Maps...); o rótulo é o nome dele. */
+        NAV("nav", R.string.home_dock_nav, R.string.home_dock_nav_title, IconView.Icon.NAVIGATION, true, null),
         APPS("apps", R.string.home_dock_apps, R.string.home_dock_apps_title, IconView.Icon.APPS, false, null);
 
         /** Id gravado em launcher.json (dock_toggles). */
@@ -73,6 +75,10 @@ public class DockView extends LinearLayout {
         /** Short label shown in the dock. */
         public String label(Context c) {
             if (this == ZLINK) return LauncherConfig.ZLINK_NAMES[LauncherConfig.zlinkName(c)].toUpperCase();
+            if (this == NAV) {
+                String pkg = LauncherConfig.navApp(c);
+                if (!pkg.isEmpty()) return ExternalApps.appLabel(c, pkg).toUpperCase();
+            }
             return c.getString(labelRes);
         }
 
@@ -96,7 +102,7 @@ public class DockView extends LinearLayout {
 
         /** Item that opens a head-unit app instead of one of our screens. */
         public boolean isExternal() {
-            return this == AUX || this == CAMERA_360 || this == VIDEO || this == ZLINK;
+            return this == AUX || this == CAMERA_360 || this == VIDEO || this == ZLINK || this == NAV;
         }
 
         /** false if the item's app or hardware doesn't exist on this head unit (hidden from dock and Settings). */
@@ -110,6 +116,8 @@ public class DockView extends LinearLayout {
                     return ExternalApps.hasVideo(c);
                 case ZLINK:
                     return ExternalApps.hasZlink(c);
+                case NAV:
+                    return !LauncherConfig.navApp(c).isEmpty();
                 default:
                     // App da suíte: some do dock se não estiver instalado (o próprio app sempre aparece).
                     if (pkg == null || pkg.equals(c.getPackageName())) return true;
@@ -169,6 +177,7 @@ public class DockView extends LinearLayout {
             key.append(item.id).append(',');
         }
         key.append(LauncherConfig.zlinkName(c)); // Z-Link's label and icon are a setting too
+        if (shown.contains(Item.NAV)) key.append(',').append(LauncherConfig.navApp(c)); // rótulo = app escolhido
         if (key.toString().equals(shownKey)) return;
         shownKey = key.toString();
 

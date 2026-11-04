@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <!-- Settings.System (chaves da NWD) e pedido de alterar props ("nwd_system_prop"), como o
@@ -9,6 +10,20 @@
          Com targetSdk < 23 são concedidas na instalação. -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- Aba Conexões: Wi-Fi, Bluetooth do Android e roteador Wi-Fi (ConnectionsPanel, system/Hotspot).
+         Ligar/desligar o roteador vale com WRITE_SETTINGS; nome e senha só com OVERRIDE_WIFI_CONFIG,
+         concedida quando o app está em /system/priv-app na ROM. -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission
+        android:name="android.permission.OVERRIDE_WIFI_CONFIG"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.TETHER_PRIVILEGED"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name=".SettingApp"

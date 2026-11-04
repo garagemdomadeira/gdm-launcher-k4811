@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.k4811.common.config.LauncherConfig;
+import com.k4811.common.system.ExternalApps;
 import com.k4811.common.ui.DockView;
 import com.k4811.common.ui.IconView;
 import com.k4811.car.setting.ui.OptionList;
@@ -85,6 +86,20 @@ public class DockSettingsActivity extends Activity {
             .local()
             .help(getString(R.string.settings_help_zlink_name))
             .visibleWhen(() -> DockView.Item.ZLINK.isAvailable(this));
+        java.util.List<String> nav = ExternalApps.navApps(this);
+        String[] navNames = new String[nav.size()];
+        int[] navValues = new int[nav.size()];
+        for (int i = 0; i < navNames.length; i++) {
+            navNames[i] = ExternalApps.appLabel(this, nav.get(i));
+            navValues[i] = i;
+        }
+        list.choice(getString(R.string.settings_nav_dock_app), getString(R.string.settings_nav_dock_app_hint),
+            navNames, navValues,
+            () -> Math.max(0, nav.indexOf(LauncherConfig.navApp(this))),
+            i -> LauncherConfig.setNavApp(this, nav.get(i)))
+            .local()
+            .help(getString(R.string.settings_help_nav_dock_app))
+            .visibleWhen(() -> !nav.isEmpty());
         list.action(getString(R.string.settings_dock_reset), getString(R.string.settings_dock_reset_hint),
             getString(R.string.settings_reset), () -> {
             LauncherConfig.resetDockToggles(this);

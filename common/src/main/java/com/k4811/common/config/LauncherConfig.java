@@ -48,6 +48,8 @@ public final class LauncherConfig {
     private static final String KEY_HOME_IMAGE = "home_image";
     private static final String KEY_HIDE_BOTTOM_BAR = "hide_bottom_bar";
     private static final String KEY_ZLINK_NAME = "zlink_name";
+    /** Package do app de navegação do botão Navegação do dock ("" = o primeiro instalado). */
+    private static final String KEY_NAV_APP = "nav_app";
     private static final String KEY_ASK_DEFAULT = "ask_default_launcher";
     private static final String KEY_VOLUME_OVERLAY = "show_volume_overlay";
     /** Antigo liga/desliga do menu da borda; só lido quando ainda não há {@link #KEY_EDGE_MENU_SIDE}. */
@@ -121,11 +123,17 @@ public final class LauncherConfig {
 
     /** Idioma escolhido; inglês quando nada foi escolhido ou o gravado não existe mais. */
     public static String language(Context c) {
-        String tag = string(KEY_LANGUAGE, DEFAULT_LANGUAGE);
+        // ROM K4811: sem escolha gravada, segue o idioma do sistema (pt na ROM brasileira) se for um dos conhecidos.
+        String sys = java.util.Locale.getDefault().getLanguage();
+        String def = DEFAULT_LANGUAGE;
+        for (String known : LANGUAGES) {
+            if (known.equals(sys)) def = sys;
+        }
+        String tag = string(KEY_LANGUAGE, def);
         for (String known : LANGUAGES) {
             if (known.equals(tag)) return tag;
         }
-        return DEFAULT_LANGUAGE;
+        return def;
     }
 
     public static boolean setLanguage(Context c, String tag) {
@@ -203,6 +211,22 @@ public final class LauncherConfig {
         return put(KEY_ZLINK_NAME, index);
     }
 
+    /**
+     * App de navegação do botão Navegação do dock: o escolhido nas Configurações, se ainda
+     * estiver instalado; senão o primeiro instalado ({@link com.k4811.common.system.ExternalApps#navApps}).
+     * "" se não houver nenhum.
+     */
+    public static String navApp(Context c) {
+        String chosen = string(KEY_NAV_APP, "");
+        java.util.List<String> apps = com.k4811.common.system.ExternalApps.navApps(c);
+        if (!chosen.isEmpty() && apps.contains(chosen)) return chosen;
+        return apps.isEmpty() ? "" : apps.get(0);
+    }
+
+    public static boolean setNavApp(Context c, String pkg) {
+        return put(KEY_NAV_APP, pkg);
+    }
+
     /** Esconder a barra flutuante da NWD enquanto um app da suíte está na frente. Desligado por padrão. */
     public static boolean hideBottomBar(Context c) {
         return bool(KEY_HIDE_BOTTOM_BAR, false);
@@ -250,8 +274,8 @@ public final class LauncherConfig {
             out.put(HomeGrid.Module.NOW_PLAYING, HomeGrid.Slot.LEFT);
             out.put(HomeGrid.Module.CLOCK, HomeGrid.Slot.CENTER_TOP);
             if (bool(KEY_VOLUME, true)) out.put(HomeGrid.Module.VOLUME, HomeGrid.Slot.CENTER_BOTTOM);
-            out.put(HomeGrid.Module.FAN, HomeGrid.Slot.RIGHT_TOP);
-            out.put(HomeGrid.Module.BLUETOOTH, HomeGrid.Slot.RIGHT_MIDDLE);
+            // Ventoinha e Bluetooth viraram ícones na barra do alto; a coluna da direita fica livre
+            // (o cartão de ligação aparece nela). Os dois módulos continuam disponíveis nas Configurações.
             return out;
         }
         for (String pair : raw.split(",")) {

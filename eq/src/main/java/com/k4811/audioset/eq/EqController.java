@@ -3,6 +3,7 @@ package com.k4811.audioset.eq;
 import com.k4811.common.eq.SettingClient;
 
 import com.k4811.common.eq.EqModel;
+import com.k4811.common.system.SystemProps;
 
 import android.content.Context;
 import android.os.Handler;
@@ -53,6 +54,11 @@ public final class EqController {
     private volatile boolean backendKnown;
     /** Boot/ACC: em ARM o DSP volta ao padrão; em MCU só se "aplicar ao ligar" estiver ligado. */
     private static final long BOOT_DELAY_MS = 3000;
+    /** Props the stock DspAdjust3 sets through the NWD channel: DSP type (3 = ARM DSP) and current EQ preset. */
+    private static final String PROP_DSP_TYPE = "sys.nwd.dsp.type";
+    private static final String PROP_DSP_EQ = "persist.sys.dsp.eq";
+    /** Last persist.sys.dsp.eq sent (avoids one broadcast per band drag). */
+    private String lastEqProp;
     private static final long BOOT_TIMEOUT_MS = 20000;
 
     public EqController(Context context) {
@@ -327,7 +333,11 @@ public final class EqController {
     public void reapplyAll() {
         appendLog("Reapplying all sound settings (" + state.backend.label + ")");
         if (state.isArm()) {
+            // Same order as the stock DspAdjust3 at boot: 32-band EQ, then the full 0xF2 state.
+            SystemProps.requestSet(context, PROP_DSP_TYPE, "3");
+            lastEqProp = null;
             sendArmEq();
+            armSend(DspFrames.otherAll(state.channels, state.fader, state.balance), false);
             armSend(DspFrames.loudness(state.loudness), false);
             armSend(DspFrames.site(state.fader, state.balance), false);
             reapplyChannels();
@@ -533,6 +543,15 @@ public final class EqController {
             wire[i] = DspFrames.gainToWire(state.armGainsDb[i], state.armEqMax);
         }
         armSend(DspFrames.allEq(state.armFrequencies, state.armQ, wire), false);
+        publishEqProp();
+    }
+
+    /** persist.sys.dsp.eq = preset name (standard, pop, rock, classic, jazz, customize), as the stock app. */
+    private void publishEqProp() {
+        String key = state.preset.fileKey;
+        if (key.equals(lastEqProp)) return;
+        lastEqProp = key;
+        SystemProps.requestSet(context, PROP_DSP_EQ, key);
     }
 
     private void armSend(byte[] frame, boolean force) {

@@ -32,6 +32,7 @@ import com.k4811.common.ui.Ui;
 public class CallFloatService extends Service {
     private static final String TAG = "K4811CallFloat";
     private static final String EXTRA_SUPPRESS = "suppress";
+    private static final String EXTRA_HOME_CARD = "home_card";
 
     private static final int NONE = 0;
     private static final int IN = 1;
@@ -55,6 +56,8 @@ public class CallFloatService extends Service {
     private String number = "";
     /** A tela do telefone está na frente: o cartão fica escondido. */
     private boolean suppressed;
+    /** A tela inicial está mostrando o próprio cartão da ligação: este fica escondido. */
+    private boolean homeCard;
     private boolean receiverRegistered;
 
     /** Chamada começou (ou número/nome chegou): mostra ou atualiza o cartão. */
@@ -69,6 +72,13 @@ public class CallFloatService extends Service {
     public static void setPhoneInFront(Context context, boolean inFront) {
         Intent i = new Intent(context, CallFloatService.class);
         i.putExtra(EXTRA_SUPPRESS, inFront);
+        start(context, i);
+    }
+
+    /** A tela inicial mostra ({@code true}) ou deixou de mostrar o cartão dela da ligação. */
+    public static void setHomeCard(Context context, boolean shown) {
+        Intent i = new Intent(context, CallFloatService.class);
+        i.putExtra(EXTRA_HOME_CARD, shown);
         start(context, i);
     }
 
@@ -101,6 +111,7 @@ public class CallFloatService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
             if (intent.hasExtra(EXTRA_SUPPRESS)) suppressed = intent.getBooleanExtra(EXTRA_SUPPRESS, false);
+            if (intent.hasExtra(EXTRA_HOME_CARD)) homeCard = intent.getBooleanExtra(EXTRA_HOME_CARD, false);
             if (intent.getAction() != null) apply(intent);
         }
         render();
@@ -163,7 +174,7 @@ public class CallFloatService extends Service {
             stopSelf();
             return;
         }
-        if (suppressed) {
+        if (suppressed || homeCard) {
             removeCard();
             return;
         }

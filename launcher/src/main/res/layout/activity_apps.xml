@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Drawer at 1280×720: header, then every app in a 5-column grid that scrolls down until the
-    last one (no pages). Rows are sized so that two and a half fit: the cut row hints at the scroll.
+    Drawer at 1280×720: header (title, Todos/Favoritos tabs, count), category filters, then the
+    apps in a 5-column grid that scrolls down until the last one (no pages). Rows are sized so that
+    two and a half fit: the cut row hints at the scroll. Touch and hold an app: favorites menu.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/apps_root"
@@ -26,13 +27,44 @@
 
         <TextView
             android:id="@+id/apps_title"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_weight="1"
             android:text="@string/home_apps_title"
             android:textColor="@color/text"
             android:textSize="32sp" />
+
+        <!-- Abas: todos os apps / favoritos (AppsActivity). -->
+        <TextView
+            android:id="@+id/apps_tab_all"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:layout_marginLeft="40dp"
+            android:background="@drawable/tab_line"
+            android:gravity="center"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:text="@string/home_apps_tab_all"
+            android:textColor="@color/text"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/apps_tab_fav"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/tab_line"
+            android:gravity="center"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:text="@string/home_apps_tab_fav"
+            android:textColor="@color/text"
+            android:textSize="22sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
 
         <!-- How many apps -->
         <TextView
@@ -42,6 +74,24 @@
             android:textColor="@color/text_muted"
             android:textSize="20sp" />
     </LinearLayout>
+
+    <!-- Filtro por categoria (só na aba Todos; só as categorias que têm apps). -->
+    <HorizontalScrollView
+        android:id="@+id/apps_filters"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:fillViewport="false"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/apps_filter_row"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
 
     <FrameLayout
         android:layout_width="match_parent"

@@ -99,6 +99,9 @@ public final class DockNavigator {
             case ZLINK:
                 ExternalApps.openZlink(from);
                 return;
+            case NAV:
+                ExternalApps.openNav(from);
+                return;
             case CAMERA_360:
                 ExternalApps.open360(from);
                 return;
