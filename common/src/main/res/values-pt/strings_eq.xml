@@ -19,7 +19,6 @@
     <string name="eq_loudness">Loudness</string>
     <string name="eq_reset">Reset</string>
     <string name="eq_influence">Influência</string>
-    <string name="eq_advanced">Avançado</string>
 
     <!-- Seats -->
     <string name="eq_seat_driver">Motorista</string>
@@ -70,6 +69,57 @@
     <string name="eq_info_path">Caminho: %1$s</string>
     <string name="eq_info_chip">Chip: %1$s · DTS %2$s</string>
     <string name="eq_info_method">Método: %1$s · máx %2$d/%3$d</string>
+    <!-- Aba Graves (Bass do DspAdjust3): divisor de frequência, reforço de graves e 3D -->
+    <string name="eq_tab_bass">Graves</string>
+    <string name="eq_crossover">Divisor de frequência</string>
+    <string name="eq_hpf">Passa-alta (HPF)</string>
+    <string name="eq_lpf">Passa-baixa (LPF)</string>
+    <string name="eq_slope">Inclinação</string>
+    <string name="eq_area_front">Frente</string>
+    <string name="eq_area_rear">Traseira</string>
+    <string name="eq_area_center">Centro</string>
+    <string name="eq_area_sub">Subwoofer</string>
+    <string name="eq_area_sub_center">Sub/centro</string>
+    <string name="eq_bass_boost">Reforço de graves</string>
+    <string name="eq_bass_freq">Frequência</string>
+    <string name="eq_bass_gain">Intensidade</string>
+    <string name="eq_3d">Som 3D</string>
+    <string name="eq_3d_hint">Amplia o palco sonoro</string>
+    <string name="eq_reset_area">Restaurar área</string>
+    <string name="eq_bass_off">Desligado</string>
+
+    <!-- Meus EQs -->
+    <string name="eq_tab_saved">Meus EQs</string>
+    <string name="eq_saved_title">EQs salvos</string>
+    <string name="eq_save_current">Salvar o EQ atual</string>
+    <string name="eq_name_hint">Nome (letras e números)</string>
+    <string name="eq_save">Salvar</string>
+    <string name="eq_replace">Substituir?</string>
+    <string name="eq_use">Usar</string>
+    <string name="eq_export">Exportar</string>
+    <string name="eq_delete">Apagar</string>
+    <string name="eq_confirm_delete">Apagar?</string>
+    <string name="eq_usb">Pen drive</string>
+    <string name="eq_usb_hint">Usa a pasta EQ_Setup do pen drive, como o app original.</string>
+    <string name="eq_import">Importar</string>
+    <string name="eq_export_all">Exportar todos</string>
+    <string name="eq_saved_empty">Nenhum EQ salvo ainda.</string>
+    <string name="eq_saved_ok">%1$s salvo</string>
+    <string name="eq_saved_fail">Não deu para concluir</string>
+    <string name="eq_name_invalid">Use só letras, números, _ e -</string>
+    <string name="eq_no_usb">Nenhum pen drive encontrado</string>
+    <string name="eq_no_usb_folder">Sem a pasta EQ_Setup com arquivos no pen drive</string>
+    <string name="eq_in_use">Em uso</string>
+    <string name="eq_usb_write_fail">Não deu para gravar no pen drive</string>
+    <string name="eq_use_fail">Não deu para ler este EQ</string>
+    <plurals name="eq_exported">
+        <item quantity="one">%1$d EQ exportado</item>
+        <item quantity="other">%1$d EQs exportados</item>
+    </plurals>
+    <plurals name="eq_imported">
+        <item quantity="one">%1$d EQ importado</item>
+        <item quantity="other">%1$d EQs importados</item>
+    </plurals>
     <string name="eq_tab_gain">Volume por fonte</string>
     <string name="eq_gain_hint">Iguala o volume de cada fonte no DSP. Vale depois de reiniciar a central.</string>
     <string name="eq_gain_radio">Rádio</string>

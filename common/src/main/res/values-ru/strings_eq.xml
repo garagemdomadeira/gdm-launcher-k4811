@@ -19,7 +19,6 @@
     <string name="eq_loudness">Тонкомпенсация</string>
     <string name="eq_reset">Сброс</string>
     <string name="eq_influence">Влияние</string>
-    <string name="eq_advanced">Расширенный</string>
 
     <!-- Seats -->
     <string name="eq_seat_driver">Водитель</string>
@@ -71,6 +70,61 @@
     <string name="eq_info_path">Тракт: %1$s</string>
     <string name="eq_info_chip">Чип: %1$s · DTS %2$s</string>
     <string name="eq_info_method">Метод: %1$s · макс. %2$d/%3$d</string>
+    <!-- Aba Graves (Bass do DspAdjust3): divisor de frequência, reforço de graves e 3D -->
+    <string name="eq_tab_bass">Басы</string>
+    <string name="eq_crossover">Кроссовер</string>
+    <string name="eq_hpf">ФВЧ (HPF)</string>
+    <string name="eq_lpf">ФНЧ (LPF)</string>
+    <string name="eq_slope">Крутизна</string>
+    <string name="eq_area_front">Передние</string>
+    <string name="eq_area_rear">Задние</string>
+    <string name="eq_area_center">Центр</string>
+    <string name="eq_area_sub">Сабвуфер</string>
+    <string name="eq_area_sub_center">Саб/центр</string>
+    <string name="eq_bass_boost">Усиление басов</string>
+    <string name="eq_bass_freq">Частота</string>
+    <string name="eq_bass_gain">Сила</string>
+    <string name="eq_3d">3D-звук</string>
+    <string name="eq_3d_hint">Расширяет звуковую сцену</string>
+    <string name="eq_reset_area">Сбросить зону</string>
+    <string name="eq_bass_off">Выкл.</string>
+
+    <!-- Meus EQs -->
+    <string name="eq_tab_saved">Мои EQ</string>
+    <string name="eq_saved_title">Сохранённые EQ</string>
+    <string name="eq_save_current">Сохранить текущий EQ</string>
+    <string name="eq_name_hint">Имя (буквы и цифры)</string>
+    <string name="eq_save">Сохранить</string>
+    <string name="eq_replace">Заменить?</string>
+    <string name="eq_use">Применить</string>
+    <string name="eq_export">Экспорт</string>
+    <string name="eq_delete">Удалить</string>
+    <string name="eq_confirm_delete">Удалить?</string>
+    <string name="eq_usb">USB-накопитель</string>
+    <string name="eq_usb_hint">Использует папку EQ_Setup на USB-накопителе, как оригинальное приложение.</string>
+    <string name="eq_import">Импорт</string>
+    <string name="eq_export_all">Экспортировать все</string>
+    <string name="eq_saved_empty">Сохранённых EQ пока нет.</string>
+    <string name="eq_saved_ok">%1$s сохранён</string>
+    <string name="eq_saved_fail">Не удалось выполнить</string>
+    <string name="eq_name_invalid">Только латинские буквы, цифры, _ и -</string>
+    <string name="eq_no_usb">USB-накопитель не найден</string>
+    <string name="eq_no_usb_folder">На USB-накопителе нет папки EQ_Setup с файлами</string>
+    <string name="eq_in_use">Используется</string>
+    <string name="eq_usb_write_fail">Не удалось записать на USB-накопитель</string>
+    <string name="eq_use_fail">Не удалось прочитать этот EQ</string>
+    <plurals name="eq_exported">
+        <item quantity="one">Экспортировано EQ: %1$d</item>
+        <item quantity="few">Экспортировано EQ: %1$d</item>
+        <item quantity="many">Экспортировано EQ: %1$d</item>
+        <item quantity="other">Экспортировано EQ: %1$d</item>
+    </plurals>
+    <plurals name="eq_imported">
+        <item quantity="one">Импортировано EQ: %1$d</item>
+        <item quantity="few">Импортировано EQ: %1$d</item>
+        <item quantity="many">Импортировано EQ: %1$d</item>
+        <item quantity="other">Импортировано EQ: %1$d</item>
+    </plurals>
     <string name="eq_tab_gain">Громкость по источникам</string>
     <string name="eq_gain_hint">Выравнивает громкость каждого источника в DSP. Действует после перезапуска магнитолы.</string>
     <string name="eq_gain_radio">Радио</string>

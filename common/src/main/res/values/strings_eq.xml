@@ -19,7 +19,6 @@
     <string name="eq_loudness">Loudness</string>
     <string name="eq_reset">Reset</string>
     <string name="eq_influence">Influence</string>
-    <string name="eq_advanced">Advanced</string>
 
     <!-- Seats -->
     <string name="eq_seat_driver">Driver</string>
@@ -71,6 +70,57 @@
     <string name="eq_info_path">Path: %1$s</string>
     <string name="eq_info_chip">Chip: %1$s · DTS %2$s</string>
     <string name="eq_info_method">Method: %1$s · max %2$d/%3$d</string>
+    <!-- Aba Graves (Bass do DspAdjust3): divisor de frequência, reforço de graves e 3D -->
+    <string name="eq_tab_bass">Bass</string>
+    <string name="eq_crossover">Crossover</string>
+    <string name="eq_hpf">High-pass (HPF)</string>
+    <string name="eq_lpf">Low-pass (LPF)</string>
+    <string name="eq_slope">Slope</string>
+    <string name="eq_area_front">Front</string>
+    <string name="eq_area_rear">Rear</string>
+    <string name="eq_area_center">Center</string>
+    <string name="eq_area_sub">Subwoofer</string>
+    <string name="eq_area_sub_center">Sub/center</string>
+    <string name="eq_bass_boost">Bass boost</string>
+    <string name="eq_bass_freq">Frequency</string>
+    <string name="eq_bass_gain">Strength</string>
+    <string name="eq_3d">3D sound</string>
+    <string name="eq_3d_hint">Widens the sound stage</string>
+    <string name="eq_reset_area">Reset area</string>
+    <string name="eq_bass_off">Off</string>
+
+    <!-- Meus EQs -->
+    <string name="eq_tab_saved">My EQs</string>
+    <string name="eq_saved_title">Saved EQs</string>
+    <string name="eq_save_current">Save current EQ</string>
+    <string name="eq_name_hint">Name (letters and numbers)</string>
+    <string name="eq_save">Save</string>
+    <string name="eq_replace">Replace?</string>
+    <string name="eq_use">Use</string>
+    <string name="eq_export">Export</string>
+    <string name="eq_delete">Delete</string>
+    <string name="eq_confirm_delete">Delete?</string>
+    <string name="eq_usb">USB drive</string>
+    <string name="eq_usb_hint">Uses the EQ_Setup folder on the USB drive, like the original app.</string>
+    <string name="eq_import">Import</string>
+    <string name="eq_export_all">Export all</string>
+    <string name="eq_saved_empty">No saved EQ yet.</string>
+    <string name="eq_saved_ok">%1$s saved</string>
+    <string name="eq_saved_fail">Could not complete</string>
+    <string name="eq_name_invalid">Use only letters, numbers, _ and -</string>
+    <string name="eq_no_usb">No USB drive found</string>
+    <string name="eq_no_usb_folder">No EQ_Setup folder with files on the USB drive</string>
+    <string name="eq_in_use">In use</string>
+    <string name="eq_usb_write_fail">Could not write to the USB drive</string>
+    <string name="eq_use_fail">Could not read this EQ</string>
+    <plurals name="eq_exported">
+        <item quantity="one">%1$d EQ exported</item>
+        <item quantity="other">%1$d EQs exported</item>
+    </plurals>
+    <plurals name="eq_imported">
+        <item quantity="one">%1$d EQ imported</item>
+        <item quantity="other">%1$d EQs imported</item>
+    </plurals>
     <string name="eq_tab_gain">Volume per source</string>
     <string name="eq_gain_hint">Evens out the volume of each source in the DSP. Takes effect after restarting the head unit.</string>
     <string name="eq_gain_radio">Radio</string>

@@ -36,7 +36,9 @@ public class EqActivity extends Activity {
     private static final int TAB_SITE = 1;
     private static final int TAB_CHANNELS = 2;
     private static final int TAB_DIAG = 3;
-    private static final int TAB_GAIN = 4;
+    private static final int TAB_BASS = 4;
+    private static final int TAB_SAVED = 5;
+    private static final int TAB_GAIN = 7;
     /** Height of the band sliders (shorter than the column: the rest is for dragging sideways). */
     private static final float SLIDER_HEIGHT_DP = 250;
     /** Share of a band's change that goes to its neighbours: [itself, ±1, ±2]. */
@@ -52,14 +54,20 @@ public class EqActivity extends Activity {
     private TextView tabSite;
     private TextView tabChannels;
     private TextView tabDiag;
+    private TextView tabBass;
+    private View panelBass;
+    private BassPanel bassPanel;
+    private TextView tabSaved;
+    private View panelSaved;
+    private SavedEqPanel savedPanel;
     private TextView tabGain;
+    private View panelGain;
+    private SourceGainPanel gainPanel;
     private TextView badge;
     private View panelEq;
     private View panelSite;
     private View panelChannels;
     private View panelDiag;
-    private View panelGain;
-    private SourceGainPanel gainPanel;
     private LinearLayout presetsRow;
     private LinearLayout optionsRow;
     private LinearLayout bandsRow;
@@ -79,7 +87,6 @@ public class EqActivity extends Activity {
     private final List<ChannelViews> channelViews = new ArrayList<>();
     private TextView loudChip;
     private TextView influenceChip;
-    private TextView modeChip;
     /** Band values when the finger touched a slider: Influence spreads the change from these. */
     private int[] dragBase;
     private final List<TextView> modeChips = new ArrayList<>();
@@ -135,12 +142,16 @@ public class EqActivity extends Activity {
         tabSite = (TextView) findViewById(R.id.tab_site);
         tabChannels = (TextView) findViewById(R.id.tab_channels);
         tabDiag = (TextView) findViewById(R.id.tab_diag);
+        tabBass = (TextView) findViewById(R.id.tab_bass);
+        panelBass = findViewById(R.id.panel_bass);
+        tabSaved = (TextView) findViewById(R.id.tab_saved);
+        panelSaved = findViewById(R.id.panel_saved);
+        tabGain = (TextView) findViewById(R.id.tab_gain);
+        panelGain = findViewById(R.id.panel_gain);
         badge = (TextView) findViewById(R.id.eq_badge);
         panelEq = findViewById(R.id.panel_eq);
         panelSite = findViewById(R.id.panel_site);
         panelChannels = findViewById(R.id.panel_channels);
-        panelGain = findViewById(R.id.panel_gain);
-        tabGain = (TextView) findViewById(R.id.tab_gain);
         panelDiag = findViewById(R.id.panel_diag);
         presetsRow = (LinearLayout) findViewById(R.id.eq_presets);
         optionsRow = (LinearLayout) findViewById(R.id.eq_options);
@@ -156,8 +167,10 @@ public class EqActivity extends Activity {
         tabEq.setOnClickListener(v -> showTab(TAB_EQ));
         tabSite.setOnClickListener(v -> showTab(TAB_SITE));
         tabChannels.setOnClickListener(v -> showTab(TAB_CHANNELS));
-        tabGain.setOnClickListener(v -> showTab(TAB_GAIN));
         tabDiag.setOnClickListener(v -> showTab(TAB_DIAG));
+        tabBass.setOnClickListener(v -> showTab(TAB_BASS));
+        tabSaved.setOnClickListener(v -> showTab(TAB_SAVED));
+        tabGain.setOnClickListener(v -> showTab(TAB_GAIN));
         // Diagnostics tab and backend badge are developer-mode only.
         boolean dev = DevMode.enabled();
         tabDiag.setVisibility(dev ? View.VISIBLE : View.GONE);
@@ -195,10 +208,6 @@ public class EqActivity extends Activity {
         ButtonIcon.attach(influenceChip, ButtonIcon.Icon.INFLUENCE);
         influenceChip.setOnClickListener(v -> controller.setInfluence(!controller.state().influence));
         optionsRow.addView(influenceChip);
-        // DSP only: toggle between the simple 7-band view and all 32 bands.
-        modeChip = chip(getString(R.string.eq_advanced));
-        modeChip.setOnClickListener(v -> controller.setArmSimple(!controller.state().armSimple));
-        optionsRow.addView(modeChip);
         TextView reset = chip(getString(R.string.eq_reset));
         ButtonIcon.attach(reset, ButtonIcon.Icon.RESET);
         reset.setOnClickListener(v -> controller.resetEq());
@@ -222,14 +231,14 @@ public class EqActivity extends Activity {
     }
 
     private void ensureBands(EqModel.State s) {
-        int count = s.isArm() ? (s.armSimple ? EqModel.EQ7_BANDS : EqModel.EQ32_BANDS) : 10;
+        int count = s.isArm() ? EqModel.EQ32_BANDS : 10;
         if (bandsBuilt && bandSliders.size() == count) return;
         bandsBuilt = true;
         bandsRow.removeAllViews();
         bandTops.clear();
         bandBottoms.clear();
         bandSliders.clear();
-        int width = (s.isArm() && !s.armSimple) ? 48 : 96;
+        int width = s.isArm() ? 48 : 96;
         for (int i = 0; i < count; i++) {
             final int band = i;
             LinearLayout col = new LinearLayout(this);
@@ -289,11 +298,6 @@ public class EqActivity extends Activity {
      */
     private void moveBand(int band, int value) {
         EqModel.State s = controller.state();
-        // Simple 7-band view: the band is an anchor; interpolation fills the rest (no Influence).
-        if (s.isArm() && s.armSimple) {
-            controller.setArmAnchor(band, value);
-            return;
-        }
         int[] base = dragBase;
         if (!s.influence || base == null || band >= base.length) {
             if (s.isArm()) controller.setArmBand(band, value);
@@ -348,9 +352,15 @@ public class EqActivity extends Activity {
             cv.phase.setOnClickListener(v ->
                 controller.setChannelPhase(ch, !controller.state().channels.get(ch).inverted));
             cv.delay = label("0.0 ms", Ui.TEXT_MUTED, 12);
+            // Toque: +0,5 ms (depois de 20 ms volta a zero); toque longo: −0,5 ms. Alcance do original.
             cv.delay.setOnClickListener(v -> {
                 int d = controller.state().channels.get(ch).delay;
-                controller.setChannelDelay(ch, (d + 10) % 150);
+                controller.setChannelDelay(ch, d >= EqModel.DELAY_MAX ? 0 : d + EqModel.DELAY_STEP);
+            });
+            cv.delay.setOnLongClickListener(v -> {
+                int d = controller.state().channels.get(ch).delay;
+                controller.setChannelDelay(ch, Math.max(0, d - EqModel.DELAY_STEP));
+                return true;
             });
 
             card.addView(cv.title);
@@ -417,19 +427,41 @@ public class EqActivity extends Activity {
 
     private void showTab(int next) {
         tab = next;
+        // O campo de nome da aba Meus EQs não leva o teclado para as outras abas.
+        View focus = getCurrentFocus();
+        if (focus != null) {
+            ((android.view.inputmethod.InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(focus.getWindowToken(), 0);
+            focus.clearFocus();
+        }
         panelEq.setVisibility(tab == TAB_EQ ? View.VISIBLE : View.GONE);
         panelSite.setVisibility(tab == TAB_SITE ? View.VISIBLE : View.GONE);
         panelChannels.setVisibility(tab == TAB_CHANNELS ? View.VISIBLE : View.GONE);
         panelDiag.setVisibility(tab == TAB_DIAG ? View.VISIBLE : View.GONE);
+        panelBass.setVisibility(tab == TAB_BASS ? View.VISIBLE : View.GONE);
+        panelSaved.setVisibility(tab == TAB_SAVED ? View.VISIBLE : View.GONE);
         panelGain.setVisibility(tab == TAB_GAIN ? View.VISIBLE : View.GONE);
         Touch.fadeIn(tab == TAB_EQ ? panelEq : tab == TAB_SITE ? panelSite
-            : tab == TAB_CHANNELS ? panelChannels : tab == TAB_GAIN ? panelGain : panelDiag);
+            : tab == TAB_CHANNELS ? panelChannels : tab == TAB_BASS ? panelBass
+            : tab == TAB_SAVED ? panelSaved : tab == TAB_GAIN ? panelGain : panelDiag);
         tabEq.setActivated(tab == TAB_EQ);
         tabSite.setActivated(tab == TAB_SITE);
         tabChannels.setActivated(tab == TAB_CHANNELS);
         tabDiag.setActivated(tab == TAB_DIAG);
+        tabBass.setActivated(tab == TAB_BASS);
+        tabSaved.setActivated(tab == TAB_SAVED);
         tabGain.setActivated(tab == TAB_GAIN);
         if (tab == TAB_CHANNELS) ensureChannels();
+        if (tab == TAB_BASS && bassPanel == null) {
+            bassPanel = new BassPanel(this, controller, (LinearLayout) findViewById(R.id.bass_root));
+        }
+        if (tab == TAB_SAVED) {
+            if (savedPanel == null) {
+                savedPanel = new SavedEqPanel(this, controller, (LinearLayout) findViewById(R.id.saved_root));
+            } else {
+                savedPanel.refresh();
+            }
+        }
         if (tab == TAB_GAIN) {
             if (gainPanel == null) {
                 gainPanel = new SourceGainPanel(this, (LinearLayout) findViewById(R.id.gain_root));
@@ -443,9 +475,15 @@ public class EqActivity extends Activity {
 
     private void render(EqModel.State s) {
         tabChannels.setVisibility(s.isArm() ? View.VISIBLE : View.GONE);
+        // Graves: os quadros vão para o DSP do ARM, como no original (a MCU não tem essa aba).
+        tabBass.setVisibility(s.isArm() ? View.VISIBLE : View.GONE);
+        // Meus EQs: os arquivos do original são do EQ de 32 bandas do DSP.
+        tabSaved.setVisibility(s.isArm() ? View.VISIBLE : View.GONE);
         // Volume por fonte: o ganho de cada fonte no DSP do ARM, lido pelo serviço da NWD ao ligar.
         tabGain.setVisibility(s.isArm() && FactoryGains.available() ? View.VISIBLE : View.GONE);
-        if (!s.isArm() && (tab == TAB_CHANNELS || tab == TAB_GAIN)) showTab(TAB_EQ);
+        if (!s.isArm() && (tab == TAB_CHANNELS || tab == TAB_BASS || tab == TAB_SAVED || tab == TAB_GAIN)) showTab(TAB_EQ);
+        if (bassPanel != null) bassPanel.render(s);
+        if (savedPanel != null) savedPanel.render(s);
 
         if (s.isArm()) {
             badge.setText("DSP " + s.detection.chipLabel());
@@ -465,26 +503,10 @@ public class EqActivity extends Activity {
             presetChips.get(i).setActivated(EqModel.Preset.values()[i] == s.preset);
         }
         if (loudChip != null) loudChip.setActivated(s.loudness);
-        if (influenceChip != null) {
-            // Influence is per-band smoothing; the simple view already smooths by interpolation.
-            influenceChip.setVisibility(s.isArm() && s.armSimple ? View.GONE : View.VISIBLE);
-            influenceChip.setActivated(s.influence);
-        }
-        if (modeChip != null) {
-            modeChip.setVisibility(s.isArm() ? View.VISIBLE : View.GONE);
-            modeChip.setActivated(!s.armSimple);
-        }
+        if (influenceChip != null) influenceChip.setActivated(s.influence);
 
         ensureBands(s);
-        if (s.isArm() && s.armSimple) {
-            for (int i = 0; i < bandSliders.size(); i++) {
-                int anchor = EqModel.EQ7_ANCHORS[i];
-                bandSliders.get(i).configure(EqModel.EQ32_MIN_DB, EqModel.EQ32_MAX_DB, 0);
-                bandSliders.get(i).setValue(s.armGainsDb[anchor]);
-                bandTops.get(i).setText(signed(s.armGainsDb[anchor]));
-                bandBottoms.get(i).setText(EqModel.freqLabel(s.armFrequencies[anchor]));
-            }
-        } else if (s.isArm()) {
+        if (s.isArm()) {
             for (int i = 0; i < bandSliders.size(); i++) {
                 bandSliders.get(i).configure(EqModel.EQ32_MIN_DB, EqModel.EQ32_MAX_DB, 0);
                 bandSliders.get(i).setValue(s.armGainsDb[i]);

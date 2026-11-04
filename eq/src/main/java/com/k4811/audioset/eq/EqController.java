@@ -41,6 +41,7 @@ public final class EqController {
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private final EqStore store;
     private final ArmDsp arm;
+    private final CustomEqFiles files;
     private final SettingClient mcu;
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
 
@@ -65,6 +66,7 @@ public final class EqController {
         this.context = context.getApplicationContext();
         this.store = new EqStore(this.context);
         this.arm = new ArmDsp(this::appendLog);
+        this.files = new CustomEqFiles(this.context, arm);
         this.mcu = new SettingClient(this.context, new SettingClient.Callbacks() {
             @Override
             public void log(String msg) {
@@ -175,6 +177,7 @@ public final class EqController {
         if (state.isArm()) {
             ArmCurve curve = armCurveFor(preset);
             state.preset = preset;
+            state.customName = null;
             state.armGainsDb = curve.gains;
             state.armFrequencies = curve.frequencies;
             state.armQ = curve.q;
@@ -216,6 +219,7 @@ public final class EqController {
         if (state.armGainsDb[band] == g && state.preset == EqModel.Preset.CUSTOM) return;
         state.armGainsDb[band] = g;
         state.preset = EqModel.Preset.CUSTOM;
+        state.customName = null;
         store.saveArmCustom(state.armGainsDb, state.armFrequencies, state.armQ);
         persistAndPublish();
         int wire = DspFrames.gainToWire(g, state.armEqMax);
@@ -281,9 +285,47 @@ public final class EqController {
     }
 
     public void setChannelDelay(int ch, int tenthsMs) {
-        state.channels.get(ch).delay = clamp(tenthsMs, 0, 140);
+        state.channels.get(ch).delay = clamp(tenthsMs, 0, EqModel.DELAY_MAX);
         persistAndPublish();
         armSend(DspFrames.delay(ch, state.channels.get(ch).delay), false);
+    }
+
+    // ---- Graves (aba Bass do DspAdjust3): divisor de frequência, reforço de graves e 3D ----
+
+    /** Passa-alta e passa-baixa de uma área (0 FL/FR, 1 RL/RR, 2 centro, 3 sub), como o sendHLData. */
+    public void setCrossover(int area, int hpf, int hpfQ, int lpf, int lpfQ) {
+        EqModel.Crossover x = state.crossovers.get(area);
+        x.hpf = clamp(hpf, 0, EqModel.PF_MAX);
+        x.hpfQ = clamp(hpfQ, 0, EqModel.PF_Q_MAX);
+        x.lpf = clamp(lpf, 0, EqModel.PF_MAX);
+        x.lpfQ = clamp(lpfQ, 0, EqModel.PF_Q_MAX);
+        persistAndPublish();
+        armSend(DspFrames.highPass(area, x.hpf, x.hpfQ), false);
+        armSend(DspFrames.lowPass(area, x.lpf, x.lpfQ), false);
+    }
+
+    public void resetCrossover(int area) {
+        EqModel.Crossover d = EqModel.defaultCrossover(area);
+        setCrossover(area, d.hpf, d.hpfQ, d.lpf, d.lpfQ);
+    }
+
+    /** Reforço de graves de uma área (0 FL/FR, 1 RL/RR, 2 sub/centro); ganho 0 = desligado. */
+    public void setBassBoost(int area, int freq, int gain) {
+        EqModel.BassBoost b = state.bassBoosts.get(area);
+        b.freq = clamp(freq, 0, EqModel.DBB_HZ.length - 1);
+        b.gain = clamp(gain, 0, EqModel.DBB_GAIN_MAX);
+        persistAndPublish();
+        armSend(DspFrames.bassBoost(area, b.freq, b.gain), false);
+    }
+
+    public void resetBassBoost(int area) {
+        setBassBoost(area, 0, 0);
+    }
+
+    public void setRound3d(boolean on) {
+        state.round3d = on;
+        persistAndPublish();
+        armSend(DspFrames.round3d(on), false);
     }
 
     public void resetChannels() {
@@ -337,7 +379,7 @@ public final class EqController {
             SystemProps.requestSet(context, PROP_DSP_TYPE, "3");
             lastEqProp = null;
             sendArmEq();
-            armSend(DspFrames.otherAll(state.channels, state.fader, state.balance), false);
+            armSend(DspFrames.otherAll(state), false);
             armSend(DspFrames.loudness(state.loudness), false);
             armSend(DspFrames.site(state.fader, state.balance), false);
             reapplyChannels();
@@ -413,31 +455,108 @@ public final class EqController {
         if (!changed) return;
         state.armGainsDb = next;
         state.preset = EqModel.Preset.CUSTOM;
+        state.customName = null;
         store.saveArmCustom(state.armGainsDb, state.armFrequencies, state.armQ);
         persistAndPublish();
+    }
+
+    // ---- EQs salvos (eq_customize e pen drive, como o original) ----
+
+    public interface Done<T> {
+        void on(T result);
+    }
+
+    private <T> void io(java.util.concurrent.Callable<T> job, Done<T> done) {
+        worker.execute(() -> {
+            T result;
+            try {
+                result = job.call();
+            } catch (Exception e) {
+                appendLog("Custom EQ error: " + e);
+                result = null;
+            }
+            final T r = result;
+            main.post(() -> done.on(r));
+        });
+    }
+
+    private String configPath() {
+        return state.detection.configPath;
+    }
+
+    public void listCustom(Done<List<String>> done) {
+        io(() -> files.list(configPath()), done);
+    }
+
+    public void customExists(String name, Done<Boolean> done) {
+        io(() -> files.exists(configPath(), name), done);
+    }
+
+    /** Grava a curva atual do DSP (frequências, ganhos no valor do quadro e Q) com esse nome. */
+    public void saveCustom(String name, Done<Boolean> done) {
+        final int[] freqs = state.armFrequencies.clone();
+        final int[] q = state.armQ.clone();
+        final int[] wire = new int[state.armGainsDb.length];
+        for (int i = 0; i < wire.length; i++) wire[i] = DspFrames.gainToWire(state.armGainsDb[i], state.armEqMax);
+        io(() -> {
+            boolean ok = files.save(configPath(), name, freqs, wire, q);
+            appendLog("Save custom EQ '" + name + "': " + ok);
+            return ok;
+        }, ok -> {
+            if (Boolean.TRUE.equals(ok)) {
+                state.customName = name;
+                persistAndPublish();
+                publishEqProp();
+            }
+            done.on(ok);
+        });
+    }
+
+    /** Usa um EQ salvo: vira a curva personalizada e vai inteira para o DSP (send32EQModeData). */
+    public void useCustom(String name, Done<Boolean> done) {
+        io(() -> files.read(configPath(), name), file -> {
+            if (file == null) {
+                done.on(false);
+                return;
+            }
+            int[] gains = new int[file.gainsWire.length];
+            for (int i = 0; i < gains.length; i++) gains[i] = DspFrames.wireToGain(file.gainsWire[i], state.armEqMax);
+            state.preset = EqModel.Preset.CUSTOM;
+            state.customName = name;
+            state.armGainsDb = gains;
+            state.armFrequencies = file.frequencies;
+            state.armQ = file.q != null ? file.q : fillQ();
+            store.saveArmCustom(state.armGainsDb, state.armFrequencies, state.armQ);
+            persistAndPublish();
+            sendArmEq();
+            appendLog("Using custom EQ '" + name + "' from " + file.path);
+            done.on(true);
+        });
+    }
+
+    public void deleteCustom(String name, Done<Boolean> done) {
+        io(() -> files.delete(configPath(), name), ok -> {
+            if (Boolean.TRUE.equals(ok) && name.equals(state.customName)) {
+                state.customName = null;
+                persistAndPublish();
+            }
+            done.on(ok);
+        });
+    }
+
+    /** Quantos foram para {@code <pen drive>/EQ_Setup}; -1 sem pen drive. */
+    public void exportCustom(List<String> names, Done<Integer> done) {
+        io(() -> files.export(configPath(), names), done);
+    }
+
+    /** Quantos vieram de {@code <pen drive>/EQ_Setup}; -1 sem pen drive, -2 sem a pasta. */
+    public void importCustom(Done<Integer> done) {
+        io(() -> files.importAll(configPath()), done);
     }
 
     public void setInfluence(boolean on) {
         state.influence = on;
         persistAndPublish();
-    }
-
-    /** ARM DSP: switch between the simple 7-band view and the full 32-band view. */
-    public void setArmSimple(boolean simple) {
-        state.armSimple = simple;
-        persistAndPublish();
-    }
-
-    /**
-     * ARM DSP simple view: one of the 7 anchor bands moved to {@code db}. Rebuilds the 32-band gains
-     * by linear interpolation between the anchors and sends only the bands that changed.
-     */
-    public void setArmAnchor(int anchor, int db) {
-        int g = clamp(db, EqModel.EQ32_MIN_DB, EqModel.EQ32_MAX_DB);
-        int[] gains7 = EqModel.anchorGains(state.armGainsDb);
-        if (gains7[anchor] == g && state.preset == EqModel.Preset.CUSTOM) return;
-        gains7[anchor] = g;
-        setArmBands(EqModel.interp7to32(gains7));
     }
 
     public void setApplyOnBoot(boolean on) {
@@ -564,9 +683,12 @@ public final class EqController {
         publishEqProp();
     }
 
-    /** persist.sys.dsp.eq = preset name (standard, pop, rock, classic, jazz, customize), as the stock app. */
+    /**
+     * persist.sys.dsp.eq = preset name (standard, pop, rock, classic, jazz, customize), or the name
+     * of the saved EQ in use, as the stock app.
+     */
     private void publishEqProp() {
-        String key = state.preset.fileKey;
+        String key = state.customName != null ? state.customName : state.preset.fileKey;
         if (key.equals(lastEqProp)) return;
         lastEqProp = key;
         SystemProps.requestSet(context, PROP_DSP_EQ, key);
@@ -618,9 +740,13 @@ public final class EqController {
         state.armQ = Arrays.copyOf(s.armQ, s.armQ.length);
         state.channels = new ArrayList<>();
         for (EqModel.Channel c : s.channels) state.channels.add(c.copy());
+        // Objetos novos vindos do EqStore.load(): podem ser usados direto.
+        state.crossovers = s.crossovers;
+        state.bassBoosts = s.bassBoosts;
+        state.round3d = s.round3d;
+        state.customName = s.customName;
         state.applyOnBoot = s.applyOnBoot;
         state.influence = s.influence;
-        state.armSimple = s.armSimple;
     }
 
     private void persistAndPublish() {

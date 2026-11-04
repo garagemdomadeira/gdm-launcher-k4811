@@ -63,6 +63,34 @@
             android:visibility="gone" />
 
         <TextView
+            android:id="@+id/tab_bass"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/pill"
+            android:gravity="center"
+            android:text="@string/eq_tab_bass"
+            android:textColor="@color/text"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tab_saved"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/pill"
+            android:gravity="center"
+            android:text="@string/eq_tab_saved"
+            android:textColor="@color/text"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/tab_gain"
             android:layout_width="match_parent"
             android:layout_height="72dp"
@@ -300,7 +328,41 @@
                 android:orientation="horizontal" />
         </HorizontalScrollView>
 
-        <!-- Volume por fonte: ganho de cada fonte no DSP (/cache/FactoryConfig.ini; montado pelo SourceGainPanel) -->
+        <!-- Bass: crossover, bass boost and 3D (DSP ARM; built by BassPanel) -->
+        <ScrollView
+            android:id="@+id/panel_bass"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/panel"
+            android:padding="16dp"
+            android:scrollbars="none"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/bass_root"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </ScrollView>
+
+        <!-- My EQs: save, use, delete, USB import/export (DSP ARM; built by SavedEqPanel) -->
+        <ScrollView
+            android:id="@+id/panel_saved"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/panel"
+            android:padding="16dp"
+            android:scrollbars="none"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/saved_root"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </ScrollView>
+
+        <!-- Volume por fonte: ganho de cada fonte no DSP (/cache/FactoryConfig.ini; built by SourceGainPanel) -->
         <ScrollView
             android:id="@+id/panel_gain"
             android:layout_width="match_parent"

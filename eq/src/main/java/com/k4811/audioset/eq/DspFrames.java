@@ -16,14 +16,12 @@ public final class DspFrames {
     public static final int ALL_EQ = 0xF1;
     public static final int OTHER_ALL = 0xF2;
     public static final int SITE = 0xF9;
-
-    /** Crossover filters sent neutral by the stock app (DspAdjust3 defaults: no cut on front/rear). */
-    private static final int HZ_20 = 20;
-    private static final int HZ_160 = 160;
-    private static final int HZ_20K = 20000;
-    private static final int FILTER_Q = 10;
-    /** Bass boost areas: stock default 40 Hz with gain 0 (off). */
-    private static final int BASS_HZ = 40;
+    /** High/low-pass filter of one area (stock sendHpfData/sendLpfData). */
+    public static final int FILTER = 0x0D;
+    /** Bass boost (DBB) of one area (stock sendAreayData). */
+    public static final int BASS_BOOST = 0x1B;
+    /** 3D surround on/off (stock sendRound3DDate). */
+    public static final int ROUND_3D = 0x1C;
 
     private DspFrames() {
     }
@@ -82,30 +80,64 @@ public final class DspFrames {
 
     /**
      * Full state frame (0xF2) the stock app (DspAdjust3 sendF2Data) sends at boot: channels, crossover
-     * of the 4 areas, fader/balance, bass boost areas and 3D. Without it the DSP keeps its power-on
-     * crossover, which sounds muffled and low. Crossover, bass boost and 3D go neutral, as the stock
-     * defaults; channels and seat come from the saved state.
+     * of the 4 areas, fader/balance, bass boost areas and 3D, all from the saved state. Without it
+     * the DSP keeps its power-on crossover, which sounds muffled and low.
      */
-    public static byte[] otherAll(java.util.List<EqModel.Channel> channels, int fader, int balance) {
+    public static byte[] otherAll(EqModel.State st) {
         java.io.ByteArrayOutputStream p = new java.io.ByteArrayOutputStream(105);
         for (int i = 0; i < EqModel.Speaker.COUNT; i++) {
-            EqModel.Channel c = i < channels.size() ? channels.get(i) : new EqModel.Channel();
+            EqModel.Channel c = i < st.channels.size() ? st.channels.get(i) : new EqModel.Channel();
             int d = clamp(c.delay, 0, 200);
             put(p, 5, 14 - clamp(c.level, 0, 14), c.inverted ? 1 : 0, c.muted ? 1 : 0, d & 0xFF, (d >> 8) & 0xFF);
         }
-        // Areas 1-2 (front/rear): full range. Areas 3-4 (center/sub): 20-160 Hz. LPF first, then HPF.
-        int[] lpf = {HZ_20K, HZ_20K, HZ_160, HZ_160};
-        for (int a = 0; a < 4; a++) {
-            put(p, 4, lpf[a] & 0xFF, (lpf[a] >> 8) & 0xFF, FILTER_Q, 0);
-            put(p, 4, HZ_20, 0, FILTER_Q, 0);
+        // Per area: low-pass first, then high-pass (frequency in Hz, slope).
+        for (int a = 0; a < EqModel.CROSSOVER_AREAS; a++) {
+            EqModel.Crossover x = a < st.crossovers.size() ? st.crossovers.get(a) : EqModel.defaultCrossover(a);
+            int lpf = pfHz(x.lpf);
+            int hpf = pfHz(x.hpf);
+            put(p, 4, lpf & 0xFF, (lpf >> 8) & 0xFF, x.lpfQ & 0xFF, (x.lpfQ >> 8) & 0xFF);
+            put(p, 4, hpf & 0xFF, (hpf >> 8) & 0xFF, x.hpfQ & 0xFF, (x.hpfQ >> 8) & 0xFF);
         }
-        put(p, 2, clamp(fader, 0, EqModel.SITE_MAX), clamp(balance, 0, EqModel.SITE_MAX));
+        put(p, 2, clamp(st.fader, 0, EqModel.SITE_MAX), clamp(st.balance, 0, EqModel.SITE_MAX));
         put(p, 2, 10, 0);
-        for (int a = 0; a < 3; a++) {
-            put(p, 5, BASS_HZ, 0, 20, 0, 0);
+        for (int a = 0; a < EqModel.DBB_AREAS; a++) {
+            EqModel.BassBoost b = a < st.bassBoosts.size() ? st.bassBoosts.get(a) : new EqModel.BassBoost();
+            int hz = dbbHz(b.freq);
+            put(p, 5, hz & 0xFF, (hz >> 8) & 0xFF, 20, 0, clamp(b.gain, 0, EqModel.DBB_GAIN_MAX));
         }
-        put(p, 4, 3, 0, 44, 1);
+        put(p, 4, 3, st.round3d ? 1 : 0, 44, 1);
         return frame(OTHER_ALL, p.toByteArray());
+    }
+
+    /** High-pass of one crossover area (0 FL/FR, 1 RL/RR, 2 center, 3 sub). */
+    public static byte[] highPass(int area, int index, int q) {
+        int hz = pfHz(index);
+        return frame(FILTER, bytes(area, 1, hz & 0xFF, (hz >> 8) & 0xFF, q & 0xFF, (q >> 8) & 0xFF));
+    }
+
+    /** Low-pass of one crossover area. */
+    public static byte[] lowPass(int area, int index, int q) {
+        int hz = pfHz(index);
+        return frame(FILTER, bytes(area, 0, hz & 0xFF, (hz >> 8) & 0xFF, q & 0xFF, (q >> 8) & 0xFF));
+    }
+
+    /** Bass boost of one area (0 FL/FR, 1 RL/RR, 2 sub/center); gain 0 = off. */
+    public static byte[] bassBoost(int area, int freqIndex, int gain) {
+        int hz = dbbHz(freqIndex);
+        return frame(BASS_BOOST, bytes(area, hz & 0xFF, (hz >> 8) & 0xFF, 20, 0,
+            clamp(gain, 0, EqModel.DBB_GAIN_MAX)));
+    }
+
+    public static byte[] round3d(boolean on) {
+        return frame(ROUND_3D, bytes(on ? 1 : 0, 44, 1));
+    }
+
+    private static int pfHz(int index) {
+        return EqModel.PF_HZ[clamp(index, 0, EqModel.PF_MAX)];
+    }
+
+    private static int dbbHz(int index) {
+        return EqModel.DBB_HZ[clamp(index, 0, EqModel.DBB_HZ.length - 1)];
     }
 
     private static void put(java.io.ByteArrayOutputStream out, int... values) {

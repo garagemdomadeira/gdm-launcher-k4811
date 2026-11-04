@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.k4811.common.ui.ThemeDrawables;
 import com.k4811.common.ui.Ui;
 
-/** Peças montadas em código das abas do EQ (Volume por fonte), com o visual das outras abas. */
+/** Peças montadas em código das abas do EQ (Graves, Meus EQs), com o visual das outras abas. */
 final class PanelParts {
 
     private PanelParts() {

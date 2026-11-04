@@ -98,6 +98,11 @@ public final class ArmDsp {
             }
         }
         if (file == null) return null;
+        return readPresetFile(file);
+    }
+
+    /** Lê um arquivo de EQ no formato do original (Properties com as 32 frequências, ganhos e Q). */
+    public PresetFile readPresetFile(File file) {
         try {
             Properties props = new Properties();
             FileInputStream in = new FileInputStream(file);
