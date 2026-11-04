@@ -45,9 +45,23 @@ public final class FactoryGains {
     private FactoryGains() {
     }
 
+    /**
+     * Teste no emulador (prints): {@code adb shell setprop debug.k4811.eq_demo 1} e uma cópia do arquivo de fábrica em
+     * {@code /sdcard/K4811/FactoryConfig.ini} (o emulador não tem o DSP no sysfs e o /cache dele é só leitura).
+     */
+    private static boolean demo() {
+        return "1".equals(com.k4811.common.system.SystemProps.get("debug.k4811.eq_demo", ""));
+    }
+
+    private static File file() {
+        return demo() ? new File(android.os.Environment.getExternalStorageDirectory(), "K4811/FactoryConfig.ini")
+            : new File(CACHE);
+    }
+
     /** Só nas centrais com DSP do ARM e o arquivo de fábrica no /cache. */
     public static boolean available() {
-        if (!new File(CACHE).isFile()) return false;
+        if (!file().isFile()) return false;
+        if (demo()) return true;
         for (String p : DSP) {
             if (new File(p).exists()) return true;
         }
@@ -56,7 +70,7 @@ public final class FactoryGains {
 
     /** Os 14 ganhos atuais (10 em todos se o campo não existe), ou null sem arquivo. */
     public static int[] read() {
-        String text = readText(new File(CACHE));
+        String text = readText(file());
         if (text == null) return null;
         int[] g = defaults();
         for (String line : text.split("\n")) {
@@ -86,7 +100,7 @@ public final class FactoryGains {
         StringBuilder b = new StringBuilder(KEY);
         for (int i = 0; i < COUNT; i++) b.append(i > 0 ? "," : "").append(Math.max(MIN, Math.min(MAX, g[i])));
         String line = b.toString();
-        boolean ok = writeLine(new File(CACHE), line);
+        boolean ok = writeLine(file(), line);
         File backup = new File(Environment.getExternalStorageDirectory(), "backups/FactoryConfig.ini");
         if (backup.isFile()) writeLine(backup, line);
         Log.i(TAG, line + (ok ? "" : " (não gravou no /cache)"));
