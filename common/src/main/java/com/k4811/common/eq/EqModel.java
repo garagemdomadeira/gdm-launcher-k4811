@@ -390,7 +390,7 @@ public final class EqModel {
         /** Moving a band also moves its 2 neighbours on each side (50% and 25% of the change). */
         public boolean influence = true;
         /** ARM DSP only: show the simple 7-band view (default) instead of all 32 bands. */
-        public boolean armSimple = true;
+        public boolean armSimple = false;
 
         public State() {
             Arrays.fill(armQ, EQ32_DEFAULT_Q);

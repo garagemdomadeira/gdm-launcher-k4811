@@ -131,4 +131,5 @@
     <string name="eq_gain_reset">सब अधिकतम (10)</string>
     <string name="eq_gain_saved">सहेजा गया। लागू करने के लिए हेड यूनिट रीस्टार्ट करें।</string>
     <string name="eq_gain_failed">फ़ैक्टरी फ़ाइल नहीं लिखी जा सकी।</string>
+    <string name="eq_simple">7 बैंड</string>
 </resources>

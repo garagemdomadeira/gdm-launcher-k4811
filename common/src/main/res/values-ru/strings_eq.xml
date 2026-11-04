@@ -135,4 +135,5 @@
     <string name="eq_gain_reset">Всё на максимум (10)</string>
     <string name="eq_gain_saved">Сохранено. Перезапустите магнитолу.</string>
     <string name="eq_gain_failed">Не удалось записать заводской файл.</string>
+    <string name="eq_simple">7 полос</string>
 </resources>

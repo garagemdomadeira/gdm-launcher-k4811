@@ -59,7 +59,7 @@ public final class EqStore {
         d.customName = prefs.getString("custom_name", null);
         d.applyOnBoot = prefs.getBoolean("apply_on_boot", false);
         d.influence = prefs.getBoolean("influence", true);
-        d.armSimple = prefs.getBoolean("arm_simple", true);
+        d.armSimple = prefs.getBoolean("arm_simple", false);
         return d;
     }
 

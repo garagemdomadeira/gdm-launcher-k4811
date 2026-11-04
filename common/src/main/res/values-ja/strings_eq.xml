@@ -129,4 +129,5 @@
     <string name="eq_gain_reset">すべて最大（10）</string>
     <string name="eq_gain_saved">保存しました。再起動して適用してください。</string>
     <string name="eq_gain_failed">工場設定ファイルを書き込めませんでした。</string>
+    <string name="eq_simple">7 バンド</string>
 </resources>

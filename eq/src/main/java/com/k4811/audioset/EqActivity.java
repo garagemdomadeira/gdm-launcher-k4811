@@ -209,8 +209,8 @@ public class EqActivity extends Activity {
         ButtonIcon.attach(influenceChip, ButtonIcon.Icon.INFLUENCE);
         influenceChip.setOnClickListener(v -> controller.setInfluence(!controller.state().influence));
         optionsRow.addView(influenceChip);
-        // DSP only: toggle between the simple 7-band view and all 32 bands.
-        modeChip = chip(getString(R.string.eq_advanced));
+        // Só no DSP: as 32 bandas do DspAdjust3 (padrão, como na central) ou a vista simples de 7 bandas.
+        modeChip = chip(getString(R.string.eq_simple));
         modeChip.setOnClickListener(v -> controller.setArmSimple(!controller.state().armSimple));
         optionsRow.addView(modeChip);
         TextView reset = chip(getString(R.string.eq_reset));
@@ -520,7 +520,7 @@ public class EqActivity extends Activity {
         }
         if (modeChip != null) {
             modeChip.setVisibility(s.isArm() ? View.VISIBLE : View.GONE);
-            modeChip.setActivated(!s.armSimple);
+            modeChip.setActivated(s.armSimple);
         }
 
         ensureBands(s);

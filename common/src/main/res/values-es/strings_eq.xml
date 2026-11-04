@@ -131,4 +131,5 @@
     <string name="eq_gain_reset">Todo al máximo (10)</string>
     <string name="eq_gain_saved">Guardado. Reinicia la unidad para aplicar.</string>
     <string name="eq_gain_failed">No se pudo escribir el archivo de fábrica.</string>
+    <string name="eq_simple">7 bandas</string>
 </resources>

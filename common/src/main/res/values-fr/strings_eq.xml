@@ -131,4 +131,5 @@
     <string name="eq_gain_reset">Tout au maximum (10)</string>
     <string name="eq_gain_saved">Enregistré. Redémarrez l\'autoradio pour appliquer.</string>
     <string name="eq_gain_failed">Impossible d\'écrire le fichier d\'usine.</string>
+    <string name="eq_simple">7 bandes</string>
 </resources>

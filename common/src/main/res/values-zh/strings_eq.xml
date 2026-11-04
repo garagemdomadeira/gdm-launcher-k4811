@@ -129,4 +129,5 @@
     <string name="eq_gain_reset">全部最大（10）</string>
     <string name="eq_gain_saved">已保存。重启主机后生效。</string>
     <string name="eq_gain_failed">无法写入出厂配置文件。</string>
+    <string name="eq_simple">7 段</string>
 </resources>

@@ -131,4 +131,5 @@
     <string name="eq_gain_reset">All at maximum (10)</string>
     <string name="eq_gain_saved">Saved. Restart the head unit to apply.</string>
     <string name="eq_gain_failed">Could not write the factory file.</string>
+    <string name="eq_simple">7 bands</string>
 </resources>
