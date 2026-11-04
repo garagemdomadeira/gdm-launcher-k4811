@@ -197,4 +197,9 @@
     <string name="settings_help_hide_bottom_bar">The factory unit often shows a floating bar with Home, Back and volume. With this on, that bar hides while you use these apps — and comes back in apps outside the suite. If you miss Back or volume, use the edge menu or turn this off.</string>
     <string name="settings_help_audio_sources">Each sound source has its own volume: radio, Bluetooth, media, navigation and AUX. Drag the control and lift your finger to save. The change applies right away for that source.</string>
     <string name="settings_help_music_max">Ceiling for Android music apps (such as the MP3 player). Lower values avoid sudden loud spikes; higher ones let you go louder. It does not replace the unit\'s overall volume.</string>
+    <string name="settings_reset_all">Reset everything</string>
+    <string name="settings_reset_all_hint">Erase all K4811 files and settings and start fresh</string>
+    <string name="settings_reset_all_button">Erase all</string>
+    <string name="settings_reset_all_confirm">Erase all settings and files in the K4811 folder? This can\'t be undone.</string>
+    <string name="settings_help_reset_all">Deletes everything in the K4811 folder (custom icons, home images, radio presets, MP3 settings) and the suite settings (theme, language, dock). The apps go back to their defaults. This can\'t be undone.</string>
 </resources>

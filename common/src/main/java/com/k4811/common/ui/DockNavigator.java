@@ -52,8 +52,23 @@ public final class DockNavigator {
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         dock.setActive(current);
-        dock.setListener(item -> navigate(activity, current, item));
+        dock.setListener((item, pkg) -> {
+            if (item != null) navigate(activity, current, item);
+            else openApp(activity, pkg);
+        });
         return dock;
+    }
+
+    /** Atalho de app comum (arrastado para o dock): só abre o app, sem a lógica da suíte. */
+    public static void openApp(Activity from, String pkg) {
+        if (pkg == null) return;
+        Intent launch = from.getPackageManager().getLaunchIntentForPackage(pkg);
+        if (launch == null) {
+            Toast.makeText(from, from.getString(R.string.screen_app_missing, pkg), Toast.LENGTH_LONG).show();
+            return;
+        }
+        launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        switchTo(from, launch, R.anim.screen_swap_in, R.anim.screen_swap_out);
     }
 
     public static void navigate(Activity from, DockView.Item current, DockView.Item target) {

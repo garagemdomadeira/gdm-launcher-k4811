@@ -197,4 +197,9 @@
     <string name="settings_help_hide_bottom_bar">A central de fábrica costuma mostrar uma barra flutuante com Início, Voltar e volume. Com esta opção ligada, essa barra some enquanto você usa os apps desta suíte — e volta ao abrir um app de fora. Se sentir falta do Voltar ou do volume, use o Menu da borda ou desligue esta opção.</string>
     <string name="settings_help_audio_sources">O rádio pode ficar mais alto que o Bluetooth, por exemplo, sem um atrapalhar o outro. Arraste o controle e solte o dedo para gravar o valor. A mudança vale na hora para aquela fonte.</string>
     <string name="settings_help_music_max">Define o teto do volume dos apps de música do Android (como o player de MP3). Valores mais baixos evitam surtos altos demais; valores mais altos permitem subir mais. Não substitui o volume geral da central.</string>
+    <string name="settings_reset_all">Restaurar tudo</string>
+    <string name="settings_reset_all_hint">Apaga todos os arquivos e configurações do K4811 e começa do zero</string>
+    <string name="settings_reset_all_button">Apagar tudo</string>
+    <string name="settings_reset_all_confirm">Apagar todas as configurações e arquivos da pasta K4811? Não dá para desfazer.</string>
+    <string name="settings_help_reset_all">Apaga tudo na pasta K4811 (ícones personalizados, imagens da tela inicial, favoritas do rádio, configurações do MP3) e as configurações da suíte (tema, idioma, dock). Os apps voltam ao padrão. Não dá para desfazer.</string>
 </resources>

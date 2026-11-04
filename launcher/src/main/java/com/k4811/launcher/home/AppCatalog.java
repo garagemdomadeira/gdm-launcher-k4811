@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 
 import com.k4811.launcher.R;
+import com.k4811.common.ui.CustomIcons;
 import com.k4811.common.ui.Ui;
 
 import java.text.Collator;
@@ -73,7 +74,10 @@ public final class AppCatalog {
             CharSequence title = info.loadLabel(pm);
             String label = title == null ? pkg : title.toString().trim();
             if (label.isEmpty()) label = pkg;
-            apps.add(new Entry(label, pkg, cls, icon(info.loadIcon(pm), size)));
+            // Ícone personalizado (K4811/icons/<package>.png) na frente do ícone do sistema.
+            Bitmap custom = CustomIcons.forPackage(pkg, size);
+            Bitmap bmp = custom != null ? custom : icon(info.loadIcon(pm), size);
+            apps.add(new Entry(label, pkg, cls, bmp));
         }
         Collator order = Collator.getInstance(Locale.getDefault());
         order.setStrength(Collator.PRIMARY);

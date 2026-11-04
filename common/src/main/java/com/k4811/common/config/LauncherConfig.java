@@ -183,18 +183,6 @@ public final class LauncherConfig {
         return out;
     }
 
-    public static boolean setDockToggles(Context c, Set<DockView.Item> items) {
-        JSONArray ids = new JSONArray();
-        for (DockView.Item item : DockView.Item.values()) {
-            if (item.toggleable && items.contains(item)) ids.put(item.id);
-        }
-        return put(KEY_DOCK_TOGGLES, ids);
-    }
-
-    public static boolean resetDockToggles(Context c) {
-        return put(KEY_DOCK_TOGGLES, null);
-    }
-
     /** Índice em {@link #ZLINK_NAMES} do nome do Z-Link no dock; Z-Link por padrão. */
     public static int zlinkName(Context c) {
         int i = integer(KEY_ZLINK_NAME, 0);

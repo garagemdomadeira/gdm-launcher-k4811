@@ -31,6 +31,7 @@ import com.k4811.common.bt.BtClient;
 import com.k4811.common.home.GpsClient;
 import com.k4811.common.home.HomeGrid;
 import com.k4811.common.home.HomeImage;
+import com.k4811.launcher.home.DockEditor;
 import com.k4811.launcher.home.HomeModuleViews;
 import com.k4811.launcher.home.HomeSession;
 import com.k4811.common.config.LauncherConfig;
@@ -282,6 +283,7 @@ public class HomeActivity extends Activity {
         Ui.applyFont(findViewById(R.id.home_root));
         // On the home screen the dock always highlights Home; what is playing shows in the top bar.
         dock = DockNavigator.attachDock(this, DockView.Item.HOME);
+        dock.setEditor(new DockEditor(this, dock)); // segurar p/ reordenar; soltar fora remove
         bindViews();
         modules = new HomeModuleViews(this);
         modules.apply(LauncherConfig.homeLayout(this));

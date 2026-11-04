@@ -197,4 +197,9 @@
     <string name="settings_help_dock_item">When on, the icon appears in the dock for quick access. When off, the app stays available in the Apps drawer. At most %1$d of these optional icons can be on at once.</string>
     <string name="settings_help_zlink_name">Only changes the name and icon shown in the dock. The app behind it is the same (iPhone or Android connection). Pick the name you and passengers recognize most easily.</string>
     <string name="settings_help_dock_reset">Restores the five default dock icons: Radio, Music, Bluetooth Music, Phone and Equalizer. Home and Apps stay fixed. Does not change theme, font or the home screen.</string>
+    <string name="settings_reset_all">Restablecer todo</string>
+    <string name="settings_reset_all_hint">Borra todos los archivos y ajustes de K4811 y empieza de cero</string>
+    <string name="settings_reset_all_button">Borrar todo</string>
+    <string name="settings_reset_all_confirm">¿Borrar todos los ajustes y archivos de la carpeta K4811? No se puede deshacer.</string>
+    <string name="settings_help_reset_all">Borra todo en la carpeta K4811 (iconos personalizados, imágenes de inicio, emisoras de la radio, ajustes del MP3) y los ajustes de la suite (tema, idioma, dock). Las apps vuelven a sus valores por defecto. No se puede deshacer.</string>
 </resources>

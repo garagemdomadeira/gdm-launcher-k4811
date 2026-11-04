@@ -17,7 +17,10 @@ import android.widget.TextView;
 
 import com.k4811.common.audio.AudioGains;
 import com.k4811.car.setting.audio.AudioPanel;
+import com.k4811.common.config.DockConfig;
 import com.k4811.common.config.LauncherConfig;
+import com.k4811.common.config.NwdConfigs;
+import com.k4811.common.home.HomeImage;
 import com.k4811.common.media.AppMediaClient;
 import com.k4811.common.system.BottomBar;
 import com.k4811.common.system.CrashLog;
@@ -26,8 +29,11 @@ import com.k4811.common.system.ExternalApps;
 import com.k4811.common.system.NwdSettings;
 import com.k4811.car.setting.system.PlatformCompat;
 import com.k4811.common.system.SystemProps;
+import com.k4811.common.ui.DockView;
 import com.k4811.common.ui.IconView;
 import com.k4811.car.setting.ui.InputDialog;
+
+import java.io.File;
 import com.k4811.car.setting.ui.OptionList;
 import com.k4811.car.setting.ui.ThemeSwatches;
 import com.k4811.common.ui.Touch;
@@ -225,9 +231,15 @@ public class SettingsActivity extends Activity {
         list.action(getString(R.string.settings_customize_home), getString(R.string.settings_customize_home_hint),
             getString(R.string.settings_open), () -> startActivity(new Intent(this, HomeSettingsActivity.class)))
             .help(getString(R.string.settings_help_customize_home));
-        list.action(getString(R.string.settings_customize_dock), getString(R.string.settings_customize_dock_hint),
-            getString(R.string.settings_open), () -> startActivity(new Intent(this, DockSettingsActivity.class)))
-            .help(getString(R.string.settings_help_customize_dock));
+        // O dock agora é montado arrastando apps da gaveta para ele; aqui fica só o nome do Z-Link.
+        int[] zlinkValues = new int[LauncherConfig.ZLINK_NAMES.length];
+        for (int i = 0; i < zlinkValues.length; i++) zlinkValues[i] = i;
+        list.choice(getString(R.string.settings_zlink_name), getString(R.string.settings_zlink_name_hint),
+            LauncherConfig.ZLINK_NAMES, zlinkValues,
+            () -> LauncherConfig.zlinkName(this),
+            i -> LauncherConfig.setZlinkName(this, i))
+            .local().help(getString(R.string.settings_help_zlink_name))
+            .visibleWhen(() -> DockView.Item.ZLINK.isAvailable(this));
     }
 
     private void buildMainHome() {
@@ -300,6 +312,33 @@ public class SettingsActivity extends Activity {
             .local()
             .visibleWhen(() -> BottomBar.available(this))
             .help(getString(R.string.settings_help_hide_bottom_bar));
+        list.action(getString(R.string.settings_reset_all), getString(R.string.settings_reset_all_hint),
+            getString(R.string.settings_reset_all_button), this::confirmResetAll)
+            .help(getString(R.string.settings_help_reset_all));
+    }
+
+    /** Pergunta antes de apagar tudo (ação destrutiva): só reseta se confirmar. */
+    private void confirmResetAll() {
+        list.showChoices(getString(R.string.settings_reset_all_confirm),
+            new String[]{getString(R.string.settings_reset_all_button), getString(R.string.settings_home_cancel)},
+            null, -1, index -> {
+                if (index == 0) resetAll();
+            });
+    }
+
+    /** Apaga tudo em K4811/ (todas as raízes) e os configs do suíte (launcher.json, dock.json). */
+    private void resetAll() {
+        for (File root : HomeImage.roots()) deleteTree(root);
+        NwdConfigs.file(LauncherConfig.FILE).delete();
+        NwdConfigs.file(DockConfig.FILE).delete();
+        recreate(); // volta aos padrões (tema, idioma, dock); os outros apps releem ao abrir
+    }
+
+    private static void deleteTree(File f) {
+        if (f == null || !f.exists()) return;
+        File[] children = f.listFiles();
+        if (children != null) for (File c : children) deleteTree(c);
+        f.delete();
     }
 
     private String yesNo(boolean v) {
