@@ -22,6 +22,14 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- Aviso de volume e menu da borda de baixo por cima dos outros apps (overlay/). Com targetSdk < 23 é concedida na instalação. -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- Módulo OBD2: ELM327 pareado no Bluetooth. -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <!-- "Tocando agora" com qualquer app de música (Spotify, Deezer…): as sessões de mídia. Vale como app
+         privilegiado (ROM); fora dela, pelo leitor de notificações (MediaListener). -->
+    <uses-permission
+        android:name="android.permission.MEDIA_CONTENT_CONTROL"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name=".LauncherApp"
@@ -66,6 +74,14 @@
             </intent-filter>
         </activity>
         <!-- Aviso de volume por cima dos apps. Exportado só para a prévia pelo adb (modo desenvolvedor). -->
+        <service
+            android:name="com.k4811.launcher.media.MediaListener"
+            android:exported="true"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
         <service
             android:name="com.k4811.launcher.overlay.VolumeOverlayService"
             android:exported="true" />

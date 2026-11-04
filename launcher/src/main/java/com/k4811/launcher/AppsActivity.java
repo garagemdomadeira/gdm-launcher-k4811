@@ -175,7 +175,7 @@ public class AppsActivity extends Activity {
 
     private void reload() {
         final int gen = ++loadGen;
-        final int iconPx = Math.round(Ui.dp(this, 88));
+        final int iconPx = Math.round(Ui.dp(this, 88) * com.k4811.launcher.home.IconStyle.scale(this));
         loader.execute(() -> {
             List<AppCatalog.Entry> loaded = AppCatalog.load(getApplicationContext(), iconPx);
             handler.post(() -> {
@@ -282,6 +282,8 @@ public class AppsActivity extends Activity {
                 .putStringSet(KEY_FAVORITES, new java.util.HashSet<>(favorites)).apply();
             show();
         });
+        menuButton(panel, R.string.home_icon_change, () -> com.k4811.launcher.home.IconPicker.show(this,
+            entry.packageName, entry.className, entry.label, this::reload));
         menuButton(panel, R.string.home_apps_info, () -> {
             try {
                 startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -410,6 +412,11 @@ public class AppsActivity extends Activity {
             cell.setContentDescription(entry.label);
             ((TextView) cell.findViewById(R.id.app_label)).setText(entry.label);
             ImageView icon = (ImageView) cell.findViewById(R.id.app_icon);
+            int iconSize = Math.round(Ui.dp(AppsActivity.this, 88) * com.k4811.launcher.home.IconStyle.scale(AppsActivity.this));
+            if (icon.getLayoutParams().width != iconSize) {
+                icon.getLayoutParams().width = iconSize;
+                icon.getLayoutParams().height = iconSize;
+            }
             if (entry.icon != null) icon.setImageBitmap(entry.icon);
             else icon.setImageDrawable(null);
             return cell;

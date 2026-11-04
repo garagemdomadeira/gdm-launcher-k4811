@@ -123,6 +123,9 @@ public class HomeSettingsActivity extends Activity {
             case IMAGE: return R.string.settings_home_module_image_hint;
             case SPEED: return R.string.settings_home_module_speed_hint;
             case GPS: return R.string.settings_home_module_gps_hint;
+            case CAR: return R.string.settings_home_module_car_hint;
+            case OBD: return R.string.settings_home_module_obd_hint;
+            case PIP: return R.string.settings_home_module_pip_hint;
             default: return R.string.settings_home_modules_hint;
         }
     }

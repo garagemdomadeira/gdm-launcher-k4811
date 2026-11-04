@@ -207,6 +207,15 @@ public class SettingsActivity extends Activity {
                 LauncherConfig.setFont(this, LauncherConfig.FONTS[i]);
                 restartScreens();
             }).local().help(getString(R.string.settings_help_font));
+        // Ícones dos apps na gaveta (e no seletor da fonte do "tocando agora"): formato e tamanho.
+        list.choice(getString(R.string.settings_icon_shape), getString(R.string.settings_icon_shape_hint),
+            new String[] {getString(R.string.settings_icon_shape_original), getString(R.string.settings_icon_shape_round),
+                getString(R.string.settings_icon_shape_squircle)}, new int[] {0, 1, 2},
+            () -> LauncherConfig.iconShape(this), i -> LauncherConfig.setIconShape(this, i));
+        list.choice(getString(R.string.settings_icon_size), getString(R.string.settings_icon_size_hint),
+            new String[] {getString(R.string.settings_icon_size_small), getString(R.string.settings_icon_size_normal),
+                getString(R.string.settings_icon_size_large)}, new int[] {0, 1, 2},
+            () -> LauncherConfig.iconSize(this), i -> LauncherConfig.setIconSize(this, i));
     }
 
     private void pickTheme(int theme) {

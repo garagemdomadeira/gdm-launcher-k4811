@@ -25,6 +25,7 @@ public class DockSettingsActivity extends Activity {
 
     private OptionList list;
     private OptionList.Row counter;
+    private final java.util.Map<DockView.Item, OptionList.Row> swapRows = new java.util.EnumMap<>(DockView.Item.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class DockSettingsActivity extends Activity {
                 fixed.help(getString(R.string.settings_help_dock_fixed));
                 continue;
             }
-            list.toggle(item.title(this), getString(R.string.settings_dock_item_hint),
+            OptionList.Row row = list.toggle(item.title(this), getString(R.string.settings_dock_item_hint),
                 () -> LauncherConfig.dockToggles(this).contains(item),
                 on -> {
                     Set<DockView.Item> set = LauncherConfig.dockToggles(this);
@@ -75,6 +76,9 @@ public class DockSettingsActivity extends Activity {
                     Set<DockView.Item> set = LauncherConfig.dockToggles(this);
                     return set.contains(item) || set.size() < max;
                 });
+            // Trocar a função do botão por um app (ex.: o Waze no lugar do Equalizador).
+            row.addButton(getString(R.string.settings_dock_swap), () -> pickApp(item, row));
+            swapRows.put(item, row);
         }
 
         int[] values = new int[LauncherConfig.ZLINK_NAMES.length];
@@ -107,7 +111,54 @@ public class DockSettingsActivity extends Activity {
         }).help(getString(R.string.settings_help_dock_reset));
     }
 
+    /** Lista de apps para pôr no lugar do botão; a primeira opção volta à função original. */
+    private void pickApp(DockView.Item item, OptionList.Row row) {
+        android.content.pm.PackageManager pm = getPackageManager();
+        android.content.Intent q = new android.content.Intent(android.content.Intent.ACTION_MAIN)
+            .addCategory(android.content.Intent.CATEGORY_LAUNCHER);
+        java.util.List<android.content.pm.ResolveInfo> found = pm.queryIntentActivities(q, 0);
+        java.util.TreeMap<String, String> apps = new java.util.TreeMap<>(java.text.Collator.getInstance());
+        if (found != null) {
+            for (android.content.pm.ResolveInfo r : found) {
+                String pkg = r.activityInfo.packageName;
+                if (pkg.equals(getPackageName()) || pkg.equals(com.k4811.common.Apps.LAUNCHER)) continue;
+                apps.put(String.valueOf(r.loadLabel(pm)).trim() + "\u0000" + pkg, pkg);
+            }
+        }
+        java.util.List<String> pkgs = new java.util.ArrayList<>();
+        java.util.List<String> names = new java.util.ArrayList<>();
+        pkgs.add("");
+        names.add(getString(R.string.settings_dock_swap_original, item.title(this)));
+        for (java.util.Map.Entry<String, String> e : apps.entrySet()) {
+            pkgs.add(e.getValue());
+            names.add(e.getKey().substring(0, e.getKey().indexOf('\u0000')));
+        }
+        new android.app.AlertDialog.Builder(this, android.app.AlertDialog.THEME_DEVICE_DEFAULT_DARK)
+            .setTitle(getString(R.string.settings_dock_swap_title, item.title(this)))
+            .setItems(names.toArray(new String[0]), (d, which) -> {
+                LauncherConfig.setDockApp(this, item, pkgs.get(which));
+                if (!pkgs.get(which).isEmpty()) {
+                    Set<DockView.Item> set = LauncherConfig.dockToggles(this);
+                    if (!set.contains(item) && set.size() < LauncherConfig.MAX_DOCK_TOGGLES) {
+                        set.add(item);
+                        LauncherConfig.setDockToggles(this, set);
+                    }
+                }
+                list.renderAll();
+            })
+            .show();
+    }
+
+    private void renderSwaps() {
+        for (java.util.Map.Entry<DockView.Item, OptionList.Row> e : swapRows.entrySet()) {
+            String pkg = LauncherConfig.dockApp(this, e.getKey());
+            e.getValue().setNote(pkg.isEmpty() ? null
+                : getString(R.string.settings_dock_swapped, ExternalApps.appLabel(this, pkg)), false);
+        }
+    }
+
     private void renderCounter() {
+        renderSwaps();
         int n = LauncherConfig.dockToggles(this).size();
         counter.setNote(n >= LauncherConfig.MAX_DOCK_TOGGLES
             ? getString(R.string.settings_dock_full, LauncherConfig.MAX_DOCK_TOGGLES) : null, false);

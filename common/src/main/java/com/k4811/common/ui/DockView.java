@@ -72,8 +72,15 @@ public class DockView extends LinearLayout {
             return null;
         }
 
+        /** App que a pessoa pôs no lugar deste botão ("" = função original). */
+        public String swappedApp(Context c) {
+            return toggleable ? LauncherConfig.dockApp(c, this) : "";
+        }
+
         /** Short label shown in the dock. */
         public String label(Context c) {
+            String app = swappedApp(c);
+            if (!app.isEmpty()) return ExternalApps.appLabel(c, app).toUpperCase();
             if (this == ZLINK) return LauncherConfig.ZLINK_NAMES[LauncherConfig.zlinkName(c)].toUpperCase();
             if (this == NAV) {
                 String pkg = LauncherConfig.navApp(c);
@@ -84,6 +91,8 @@ public class DockView extends LinearLayout {
 
         /** Icon in the dock: Z-Link's follows its chosen name (Z-Link, CarPlay or Auto). */
         public IconView.Icon icon(Context c) {
+            String app = swappedApp(c);
+            if (!app.isEmpty()) return appIcon(c, app);
             if (this != ZLINK) return icon;
             switch (LauncherConfig.zlinkName(c)) {
                 case 1:
@@ -107,6 +116,7 @@ public class DockView extends LinearLayout {
 
         /** false if the item's app or hardware doesn't exist on this head unit (hidden from dock and Settings). */
         public boolean isAvailable(Context c) {
+            if (!swappedApp(c).isEmpty()) return true;
             switch (this) {
                 case AUX:
                     return ExternalApps.hasAux(c);
@@ -130,8 +140,29 @@ public class DockView extends LinearLayout {
         void onDockItem(Item item);
     }
 
+    /**
+     * Ícone de traço (no estilo do dock) para um app posto no lugar de um botão: navegação, música, vídeo,
+     * conversa/telefone, câmera, ajustes; o resto, o ícone de apps. null = desenhar o ícone do próprio app em cinza.
+     */
+    public static IconView.Icon appIcon(Context c, String pkg) {
+        String p = pkg.toLowerCase(java.util.Locale.US);
+        if (ExternalApps.navApps(c).contains(pkg) || p.contains("waze") || p.contains("maps") || p.contains("navi")
+            || p.contains("gps")) return IconView.Icon.NAVIGATION;
+        if (p.contains("spotify") || p.contains("deezer") || p.contains("music") || p.contains("tidal")
+            || p.contains("podcast") || p.contains("soundcloud") || p.contains("radio")) return IconView.Icon.MUSIC;
+        if (p.contains("youtube") || p.contains("netflix") || p.contains("video") || p.contains("player")
+            || p.contains("tv")) return IconView.Icon.VIDEO;
+        if (p.contains("whatsapp") || p.contains("telegram") || p.contains("dialer") || p.contains("phone"))
+            return IconView.Icon.PHONE;
+        if (p.contains("camera") || p.contains("360") || p.contains("dvr")) return IconView.Icon.CAMERA_360;
+        if (p.contains("setting")) return IconView.Icon.SETTINGS;
+        if (p.contains("android.auto") || p.contains("projection")) return IconView.Icon.ANDROID_AUTO;
+        if (p.contains("carplay") || p.contains("zlink")) return IconView.Icon.CARPLAY;
+        return IconView.Icon.APPS;
+    }
+
     /** Total height reserved by the dock (panel + margins), in design dp. */
-    public static final int HEIGHT_DP = 160;
+    public static final int HEIGHT_DP = 128;
 
     private final Paint panel = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint border = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -155,7 +186,7 @@ public class DockView extends LinearLayout {
         setGravity(Gravity.CENTER_VERTICAL);
         setWillNotDraw(false);
         int side = Math.round(Ui.dp(c, 44));
-        setPadding(side, Math.round(Ui.dp(c, 14)), side, Math.round(Ui.dp(c, 26)));
+        setPadding(side, Math.round(Ui.dp(c, 10)), side, Math.round(Ui.dp(c, 20)));
         panel.setColor(Ui.BG_SOFT);
         border.setColor(Ui.HAIRLINE);
         border.setStyle(Paint.Style.STROKE);
@@ -178,6 +209,7 @@ public class DockView extends LinearLayout {
         }
         key.append(LauncherConfig.zlinkName(c)); // Z-Link's label and icon are a setting too
         if (shown.contains(Item.NAV)) key.append(',').append(LauncherConfig.navApp(c)); // rótulo = app escolhido
+        for (Item item : shown) key.append(',').append(item.swappedApp(c)); // botões trocados por um app
         if (key.toString().equals(shownKey)) return;
         shownKey = key.toString();
 
@@ -200,13 +232,13 @@ public class DockView extends LinearLayout {
             icon.setClickable(false);
             icon.setDuplicateParentStateEnabled(true);
             icon.color(Ui.TEXT_MUTED);
-            int iconSize = Math.round(Ui.dp(c, 62));
+            int iconSize = Math.round(Ui.dp(c, 48));
             slot.addView(icon, new LayoutParams(iconSize, iconSize));
 
             TextView label = new TextView(c);
             label.setText(item.label(c));
             // Portrait units are narrower: about 30% smaller labels so they fit side by side.
-            label.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, Ui.dp(c, Ui.isPortrait(c) ? 15 : 22));
+            label.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, Ui.dp(c, Ui.isPortrait(c) ? 13 : 18));
             label.setTextColor(Ui.TEXT_MUTED);
             label.setSingleLine(true);
             label.setTypeface(Ui.medium(c));
@@ -257,8 +289,8 @@ public class DockView extends LinearLayout {
         // Rounded panel with a thin border, inside the side/bottom margins.
         float inset = Ui.dp(getContext(), 26);
         float top = Ui.dp(getContext(), 4);
-        float bottom = getHeight() - Ui.dp(getContext(), 14);
-        float r = Ui.dp(getContext(), 26);
+        float bottom = getHeight() - Ui.dp(getContext(), 10);
+        float r = Ui.dp(getContext(), 24);
         rect.set(inset, top, getWidth() - inset, bottom);
         c.drawRoundRect(rect, r, r, panel);
         c.drawRoundRect(rect, r, r, border);
@@ -270,9 +302,9 @@ public class DockView extends LinearLayout {
         super.dispatchDraw(c);
         if (active == null || slots[active.ordinal()] == null) return;
         View slot = slots[active.ordinal()];
-        float w = Ui.dp(getContext(), 88);
+        float w = Ui.dp(getContext(), 72);
         float cx = slot.getLeft() + slot.getWidth() / 2f;
-        float y = getHeight() - Ui.dp(getContext(), 26);
+        float y = getHeight() - Ui.dp(getContext(), 19);
         float h = Ui.dp(getContext(), 4);
         rect.set(cx - w / 2f, y - h, cx + w / 2f, y);
         c.drawRoundRect(rect, h / 2f, h / 2f, underline);

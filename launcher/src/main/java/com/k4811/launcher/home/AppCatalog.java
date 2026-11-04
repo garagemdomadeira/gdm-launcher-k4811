@@ -127,7 +127,7 @@ public final class AppCatalog {
             CharSequence title = info.loadLabel(pm);
             String label = title == null ? pkg : title.toString().trim();
             if (label.isEmpty()) label = pkg;
-            apps.add(new Entry(label, pkg, cls, icon(info.loadIcon(pm), size),
+            apps.add(new Entry(label, pkg, cls, icon(context, info, pm, pkg, cls, size),
                 groupOf(info.activityInfo.applicationInfo, pkg)));
         }
         Collator order = Collator.getInstance(Locale.getDefault());
@@ -182,6 +182,17 @@ public final class AppCatalog {
         } catch (Exception ignored) {
         }
         return names;
+    }
+
+    /** Ícone trocado pela pessoa (GDM-icones) ou o do app, no formato escolhido nas Configurações. */
+    private static Bitmap icon(Context c, ResolveInfo info, PackageManager pm, String pkg, String cls, int size) {
+        Drawable custom = CustomIcons.get(c, pkg, cls);
+        Bitmap b = null;
+        try {
+            b = IconStyle.render(c, custom != null ? custom : info.loadIcon(pm), size, custom != null);
+        } catch (Exception ignored) {
+        }
+        return b != null ? b : icon(custom != null ? custom : info.loadIcon(pm), size);
     }
 
     private static Bitmap icon(Drawable drawable, int size) {

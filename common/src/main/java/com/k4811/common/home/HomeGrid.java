@@ -12,7 +12,7 @@ import com.k4811.common.ui.DockView;
  * Invisible grid of the home screen, in dp, with six slots (A–F); each holds at most one
  * {@link Module}. Where the slots sit depends on the screen ({@link #layout}):
  * <ul>
- * <li>Landscape (1280×720 design): below the top bar a 1232×444 area split into three columns —
+ * <li>Landscape (1280×720 design): below the top bar a 1232×476 area split into three columns —
  * left with one tall slot (A), center with a large slot over a wide one (B, C), right with three
  * small slots (D, E, F).</li>
  * <li>Portrait (e.g. 768×1024 units): the columns become rows — A across the whole width, then B and
@@ -32,13 +32,13 @@ public final class HomeGrid {
 
     /** Shape of a slot: every module has a layout for each one. */
     public enum Size {
-        /** Narrower than tall (landscape A: 400×444). */
+        /** Narrower than tall (landscape A: 380×476). */
         TALL,
-        /** Big and wide (landscape B: 494×260; portrait A, B, C). */
+        /** Big and wide (landscape B: 372×282; portrait A, B, C). */
         LARGE,
-        /** Wide and short (landscape C: 494×160). */
+        /** Wide and short (landscape C: 372×170). */
         WIDE,
-        /** The small ones (landscape D–F: 290×132; portrait D–F). */
+        /** The small ones (landscape D–F: 432×142; portrait D–F). */
         SMALL
     }
 
@@ -88,6 +88,11 @@ public final class HomeGrid {
         return new Frame(top.x, top.y, top.width, bottom.y + bottom.height - top.y, Size.TALL);
     }
 
+    /** Linha inteira de {@code left} até o fim de {@code right} (mesma altura), tratada como grande. */
+    public static Frame row(Frame left, Frame right) {
+        return new Frame(left.x, left.y, right.x + right.width - left.x, left.height, Size.LARGE);
+    }
+
     /** The grid for one screen: its size in dp and each slot's frame. */
     public static final class Layout {
         public final boolean portrait;
@@ -134,12 +139,14 @@ public final class HomeGrid {
 
     private static Layout landscape() {
         return new Layout(false, 1280, 720, new Frame[]{
-            new Frame(24, 100, 400, 444, Size.TALL),
-            new Frame(448, 100, 494, 260, Size.LARGE),
-            new Frame(448, 384, 494, 160, Size.WIDE),
-            new Frame(966, 100, 290, 132, Size.SMALL),
-            new Frame(966, 256, 290, 132, Size.SMALL),
-            new Frame(966, 412, 290, 132, Size.SMALL),
+            // dock de 128: a área vai de 100 a 576 (476 de altura). Centro mais estreito (372) e a coluna da
+            // direita mais larga (432), para o PIP caber nela inteira.
+            new Frame(24, 100, 380, 476, Size.TALL),
+            new Frame(428, 100, 372, 282, Size.LARGE),
+            new Frame(428, 406, 372, 170, Size.WIDE),
+            new Frame(824, 100, 432, 142, Size.SMALL),
+            new Frame(824, 267, 432, 142, Size.SMALL),
+            new Frame(824, 434, 432, 142, Size.SMALL),
         });
     }
 
@@ -176,7 +183,16 @@ public final class HomeGrid {
         /** GPS speed (see {@link GpsClient}). */
         SPEED("speed", R.string.settings_home_module_speed),
         /** Latitude, longitude, altitude and heading. */
-        GPS("gps", R.string.settings_home_module_gps);
+        GPS("gps", R.string.settings_home_module_gps),
+        /** O carro em 3D (modelo, cor e placa) ou uma foto dele. */
+        CAR("car", R.string.settings_home_module_car),
+        /** Velocidade e vitais do motor pelo OBD2 (ELM327 Bluetooth); sem ele, a velocidade do GPS. */
+        OBD("obd", R.string.settings_home_module_obd),
+        /**
+         * Um app rodando dentro da tela inicial (Waze, Maps…). Na coluna da direita com as outras áreas dela livres,
+         * ocupa a coluna inteira.
+         */
+        PIP("pip", R.string.settings_home_module_pip);
 
         /** Id stored in launcher_prefs (home_layout). */
         public final String id;

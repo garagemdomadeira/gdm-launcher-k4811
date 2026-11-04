@@ -58,6 +58,19 @@ public final class DockNavigator {
 
     public static void navigate(Activity from, DockView.Item current, DockView.Item target) {
         if (target == current) return;
+        String swapped = target.swappedApp(from);
+        if (!swapped.isEmpty()) {
+            // Botão trocado por um app (ex.: Waze no lugar do Equalizador): abre o app.
+            Splash.cancel();
+            Intent launch = from.getPackageManager().getLaunchIntentForPackage(swapped);
+            if (launch == null) {
+                Toast.makeText(from, from.getString(R.string.screen_app_missing, swapped), Toast.LENGTH_LONG).show();
+                return;
+            }
+            launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            switchTo(from, launch, R.anim.screen_swap_in, R.anim.screen_swap_out);
+            return;
+        }
         Splash.cancel(); // outro item tocado enquanto um Splash estava na tela: vale o último
         if (Apps.LAUNCHER.equals(from.getPackageName())) {
             // Tela inicial: abre na hora. Os players já começam a parar agora.

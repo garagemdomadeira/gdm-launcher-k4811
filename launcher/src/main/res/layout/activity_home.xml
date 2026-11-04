@@ -220,16 +220,46 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/np_label"
-                android:layout_width="match_parent"
+            <!-- Fonte: ícone, nome e a setinha; toque escolhe Automático, Rádio, MP3, BT ou um app de música. -->
+            <LinearLayout
+                android:id="@+id/np_source"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:letterSpacing="0.28"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/text_muted"
-                android:textSize="16sp" />
+                android:layout_marginLeft="-6dp"
+                android:background="@drawable/chip"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:minHeight="40dp"
+                android:orientation="horizontal"
+                android:paddingLeft="8dp"
+                android:paddingRight="4dp">
+
+                <ImageView
+                    android:id="@+id/np_source_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:scaleType="fitCenter" />
+
+                <TextView
+                    android:id="@+id/np_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:ellipsize="end"
+                    android:letterSpacing="0.2"
+                    android:singleLine="true"
+                    android:text=""
+                    android:textColor="@color/text_muted"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/np_source_arrow"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:rotation="90"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ms_chevron_right" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/np_line1"
@@ -252,6 +282,31 @@
                 android:textSize="24sp"
                 android:visibility="gone" />
 
+            <!-- Álbum ou o texto que a rádio manda (RDS) -->
+            <TextView
+                android:id="@+id/np_extra"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/text_muted"
+                android:textSize="18sp"
+                android:visibility="gone" />
+
+            <!-- Memória, estéreo, TP/TA; faixa, ano, gênero; formato do arquivo -->
+            <TextView
+                android:id="@+id/np_tags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:letterSpacing="0.12"
+                android:singleLine="true"
+                android:textColor="@color/accent"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
             <!-- Thin progress bar -->
             <FrameLayout
                 android:id="@+id/np_progress_track"
@@ -267,6 +322,30 @@
                     android:scaleX="0"
                     android:transformPivotX="0px" />
             </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/np_times"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/np_pos"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/text_muted"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/np_dur"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_muted"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/np_controls"
@@ -637,6 +716,367 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
+    <!-- ===== Carro: o carro 3D (modelo, cor e placa) ou uma foto; toque abre as opções ===== -->
+    <FrameLayout
+        android:id="@+id/car_block"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <com.k4811.launcher.car.Car3DView
+            android:id="@+id/car_3d"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/car_photo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/car_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/home_car_photo_pick"
+            android:textColor="@color/text_muted"
+            android:textSize="20sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <!-- ===== OBD2 com o relógio: hora, data e a luz da injeção à esquerda; velocidade, marcha, RPM, motor,
+         bateria e combustível pelo ELM327 (sem ele, a velocidade do GPS) ===== -->
+    <LinearLayout
+        android:id="@+id/obd_block"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="6dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/obd_clock_col"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/obd_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:textColor="@color/text"
+                android:textSize="52sp" />
+
+            <TextView
+                android:id="@+id/obd_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:singleLine="true"
+                android:textColor="@color/text_soft"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:id="@+id/obd_mil_cell"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/obd_mil_icon"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ms_info" />
+
+                <TextView
+                    android:id="@+id/obd_mil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
+                    android:singleLine="true"
+                    android:text="@string/home_obd_none"
+                    android:textColor="@color/text_soft"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/obd_divider"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:background="@color/hairline" />
+
+        <LinearLayout
+            android:id="@+id/obd_cells"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/obd_row1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/obd_speed_cell"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/obd_speed_icon"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ms_speed" />
+
+                    <TextView
+                        android:id="@+id/obd_speed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:includeFontPadding="false"
+                        android:singleLine="true"
+                        android:text="@string/home_obd_none"
+                        android:textColor="@color/text"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/obd_rpm_cell"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/obd_rpm_icon"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ms_directions_car" />
+
+                    <TextView
+                        android:id="@+id/obd_rpm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:includeFontPadding="false"
+                        android:singleLine="true"
+                        android:text="@string/home_obd_none"
+                        android:textColor="@color/text"
+                        android:textSize="20sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/obd_row2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/obd_gear_cell"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/obd_gear_icon"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ms_settings_input_component" />
+
+                    <TextView
+                        android:id="@+id/obd_gear"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:includeFontPadding="false"
+                        android:singleLine="true"
+                        android:text="@string/home_obd_none"
+                        android:textColor="@color/text"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/obd_temp_cell"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/obd_temp_icon"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ms_device_thermostat" />
+
+                    <TextView
+                        android:id="@+id/obd_temp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:includeFontPadding="false"
+                        android:singleLine="true"
+                        android:text="@string/home_obd_none"
+                        android:textColor="@color/text"
+                        android:textSize="20sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/obd_row3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/obd_volts_cell"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/obd_volts_icon"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ms_battery_full" />
+
+                    <TextView
+                        android:id="@+id/obd_volts"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:includeFontPadding="false"
+                        android:singleLine="true"
+                        android:text="@string/home_obd_none"
+                        android:textColor="@color/text"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/obd_fuel_cell"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/obd_fuel_icon"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ms_local_gas_station" />
+
+                    <TextView
+                        android:id="@+id/obd_fuel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:includeFontPadding="false"
+                        android:singleLine="true"
+                        android:text="@string/home_obd_none"
+                        android:textColor="@color/text"
+                        android:textSize="20sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/obd_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/text_muted"
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ===== PIP: um app de verdade (Waze, Maps, Spotify…) rodando dentro da tela inicial ===== -->
+    <FrameLayout
+        android:id="@+id/pip_block"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/art_frame"
+        android:padding="1dp"
+        android:visibility="gone">
+
+        <com.k4811.launcher.pip.PipView
+            android:id="@+id/pip_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/pip_empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:padding="24dp"
+                android:text="@string/home_pip_empty"
+                android:textColor="@color/text_muted"
+                android:textSize="20sp" />
+        </com.k4811.launcher.pip.PipView>
+
+        <!-- Trocar o app do PIP / abrir em tela cheia -->
+        <LinearLayout
+            android:id="@+id/pip_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:layout_margin="8dp"
+            android:background="@drawable/chip"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/pip_swap"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ms_apps" />
+
+            <ImageView
+                android:id="@+id/pip_full"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ms_open_full" />
+        </LinearLayout>
+    </FrameLayout>
 
     <!-- Screen off: black layer over everything; any touch turns the backlight back on. -->
     <View

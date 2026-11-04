@@ -55,6 +55,11 @@ public final class LauncherConfig {
     /** Antigo liga/desliga do menu da borda; só lido quando ainda não há {@link #KEY_EDGE_MENU_SIDE}. */
     private static final String KEY_EDGE_MENU = "edge_menu";
     private static final String KEY_EDGE_MENU_SIDE = "edge_menu_side";
+    /** Formato dos ícones dos apps (0 original, 1 redondo, 2 quadrado arredondado) e tamanho na gaveta (0–2). */
+    private static final String KEY_ICON_SHAPE = "icon_shape";
+    private static final String KEY_ICON_SIZE = "icon_size";
+    /** Botões do dock trocados por um app: {"eq": "com.waze", ...}. */
+    private static final String KEY_DOCK_APPS = "dock_apps";
 
     /** Launcher original da NWD (valor de fábrica de persist.nwd.launcher.default). */
     public static final String ORIGINAL_LAUNCHER = "com.android.launcher";
@@ -87,7 +92,7 @@ public final class LauncherConfig {
     };
 
     private static final String DEFAULT_HOME_LAYOUT =
-        "now_playing:left,clock:center_top,volume:center_bottom,fan:right_top,bluetooth:right_middle";
+        "now_playing:left,car:center_top,obd:center_bottom,pip:right_top";
 
     private static JSONObject cached;
     private static long cachedModified = -1;
@@ -198,7 +203,41 @@ public final class LauncherConfig {
     }
 
     public static boolean resetDockToggles(Context c) {
+        put(KEY_DOCK_APPS, null);
         return put(KEY_DOCK_TOGGLES, null);
+    }
+
+    /**
+     * App que ocupa o lugar de um botão do dock (ex.: o Waze no lugar do Equalizador), ou "" se o botão tem a função
+     * original (ou se o app foi desinstalado).
+     */
+    public static String dockApp(Context c, DockView.Item item) {
+        JSONObject j = json();
+        JSONObject map = j == null ? null : j.optJSONObject(KEY_DOCK_APPS);
+        String pkg = map == null ? "" : map.optString(item.id, "");
+        if (pkg.isEmpty() || !com.k4811.common.system.ExternalApps.installed(c, pkg)) return "";
+        return pkg;
+    }
+
+    /** Troca o botão {@code item} pelo app {@code pkg}; null ou "" volta à função original. */
+    public static boolean setDockApp(Context c, DockView.Item item, String pkg) {
+        JSONObject j = json();
+        JSONObject map = j == null ? null : j.optJSONObject(KEY_DOCK_APPS);
+        JSONObject out = new JSONObject();
+        try {
+            if (map != null) {
+                java.util.Iterator<String> keys = map.keys();
+                while (keys.hasNext()) {
+                    String k = keys.next();
+                    out.put(k, map.optString(k));
+                }
+            }
+            if (pkg == null || pkg.isEmpty()) out.remove(item.id);
+            else out.put(item.id, pkg);
+        } catch (Exception e) {
+            return false;
+        }
+        return put(KEY_DOCK_APPS, out);
     }
 
     /** Índice em {@link #ZLINK_NAMES} do nome do Z-Link no dock; Z-Link por padrão. */
@@ -271,11 +310,12 @@ public final class LauncherConfig {
         Map<HomeGrid.Module, HomeGrid.Slot> out = new EnumMap<>(HomeGrid.Module.class);
         String raw = string(KEY_HOME_LAYOUT, null);
         if (raw == null) {
+            // Tocando agora à esquerda; no meio o carro e o OBD2 com o relógio; à direita o PIP (coluna inteira).
+            // Volume, relógio grande, ventoinha e Bluetooth continuam disponíveis nas Configurações.
             out.put(HomeGrid.Module.NOW_PLAYING, HomeGrid.Slot.LEFT);
-            out.put(HomeGrid.Module.CLOCK, HomeGrid.Slot.CENTER_TOP);
-            if (bool(KEY_VOLUME, true)) out.put(HomeGrid.Module.VOLUME, HomeGrid.Slot.CENTER_BOTTOM);
-            // Ventoinha e Bluetooth viraram ícones na barra do alto; a coluna da direita fica livre
-            // (o cartão de ligação aparece nela). Os dois módulos continuam disponíveis nas Configurações.
+            out.put(HomeGrid.Module.CAR, HomeGrid.Slot.CENTER_TOP);
+            out.put(HomeGrid.Module.OBD, HomeGrid.Slot.CENTER_BOTTOM);
+            out.put(HomeGrid.Module.PIP, HomeGrid.Slot.RIGHT_TOP);
             return out;
         }
         for (String pair : raw.split(",")) {
@@ -314,6 +354,24 @@ public final class LauncherConfig {
             sb.append(e.getKey().id).append(':').append(e.getValue().id);
         }
         return put(KEY_HOME_LAYOUT, sb.toString());
+    }
+
+    public static int iconShape(Context c) {
+        int v = integer(KEY_ICON_SHAPE, 0);
+        return v >= 0 && v <= 2 ? v : 0;
+    }
+
+    public static boolean setIconShape(Context c, int shape) {
+        return put(KEY_ICON_SHAPE, shape);
+    }
+
+    public static int iconSize(Context c) {
+        int v = integer(KEY_ICON_SIZE, 1);
+        return v >= 0 && v <= 2 ? v : 1;
+    }
+
+    public static boolean setIconSize(Context c, int size) {
+        return put(KEY_ICON_SIZE, size);
     }
 
     /** Mostrar o volume por cima de qualquer app quando ele muda (VolumeOverlayService do launcher). */
