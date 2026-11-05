@@ -11,8 +11,8 @@ android {
         // applicationId: definido na tabela de packages do build.gradle.kts da raiz
         minSdk = 17     // Android 4.2, igual ao com.android.car.setting original
         targetSdk = 19  // Android 4.4, igual ao com.android.car.setting original
-        versionCode = 20271200  // maior que o de todos os originais (o com.nwd.audioset está em 20260915)
-        versionName = "2.1.2"
+        versionCode = 20271300  // maior que o de todos os originais (o com.nwd.audioset está em 20260915)
+        versionName = "2.1.3"
     }
 
     buildFeatures {

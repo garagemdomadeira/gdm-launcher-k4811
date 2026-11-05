@@ -70,15 +70,32 @@ public final class BottomBar implements Application.ActivityLifecycleCallbacks {
      * Espaço (px reais) que as telas da suíte deixam livre embaixo para a barra da NWD: nas centrais verticais que
      * têm a barra e com "Ocultar a barra" desligado ela fica por cima dos apps, então o dock da suíte sobe e fica
      * logo acima dela. 0 nas horizontais (sem a barra) ou com a barra oculta.
+     * <p>
+     * Só conta a parte da barra que cai dentro da área dos apps: em algumas centrais o sistema já termina a janela
+     * acima da barra, e descontar de novo deixava a tela inicial mais larga que alta (grade horizontal cortada numa
+     * tela de 768) e o dock 140 px acima do lugar.
      */
     public static int reservedPx(Context c) {
+        return reservedPx(c, null);
+    }
+
+    /**
+     * Como {@link #reservedPx(Context)}, medindo onde {@code area} (já na tela) termina: só conta a parte da barra
+     * que fica por cima dela. Sem a área medida, supõe a janela até o fim da tela (a barra inteira).
+     */
+    public static int reservedPx(Context c, android.view.View area) {
         if (!available(c) || LauncherConfig.hideBottomBar(c)) return 0;
-        android.util.DisplayMetrics dm = new android.util.DisplayMetrics();
         android.view.WindowManager wm = (android.view.WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
         if (wm == null) return 0;
-        wm.getDefaultDisplay().getRealMetrics(dm);
-        if (dm.heightPixels <= dm.widthPixels) return 0; // a barra é da tela vertical
-        return Math.round(BAR_HEIGHT_PX * (dm.widthPixels / (float) BAR_WIDTH_PX));
+        android.graphics.Point real = new android.graphics.Point();
+        wm.getDefaultDisplay().getRealSize(real);
+        if (real.y <= real.x) return 0; // a barra é da tela vertical
+        int bar = Math.round(BAR_HEIGHT_PX * (real.x / (float) BAR_WIDTH_PX));
+        if (area == null || area.getHeight() <= 0 || area.getWindowToken() == null) return bar;
+        int[] at = new int[2];
+        area.getLocationOnScreen(at);
+        int under = at[1] + area.getHeight() - (real.y - bar);
+        return Math.max(0, Math.min(bar, under));
     }
 
     /** Settings switch. Applies at once: K4811 is in front while it's toggled. */

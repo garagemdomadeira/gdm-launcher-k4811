@@ -147,11 +147,17 @@ public final class HomeGrid {
             wPx = size.x;
             hPx = size.y;
         }
-        hPx -= com.k4811.common.system.BottomBar.reservedPx(a); // barra da NWD na vertical (o dock fica acima dela)
+        // barra da NWD na vertical (o dock fica acima dela): só a parte que cai sobre a área do app
+        hPx -= com.k4811.common.system.BottomBar.reservedPx(a, content != null && content.getHeight() > 0 ? content : null);
         float density = a.getResources().getDisplayMetrics().density;
         int w = Math.round(wPx / density);
         int h = Math.round(hPx / density);
-        Layout l = h > w ? portrait(w, h) : landscape();
+        // Tela física em pé = sempre a grade em linhas: a horizontal (1280 de largura) não cabe numa tela de 768.
+        Display d = a.getWindowManager().getDefaultDisplay();
+        Point real = new Point();
+        d.getRealSize(real);
+        boolean screenPortrait = real.y > real.x;
+        Layout l = h > w || screenPortrait ? portrait(w, h) : landscape();
         return com.k4811.common.config.LauncherConfig.homeMirrored(a) ? l.mirrored() : l;
     }
 
