@@ -202,8 +202,8 @@
         <!-- Album cover (MP3) or source icon (radio, Bluetooth). -->
         <FrameLayout
             android:id="@+id/np_art_frame"
-            android:layout_width="216dp"
-            android:layout_height="216dp"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
             android:background="@drawable/art_frame"
             android:padding="1dp">
 

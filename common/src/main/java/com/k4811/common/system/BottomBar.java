@@ -80,11 +80,40 @@ public final class BottomBar implements Application.ActivityLifecycleCallbacks {
     }
 
     /**
+     * Altura (px) que o framework do vendor reserva embaixo para o painel "instrument" (a faixa da barra da NWD),
+     * lida de {@code sys.nwd.instrument.panelheight}. 0 = o vendor não reserva nada (ROM com a faixa desligada via
+     * WindowFeatureConfig.ini), então o nosso dock desce até o fim. -1 quando a prop não existe: aí mantemos o
+     * comportamento antigo (reserva calculada pela altura padrão da barra).
+     */
+    private static int vendorInstrumentPx(Context c) {
+        String v = com.k4811.common.system.SystemProps.get("sys.nwd.instrument.panelheight", "-1");
+        try {
+            return Integer.parseInt(v.trim());
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    /**
+     * Altura real (px) da barra da NWD nesta tela, SEM olhar a chave de ocultar: para quem acabou de alternar a
+     * chave e ainda lê o cache antigo. 0 nas centrais sem a barra ou nas telas horizontais.
+     */
+    public static int barHeightPx(Context c) {
+        if (!available(c) || vendorInstrumentPx(c) == 0) return 0;
+        android.view.WindowManager wm = (android.view.WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
+        if (wm == null) return 0;
+        android.graphics.Point real = new android.graphics.Point();
+        wm.getDefaultDisplay().getRealSize(real);
+        if (real.y <= real.x) return 0; // a barra é da tela vertical
+        return Math.round(BAR_HEIGHT_PX * (real.x / (float) BAR_WIDTH_PX));
+    }
+
+    /**
      * Como {@link #reservedPx(Context)}, medindo onde {@code area} (já na tela) termina: só conta a parte da barra
      * que fica por cima dela. Sem a área medida, supõe a janela até o fim da tela (a barra inteira).
      */
     public static int reservedPx(Context c, android.view.View area) {
-        if (!available(c) || LauncherConfig.hideBottomBar(c)) return 0;
+        if (!available(c) || LauncherConfig.hideBottomBar(c) || vendorInstrumentPx(c) == 0) return 0;
         android.view.WindowManager wm = (android.view.WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
         if (wm == null) return 0;
         android.graphics.Point real = new android.graphics.Point();

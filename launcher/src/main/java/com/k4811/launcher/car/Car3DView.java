@@ -253,7 +253,10 @@ public final class Car3DView extends View {
         car.drawLights(c, braking);
         c.restore();
 
-        if (running) postInvalidateOnAnimation();
+        // Só continua animando enquanto há movimento (ou a luz de freio ainda vai apagar). Parado, o carro fica
+        // estático e NÃO redesenha — antes ele re-invalidava a 60fps à toa, segurando ~45% de CPU na tela inicial.
+        boolean animating = speedKmh > 0.01f || Math.abs(targetSpeedKmh - speedKmh) > 0.01f || now < brakeUntilMs;
+        if (running && animating) postInvalidateOnAnimation();
     }
 
     private void drawRoad(Canvas c, float camShiftX) {

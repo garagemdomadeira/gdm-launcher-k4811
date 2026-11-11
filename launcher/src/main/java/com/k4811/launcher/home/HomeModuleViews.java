@@ -356,8 +356,9 @@ public final class HomeModuleViews {
                 npProgress = true;
                 break;
             case LARGE:
-                // 200 in the landscape slot; up to 300 in the wider portrait ones.
-                art = Math.max(200, Math.min(300, Math.min(slot.height - 28, slot.width * 9 / 20)));
+                // Capa compacta: ~128 no slot horizontal, até 150 nos verticais mais largos (antes ia a 300 e
+                // ficava enorme na tela inicial). O mini play (prev/play/next) fica ao lado, estilo HTG Dash.
+                art = Math.max(128, Math.min(150, Math.min(slot.height - 28, slot.width * 9 / 20)));
                 line1 = 30;
                 line2 = 20;
                 button = 56;
