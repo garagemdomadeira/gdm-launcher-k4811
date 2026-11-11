@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GDM Atualizações (updater) e a linha dele nas configurações do launcher. -->
+<resources>
+    <string name="ota_app_name">GDM アップデート</string>
+    <string name="ota_check_now">今すぐ確認</string>
+    <string name="ota_checking">アップデートを確認中…</string>
+    <string name="ota_last_check">最終確認: %1$s</string>
+    <string name="ota_never">なし</string>
+    <string name="ota_up_to_date">すべて最新です。</string>
+    <string name="ota_offline">インターネットに接続されていません。次回の確認で再試行します。</string>
+    <string name="ota_bad_sig">アップデート一覧に GDM の署名がありません。何もインストールしていません。</string>
+    <string name="ota_app_line">%1$s: %2$s → %3$s</string>
+    <string name="ota_confirm">アップデートを確定</string>
+    <string name="ota_later">後で</string>
+    <string name="ota_installing">%1$s をインストール中…</string>
+    <string name="ota_downloading">%1$s をダウンロード中… %2$d%%</string>
+    <string name="ota_done">完了: %1$d 個のアプリを更新しました。</string>
+    <string name="ota_failed">%1$s: %2$s</string>
+    <string name="ota_prompt_title">GDM のアップデート</string>
+    <string name="ota_rom_line">ROM %1$s (%2$d MB)</string>
+    <string name="ota_rom_install">ROM をインストール</string>
+    <string name="ota_rom_confirm_title">ROM %1$s をインストールしますか?</string>
+    <string name="ota_rom_confirm_msg">%1$d MB をダウンロードした後、本体が再起動して ROM を書き込みます(約 10 分)。データとアプリはそのまま残ります。書き込み中は車のエンジンを切らないでください。</string>
+    <string name="ota_rom_metered">注意: モバイルデータを使用しています。</string>
+    <string name="ota_rom_no_channel">この ROM は更新チャンネルを持っていません。ここではアプリのみ更新されます。</string>
+    <string name="ota_rom_blocked_key">この ROM は別の鍵で署名されており、データが消えます。USB メモリからインストールしてください。</string>
+    <string name="ota_rom_blocked_cache">/cache にアクセスできません。USB メモリからインストールしてください。</string>
+    <string name="ota_rom_blocked_system">ROM はここでは ROM に含まれる GDM アップデートでのみインストールできます。</string>
+    <string name="ota_rom_no_space">/cache に ROM 用の空き容量がありません。</string>
+    <string name="ota_rom_rebooting">ROM の準備ができました。本体が再起動して書き込みます。</string>
+    <string name="home_dash_updates">アップデート</string>
+    <string name="home_dash_updates_sub">GitHub からアプリと ROM、週 1 回確認</string>
+</resources>

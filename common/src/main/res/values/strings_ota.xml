@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GDM Atualizações (updater) e a linha dele nas configurações do launcher. -->
+<resources>
+    <string name="ota_app_name">GDM Updates</string>
+    <string name="ota_check_now">Check now</string>
+    <string name="ota_checking">Checking for updates…</string>
+    <string name="ota_last_check">Last check: %1$s</string>
+    <string name="ota_never">never</string>
+    <string name="ota_up_to_date">Everything is up to date.</string>
+    <string name="ota_offline">No internet. It will try again on the next check.</string>
+    <string name="ota_bad_sig">The update list is not signed by GDM. Nothing was installed.</string>
+    <string name="ota_app_line">%1$s: %2$s → %3$s</string>
+    <string name="ota_confirm">Confirm update</string>
+    <string name="ota_later">Not now</string>
+    <string name="ota_installing">Installing %1$s…</string>
+    <string name="ota_downloading">Downloading %1$s… %2$d%%</string>
+    <string name="ota_done">Done: %1$d app(s) updated.</string>
+    <string name="ota_failed">%1$s: %2$s</string>
+    <string name="ota_prompt_title">GDM updates</string>
+    <string name="ota_rom_line">ROM %1$s (%2$d MB)</string>
+    <string name="ota_rom_install">Install ROM</string>
+    <string name="ota_rom_confirm_title">Install ROM %1$s?</string>
+    <string name="ota_rom_confirm_msg">Downloads %1$d MB, then the head unit restarts and writes the ROM (about 10 minutes). Your data and apps stay. Do not turn the car off while it writes.</string>
+    <string name="ota_rom_metered">Warning: you are on mobile data.</string>
+    <string name="ota_rom_no_channel">This ROM does not report an update channel: only the apps are updated here.</string>
+    <string name="ota_rom_blocked_key">This ROM has another key and would erase your data: install it from a USB drive.</string>
+    <string name="ota_rom_blocked_cache">No access to /cache: install it from a USB drive.</string>
+    <string name="ota_rom_blocked_system">The ROM can only be installed here by the GDM Updates that comes in the ROM.</string>
+    <string name="ota_rom_no_space">Not enough space in /cache for the ROM.</string>
+    <string name="ota_rom_rebooting">ROM ready. The head unit will restart and write it.</string>
+    <string name="home_dash_updates">Updates</string>
+    <string name="home_dash_updates_sub">Apps and ROM from GitHub, checked once a week</string>
+</resources>

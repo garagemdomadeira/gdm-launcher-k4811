@@ -165,7 +165,7 @@ public class DockView extends LinearLayout {
     }
 
     /** Total height reserved by the dock (panel + margins), in design dp. */
-    public static final int HEIGHT_DP = 160;
+    public static final int HEIGHT_DP = 128;
 
     private final Paint panel = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint border = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -235,10 +235,13 @@ public class DockView extends LinearLayout {
                 if (pm.getLaunchIntentForPackage(pkg) == null) continue; // não instalado
                 labelText = appLabel(pm, pkg);
             }
+            // Item embutido: o dock mantém o ícone VETORIAL da suíte (estilo do Madeira). Só um PNG explícito
+            // "dock_<id>.png" troca; NÃO usa o "<pacote>.png" (esse é o ícone personalizado só da gaveta). App
+            // comum no dock: usa o PNG personalizado do pacote e, por fim, o ícone do app.
             Bitmap custom = item != null
-                ? CustomIcons.forDock(item.id, item.pkg, iconSize)
+                ? CustomIcons.forDock(item.id, null, iconSize)
                 : CustomIcons.forPackage(pkg, iconSize);
-            if (custom == null) custom = CustomIcons.appIcon(c, pkg, iconSize);
+            if (custom == null && item == null) custom = CustomIcons.appIcon(c, pkg, iconSize);
 
             Slot slot = new Slot(i, token, item);
             buildSlot(c, slot, labelText, custom, iconSize);

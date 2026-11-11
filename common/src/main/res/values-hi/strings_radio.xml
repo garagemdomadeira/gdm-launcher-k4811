@@ -27,6 +27,7 @@
     <!-- RDS programme types (PTY 0..31) -->
     <string name="radio_config_invalid">%1$s अमान्य है: फ़ाइल ठीक करें। तब तक मेमोरी में बदलाव सहेजे नहीं जाएँगे।</string>
     <string name="radio_stereo">स्टीरियो</string>
+    <string name="radio_search">खोज</string>
     <string name="radio_distant">दूर</string>
     <string name="radio_power">रेडियो</string>
     <string name="radio_ams_started">%1$s पर स्टेशन खोजे जा रहे हैं… मेमोरी बदल दी जाएगी</string>

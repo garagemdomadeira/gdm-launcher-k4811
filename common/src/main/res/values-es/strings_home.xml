@@ -120,4 +120,20 @@
     <!-- Menu da borda de baixo (EdgeMenuService) -->
     <string name="overlay_back">Atrás</string>
     <string name="overlay_home">Inicio</string>
+    <string name="home_dock_nav">NAVEGAR</string>
+    <string name="home_dock_nav_title">Navegación (Waze, Maps…)</string>
+    <string name="home_apps_tab_all">Todas</string>
+    <string name="home_apps_tab_fav">Favoritas</string>
+    <string name="home_apps_cat_all">Todas</string>
+    <string name="home_apps_cat_car">Central</string>
+    <string name="home_apps_cat_nav">Navegación</string>
+    <string name="home_apps_cat_media">Música y video</string>
+    <string name="home_apps_cat_social">Social</string>
+    <string name="home_apps_cat_tools">Herramientas</string>
+    <string name="home_apps_cat_games">Juegos</string>
+    <string name="home_apps_cat_other">Otras</string>
+    <string name="home_apps_fav_add">Añadir a favoritas</string>
+    <string name="home_apps_fav_remove">Quitar de favoritas</string>
+    <string name="home_apps_fav_empty">Aún no hay favoritas.\nMantén pulsada una app para añadirla.</string>
+    <string name="home_apps_info">Información de la app</string>
 </resources>

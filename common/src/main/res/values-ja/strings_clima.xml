@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- App de clima (ar-condicionado). A/C, AUTO, DUAL, MAX e as setas de direcao ficam no codigo (universais). -->
+<resources>
+    <string name="clima_app_name">空調</string>
+    <string name="clima_title">空調</string>
+    <string name="clima_zone_left">左</string>
+    <string name="clima_zone_right">右</string>
+    <string name="clima_defog_front">前デフォグ</string>
+    <string name="clima_defog_rear">後デフォグ</string>
+    <string name="clima_recirc">内気循環</string>
+    <string name="clima_status_connecting">接続中…</string>
+    <string name="clima_status_waiting">接続済み · 車両待機中</string>
+    <string name="clima_status_offline">車両の空調に接続できません</string>
+</resources>

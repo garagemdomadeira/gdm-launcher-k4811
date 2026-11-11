@@ -54,6 +54,57 @@ public final class ExternalApps {
         }
     }
 
+    /** Apps de navegação conhecidos, na ordem de preferência quando nada foi escolhido. */
+    private static final String[] NAV_KNOWN = {"com.waze", "com.google.android.apps.maps",
+        "com.sygic.aura", "com.here.app.maps", "net.osmand", "net.osmand.plus", "com.mapfactor.navigator",
+        "com.tomtom.gplay.navapp", "cz.aponia.bor3", "ru.yandex.yandexnavi", "com.google.android.apps.mapslite"};
+
+    /**
+     * Apps de navegação instalados: os conhecidos e qualquer outro que abra um endereço ({@code geo:})
+     * e tenha ícone na gaveta. Package, sem repetir.
+     */
+    public static java.util.List<String> navApps(Context c) {
+        java.util.List<String> out = new java.util.ArrayList<>();
+        PackageManager pm = c.getPackageManager();
+        for (String p : NAV_KNOWN) {
+            if (installed(c, p) && pm.getLaunchIntentForPackage(p) != null) out.add(p);
+        }
+        try {
+            Intent geo = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse("geo:0,0?q=0,0"));
+            for (android.content.pm.ResolveInfo r : pm.queryIntentActivities(geo, 0)) {
+                String p = r.activityInfo.packageName;
+                if (!out.contains(p) && pm.getLaunchIntentForPackage(p) != null) out.add(p);
+            }
+        } catch (Exception ignored) {
+        }
+        return out;
+    }
+
+    /** Nome do app (para o dock e as Configurações), ou o package. */
+    public static String appLabel(Context c, String pkg) {
+        try {
+            PackageManager pm = c.getPackageManager();
+            return pm.getApplicationLabel(pm.getApplicationInfo(pkg, 0)).toString();
+        } catch (Exception e) {
+            return pkg;
+        }
+    }
+
+    /** Abre o app de navegação escolhido. false se não houver nenhum. */
+    public static boolean openNav(Context c) {
+        String pkg = com.k4811.common.config.LauncherConfig.navApp(c);
+        if (pkg.isEmpty()) return false;
+        Intent launch = c.getPackageManager().getLaunchIntentForPackage(pkg);
+        if (launch == null) return false;
+        launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            c.startActivity(launch);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public static boolean hasAux(Context c) {
         return installed(c, PKG_AUX);
     }

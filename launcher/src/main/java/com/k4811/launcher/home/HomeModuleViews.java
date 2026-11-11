@@ -30,6 +30,7 @@ public final class HomeModuleViews {
     private Map<HomeGrid.Module, HomeGrid.Slot> layout;
     private boolean npLine2 = true;
     private boolean npProgress = true;
+    private boolean npExtras = true;
 
     public HomeModuleViews(Activity activity) {
         this.activity = activity;
@@ -58,13 +59,30 @@ public final class HomeModuleViews {
             HomeGrid.Slot at = layout.get(m);
             if (at == null) {
                 root.setVisibility(View.GONE);
+                if (m == HomeGrid.Module.NOW_PLAYING) activity.findViewById(R.id.home_clima).setVisibility(View.GONE);
                 continue;
             }
             HomeGrid.Frame slot = grid.frame(at);
+            if (m == HomeGrid.Module.PIP) slot = pipFrame(at, next);
             place(root, slot);
             switch (m) {
                 case NOW_PLAYING:
-                    fitNowPlaying(slot);
+                    if (grid.portrait) {
+                        // Em pé: o tempo (clima do ambiente) ocupa a esquerda e o tocando-agora a direita,
+                        // preenchendo o vão preto que ficava ao lado do player centralizado.
+                        int climaW = Math.round(slot.width * 0.30f);
+                        int gap = 16;
+                        View clima = activity.findViewById(R.id.home_clima);
+                        place(clima, HomeGrid.frameOf(slot.x, slot.y, climaW, slot.height, slot.size));
+                        clima.setVisibility(View.VISIBLE);
+                        HomeGrid.Frame np = HomeGrid.frameOf(slot.x + climaW + gap, slot.y,
+                            slot.width - climaW - gap, slot.height, slot.size);
+                        place(root, np);
+                        fitNowPlaying(np);
+                    } else {
+                        activity.findViewById(R.id.home_clima).setVisibility(View.GONE);
+                        fitNowPlaying(slot);
+                    }
                     break;
                 case CLOCK:
                     fitClock(slot);
@@ -90,18 +108,68 @@ public final class HomeModuleViews {
                 case GPS:
                     fitGps(slot);
                     break;
+                case OBD:
+                    fitObd(slot);
+                    break;
+                default:
+                    break;
             }
             root.setVisibility(View.VISIBLE);
         }
-        HomeGrid.Slot callSlot = slotOf(HomeGrid.Module.NOW_PLAYING);
-        if (callSlot == null) callSlot = HomeGrid.Slot.LEFT;
+        // Ligação: com a coluna da direita livre (padrão), o cartão aparece nela inteira e o "tocando
+        // agora" continua à vista; senão, por cima do "tocando agora", como antes. Some sem ligação.
+        HomeGrid.Frame callFrame;
+        if (!grid.portrait && free(HomeGrid.Slot.RIGHT_TOP) && free(HomeGrid.Slot.RIGHT_MIDDLE)
+            && free(HomeGrid.Slot.RIGHT_BOTTOM)) {
+            callFrame = HomeGrid.span(grid.frame(HomeGrid.Slot.RIGHT_TOP), grid.frame(HomeGrid.Slot.RIGHT_BOTTOM));
+        } else {
+            HomeGrid.Slot callSlot = slotOf(HomeGrid.Module.NOW_PLAYING);
+            if (callSlot == null) callSlot = HomeGrid.Slot.LEFT;
+            callFrame = grid.frame(callSlot);
+        }
+        callOnRight = !grid.portrait && free(HomeGrid.Slot.RIGHT_TOP) && free(HomeGrid.Slot.RIGHT_MIDDLE)
+            && free(HomeGrid.Slot.RIGHT_BOTTOM);
         View card = activity.findViewById(R.id.card_call);
-        place(card, grid.frame(callSlot));
-        fitCall(grid.frame(callSlot));
+        place(card, callFrame);
+        fitCall(callFrame);
         card.bringToFront();
     }
 
     /** Slot of {@code m}, or null when it's hidden. */
+    private boolean callOnRight;
+
+    /** O cartão da ligação aparece na coluna da direita (o "tocando agora" continua à vista). */
+    public boolean callOnRight() {
+        return callOnRight;
+    }
+
+    /**
+     * O PIP na coluna da direita, com as outras áreas dela livres, ocupa a coluna inteira (paisagem); no retrato, a
+     * linha de baixo inteira. Senão, só a área dele.
+     */
+    private HomeGrid.Frame pipFrame(HomeGrid.Slot at, Map<HomeGrid.Module, HomeGrid.Slot> next) {
+        HomeGrid.Slot[] column = {HomeGrid.Slot.RIGHT_TOP, HomeGrid.Slot.RIGHT_MIDDLE, HomeGrid.Slot.RIGHT_BOTTOM};
+        boolean inColumn = false;
+        for (HomeGrid.Slot c : column) if (c == at) inColumn = true;
+        if (!inColumn) return grid.frame(at);
+        for (HomeGrid.Slot c : column) if (c != at && next.containsValue(c)) return grid.frame(at);
+        HomeGrid.Frame top = grid.frame(HomeGrid.Slot.RIGHT_TOP);
+        HomeGrid.Frame bottom = grid.frame(HomeGrid.Slot.RIGHT_BOTTOM);
+        if (!grid.portrait) return HomeGrid.span(top, bottom);
+        return HomeGrid.row(top, bottom);
+    }
+
+    /** O PIP está ocupando a coluna (ou linha) inteira. */
+    public HomeGrid.Frame pipArea() {
+        HomeGrid.Slot at = slotOf(HomeGrid.Module.PIP);
+        return at == null ? null : pipFrame(at, layout);
+    }
+
+    /** Nenhum módulo ocupa {@code slot}. */
+    private boolean free(HomeGrid.Slot slot) {
+        return layout == null || !layout.containsValue(slot);
+    }
+
     public HomeGrid.Slot slotOf(HomeGrid.Module m) {
         return layout == null ? null : layout.get(m);
     }
@@ -109,6 +177,11 @@ public final class HomeModuleViews {
     /** "Now playing" has room for the second line (artist, band) in its slot. */
     public boolean nowPlayingLine2() {
         return npLine2;
+    }
+
+    /** "Tocando agora" tem lugar para o álbum/RDS, as etiquetas e os tempos. */
+    public boolean nowPlayingExtras() {
+        return npExtras;
     }
 
     /** "Now playing" has room for the progress bar in its slot. */
@@ -132,6 +205,12 @@ public final class HomeModuleViews {
                 return activity.findViewById(R.id.image_block);
             case SPEED:
                 return activity.findViewById(R.id.speed_block);
+            case CAR:
+                return activity.findViewById(R.id.car_block);
+            case OBD:
+                return activity.findViewById(R.id.obd_block);
+            case PIP:
+                return activity.findViewById(R.id.pip_block);
             default:
                 return activity.findViewById(R.id.gps_block);
         }
@@ -283,8 +362,8 @@ public final class HomeModuleViews {
         boolean label;
         switch (slot.size) {
             case TALL:
-                art = 188;
-                line1 = 36;
+                art = 180;
+                line1 = 34;
                 line2 = 24;
                 button = 60;
                 buttonGap = 14;
@@ -293,8 +372,9 @@ public final class HomeModuleViews {
                 npProgress = true;
                 break;
             case LARGE:
-                // 200 in the landscape slot; up to 300 in the wider portrait ones.
-                art = Math.max(200, Math.min(300, Math.min(slot.height - 28, slot.width * 9 / 20)));
+                // Capa compacta: ~128 no slot horizontal, até 150 nos verticais mais largos (antes ia a 300 e
+                // ficava enorme na tela inicial). O mini play (prev/play/next) fica ao lado, estilo HTG Dash.
+                art = Math.max(128, Math.min(150, Math.min(slot.height - 28, slot.width * 9 / 20)));
                 line1 = 30;
                 line2 = 20;
                 button = 56;
@@ -325,9 +405,13 @@ public final class HomeModuleViews {
                 break;
         }
         boolean tall = slot.size == HomeGrid.Size.TALL;
+        npExtras = tall || slot.size == HomeGrid.Size.LARGE;
         LinearLayout root = (LinearLayout) activity.findViewById(R.id.now_playing);
         root.setOrientation(tall ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
-        root.setGravity(tall ? Gravity.LEFT : Gravity.CENTER_VERTICAL);
+        // Na vertical o "tocando agora" fica embaixo (perto do dock): alinha o conteúdo ao rodapé do seu espaço
+        // em vez de centralizar, para descer mais. Em paisagem continua centralizado.
+        root.setGravity(tall ? Gravity.LEFT
+            : (Ui.isPortrait(activity) ? (Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL) : Gravity.CENTER_VERTICAL));
 
         View frame = activity.findViewById(R.id.np_art_frame);
         size(frame, art, art);
@@ -335,21 +419,45 @@ public final class HomeModuleViews {
         int pad = dp(art / 3f);
         activity.findViewById(R.id.np_art_icon).setPadding(pad, pad, pad, pad);
 
+        // Na vertical o "tocando agora" fica centralizado: o info usa a largura do conteúdo (sem esticar), para o
+        // conjunto capa+texto centralizar de verdade (o gravity do root é CENTER_HORIZONTAL). Em paisagem estica.
+        boolean center = !tall && Ui.isPortrait(activity);
         View info = activity.findViewById(R.id.np_info);
         LinearLayout.LayoutParams infoLp = new LinearLayout.LayoutParams(
-            tall ? LinearLayout.LayoutParams.MATCH_PARENT : 0, LinearLayout.LayoutParams.WRAP_CONTENT);
+            tall || center ? LinearLayout.LayoutParams.WRAP_CONTENT : 0, LinearLayout.LayoutParams.WRAP_CONTENT);
         if (!tall) {
-            infoLp.weight = 1;
+            if (!center) infoLp.weight = 1;
             infoLp.leftMargin = dp(slot.size == HomeGrid.Size.SMALL ? 14 : 20);
         }
         info.setLayoutParams(infoLp);
 
+        // A fonte (com a setinha) aparece em todos os tamanhos: é por ela que se escolhe o que toca.
         TextView npLabel = text(R.id.np_label);
-        npLabel.setVisibility(label ? View.VISIBLE : View.GONE);
-        npLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, tall ? 16 : 14);
+        npLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, tall ? 16 : label ? 14 : 13);
+        npLabel.setMaxWidth(dp(Math.max(80, (tall ? slot.width : slot.width - art - 20) - 90)));
         TextView npLine1 = text(R.id.np_line1);
         npLine1.setTextSize(TypedValue.COMPLEX_UNIT_SP, line1);
-        margins(npLine1, 0, label ? (tall ? 12 : 10) : 0, 0, 0);
+        margins(npLine1, 0, tall ? 10 : label ? 8 : 2, 0, 0);
+        // No modo centralizado (vertical) o título/artista não esticam o bloco: largura limitada, corta com "…".
+        if (center) {
+            int tw = dp(Math.round(slot.width * 0.52f));
+            npLine1.setMaxWidth(tw);
+            npLine1.setSingleLine(true);
+            npLine1.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            TextView l2 = text(R.id.np_line2);
+            l2.setMaxWidth(tw);
+            l2.setSingleLine(true);
+            l2.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        }
+        if (!npExtras) {
+            text(R.id.np_extra).setVisibility(View.GONE);
+            text(R.id.np_tags).setVisibility(View.GONE);
+            activity.findViewById(R.id.np_times).setVisibility(View.GONE);
+        }
+        int barWidth = tall ? slot.width - 28
+            : center ? Math.round(slot.width * 0.52f) : Math.max(150, slot.width - art - 60);
+        activity.findViewById(R.id.np_progress_track).getLayoutParams().width = dp(barWidth);
+        activity.findViewById(R.id.np_times).getLayoutParams().width = dp(barWidth);
         text(R.id.np_line2).setTextSize(TypedValue.COMPLEX_UNIT_SP, line2);
         if (!npLine2) text(R.id.np_line2).setVisibility(View.GONE);
         View track = activity.findViewById(R.id.np_progress_track);
@@ -363,6 +471,51 @@ public final class HomeModuleViews {
         View play = activity.findViewById(R.id.np_play);
         size(play, button, button);
         margins(play, buttonGap, 0, buttonGap, 0);
+    }
+
+    /**
+     * OBD2 com o relógio: hora, data e injeção à esquerda; seis vitais (ícone e valor) em duas linhas de três.
+     * Alto ou retrato largo: o relógio em cima. Pequeno: só a hora e a primeira linha.
+     */
+    private void fitObd(HomeGrid.Frame slot) {
+        boolean small = slot.size == HomeGrid.Size.SMALL;
+        // Relógio em cima dos vitais só onde há altura (área alta); nas faixas do retrato fica ao lado, como na paisagem.
+        boolean stacked = slot.size == HomeGrid.Size.TALL || slot.height >= 300;
+        LinearLayout root = (LinearLayout) activity.findViewById(R.id.obd_block);
+        root.setOrientation(stacked ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
+        root.setGravity(stacked ? Gravity.CENTER : Gravity.CENTER_VERTICAL);
+        View divider = activity.findViewById(R.id.obd_divider);
+        LinearLayout.LayoutParams dl = stacked
+            ? new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(1))
+            : new LinearLayout.LayoutParams(dp(1), LinearLayout.LayoutParams.MATCH_PARENT);
+        int gap = small ? 10 : 14;
+        if (stacked) dl.setMargins(0, dp(gap), 0, dp(gap));
+        else dl.setMargins(dp(gap), 0, dp(gap), 0);
+        divider.setLayoutParams(dl);
+        View cells = activity.findViewById(R.id.obd_cells);
+        cells.setLayoutParams(stacked
+            ? new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            : new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        int timeSp = stacked ? 84 : slot.size == HomeGrid.Size.LARGE ? 64 : small ? 40 : 48;
+        int clockWidth = stacked ? slot.width - 20 : Math.min(150, slot.width / 3);
+        Ui.autoFit(text(R.id.obd_time), sp(timeSp), clockWidth);
+        Ui.autoFit(text(R.id.obd_date), sp(stacked ? 18 : 13), clockWidth);
+        text(R.id.obd_date).setVisibility(small ? View.GONE : View.VISIBLE);
+        activity.findViewById(R.id.obd_mil_cell).setVisibility(small ? View.GONE : View.VISIBLE);
+        activity.findViewById(R.id.obd_row2).setVisibility(small ? View.GONE : View.VISIBLE);
+        activity.findViewById(R.id.obd_row3).setVisibility(small ? View.GONE : View.VISIBLE);
+        int value = stacked ? 28 : small ? 16 : 18;
+        int icon = stacked ? 30 : small ? 18 : 20;
+        for (String id : new String[] {"speed", "gear", "rpm", "temp", "volts", "fuel"}) {
+            text(id("obd_" + id)).setTextSize(TypedValue.COMPLEX_UNIT_SP, value);
+            size(activity.findViewById(id("obd_" + id + "_icon")), icon, icon);
+        }
+        margins(activity.findViewById(R.id.obd_row2), 0, stacked ? 20 : 10, 0, 0);
+        margins(activity.findViewById(R.id.obd_row3), 0, stacked ? 20 : 10, 0, 0);
+    }
+
+    private int id(String name) {
+        return activity.getResources().getIdentifier(name, "id", activity.getPackageName());
     }
 
     /** The call card fills its slot; the short slots keep only the name and the buttons. */

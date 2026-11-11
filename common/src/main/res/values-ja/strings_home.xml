@@ -118,4 +118,20 @@
     <!-- Menu da borda de baixo (EdgeMenuService) -->
     <string name="overlay_back">戻る</string>
     <string name="overlay_home">ホーム</string>
+    <string name="home_dock_nav">ナビ</string>
+    <string name="home_dock_nav_title">ナビ（Waze、マップ…）</string>
+    <string name="home_apps_tab_all">すべて</string>
+    <string name="home_apps_tab_fav">お気に入り</string>
+    <string name="home_apps_cat_all">すべて</string>
+    <string name="home_apps_cat_car">本体</string>
+    <string name="home_apps_cat_nav">ナビ</string>
+    <string name="home_apps_cat_media">音楽と動画</string>
+    <string name="home_apps_cat_social">ソーシャル</string>
+    <string name="home_apps_cat_tools">ツール</string>
+    <string name="home_apps_cat_games">ゲーム</string>
+    <string name="home_apps_cat_other">その他</string>
+    <string name="home_apps_fav_add">お気に入りに追加</string>
+    <string name="home_apps_fav_remove">お気に入りから削除</string>
+    <string name="home_apps_fav_empty">お気に入りはまだありません。\nアプリを長押しして追加します。</string>
+    <string name="home_apps_info">アプリ情報</string>
 </resources>

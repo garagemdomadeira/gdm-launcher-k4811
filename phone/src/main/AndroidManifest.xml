@@ -51,6 +51,8 @@
                 <action android:name="com.bt.ACTION_BT_INCOMING_NAME" />
                 <action android:name="com.bt.ACTION_BT_OUTGOING_NUMBER" />
                 <action android:name="com.bt.ACTION_BT_OUTGOING_NAME" />
+                <!-- Tela inicial mostrando o próprio cartão da ligação (esconde a janela flutuante). -->
+                <action android:name="com.k4811.action.HOME_CALL_CARD" />
             </intent-filter>
         </receiver>
 
@@ -58,5 +60,10 @@
         <service
             android:name=".CallFloatService"
             android:exported="false" />
+        <!-- ROM K4811: nome que o KernelService da NWD usa para abrir esta fonte (SourceConstant: botão MODE) -->
+        <activity-alias
+            android:name="com.nwd.android.phone.StartBT"
+            android:exported="true"
+            android:targetActivity=".PhoneActivity" />
     </application>
 </manifest>

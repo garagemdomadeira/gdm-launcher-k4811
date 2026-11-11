@@ -27,6 +27,7 @@
     <!-- RDS programme types (PTY 0..31) -->
     <string name="radio_config_invalid">%1$s が無効です。ファイルを修正してください。それまでメモリーの変更は保存されません。</string>
     <string name="radio_stereo">ステレオ</string>
+    <string name="radio_search">検索</string>
     <string name="radio_distant">遠距離</string>
     <string name="radio_power">ラジオ</string>
     <string name="radio_ams_started">%1$s で局を検索中… メモリーは置き換えられます</string>

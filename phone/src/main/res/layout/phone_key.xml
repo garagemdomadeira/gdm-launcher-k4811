@@ -2,10 +2,10 @@
 <!-- Grid keypad key: cell with a thin line (right and bottom). -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="0dp"
-    android:layout_height="64dp"
+    android:layout_height="72dp"
     android:layout_weight="1"
     android:background="@drawable/grid_cell"
     android:clickable="true"
     android:gravity="center"
     android:textColor="@color/text"
-    android:textSize="28sp" />
+    android:textSize="36sp" />

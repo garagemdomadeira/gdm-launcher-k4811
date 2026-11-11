@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GDM Atualizações (updater) e a linha dele nas configurações do launcher. -->
+<resources>
+    <string name="ota_app_name">GDM 更新</string>
+    <string name="ota_check_now">立即检查</string>
+    <string name="ota_checking">正在检查更新…</string>
+    <string name="ota_last_check">上次检查：%1$s</string>
+    <string name="ota_never">从未</string>
+    <string name="ota_up_to_date">已全部是最新版本。</string>
+    <string name="ota_offline">没有网络。下次检查时会再试。</string>
+    <string name="ota_bad_sig">更新列表没有 GDM 签名。未安装任何内容。</string>
+    <string name="ota_app_line">%1$s：%2$s → %3$s</string>
+    <string name="ota_confirm">确认更新</string>
+    <string name="ota_later">以后再说</string>
+    <string name="ota_installing">正在安装 %1$s…</string>
+    <string name="ota_downloading">正在下载 %1$s… %2$d%%</string>
+    <string name="ota_done">完成：已更新 %1$d 个应用。</string>
+    <string name="ota_failed">%1$s：%2$s</string>
+    <string name="ota_prompt_title">GDM 更新</string>
+    <string name="ota_rom_line">ROM %1$s（%2$d MB）</string>
+    <string name="ota_rom_install">安装 ROM</string>
+    <string name="ota_rom_confirm_title">安装 ROM %1$s？</string>
+    <string name="ota_rom_confirm_msg">下载 %1$d MB，然后主机重启并写入 ROM（约 10 分钟）。数据和应用会保留。写入期间请勿熄火。</string>
+    <string name="ota_rom_metered">注意：正在使用移动数据。</string>
+    <string name="ota_rom_no_channel">此 ROM 没有更新通道：这里只更新应用。</string>
+    <string name="ota_rom_blocked_key">此 ROM 使用不同的密钥，会清除数据：请用 U 盘安装。</string>
+    <string name="ota_rom_blocked_cache">无法访问 /cache：请用 U 盘安装。</string>
+    <string name="ota_rom_blocked_system">只有 ROM 自带的 GDM 更新才能在这里安装 ROM。</string>
+    <string name="ota_rom_no_space">/cache 空间不足，无法放下 ROM。</string>
+    <string name="ota_rom_rebooting">ROM 已就绪。主机将重启并写入。</string>
+    <string name="home_dash_updates">更新</string>
+    <string name="home_dash_updates_sub">通过 GitHub 更新应用和 ROM，每周检查一次</string>
+</resources>

@@ -152,10 +152,16 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <View
-                android:layout_width="0dp"
+            <ImageView
+                android:id="@+id/music_vinyl"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:contentDescription="@string/media_music_cover"
+                android:scaleType="fitCenter"
+                android:src="@drawable/vinyl" />
 
             <SeekBar
                 android:id="@+id/music_seek"

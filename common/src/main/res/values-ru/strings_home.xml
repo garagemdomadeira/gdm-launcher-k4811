@@ -122,4 +122,20 @@
     <!-- Menu da borda de baixo (EdgeMenuService) -->
     <string name="overlay_back">Назад</string>
     <string name="overlay_home">Домой</string>
+    <string name="home_dock_nav">НАВИГАЦИЯ</string>
+    <string name="home_dock_nav_title">Навигация (Waze, Maps…)</string>
+    <string name="home_apps_tab_all">Все</string>
+    <string name="home_apps_tab_fav">Избранное</string>
+    <string name="home_apps_cat_all">Все</string>
+    <string name="home_apps_cat_car">Магнитола</string>
+    <string name="home_apps_cat_nav">Навигация</string>
+    <string name="home_apps_cat_media">Музыка и видео</string>
+    <string name="home_apps_cat_social">Общение</string>
+    <string name="home_apps_cat_tools">Инструменты</string>
+    <string name="home_apps_cat_games">Игры</string>
+    <string name="home_apps_cat_other">Другое</string>
+    <string name="home_apps_fav_add">Добавить в избранное</string>
+    <string name="home_apps_fav_remove">Убрать из избранного</string>
+    <string name="home_apps_fav_empty">Избранного пока нет.\nНажмите и удерживайте приложение, чтобы добавить.</string>
+    <string name="home_apps_info">О приложении</string>
 </resources>

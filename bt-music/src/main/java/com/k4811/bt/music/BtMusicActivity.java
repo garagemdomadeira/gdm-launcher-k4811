@@ -48,6 +48,7 @@ public class BtMusicActivity extends Activity {
     private TextView deviceView;
     private TextView statusView;
     private IconView playBtn;
+    private android.animation.ObjectAnimator vinylSpin;
     private View transport;
 
     @Override
@@ -92,6 +93,12 @@ public class BtMusicActivity extends Activity {
         playBtn = (IconView) findViewById(R.id.bt_music_play);
         playBtn.set(IconView.Icon.PLAY, IconView.Style.OUTLINE_CIRCLE);
         playBtn.setOnClickListener(v -> transport(playing ? BT_PAUSE : BT_PLAY));
+
+        android.widget.ImageView vinyl = (android.widget.ImageView) findViewById(R.id.bt_music_vinyl);
+        vinylSpin = android.animation.ObjectAnimator.ofFloat(vinyl, "rotation", 0f, 360f);
+        vinylSpin.setDuration(9000);
+        vinylSpin.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+        vinylSpin.setInterpolator(new android.view.animation.LinearInterpolator());
         ((IconView) findViewById(R.id.bt_music_next))
             .set(IconView.Icon.SKIP_NEXT, IconView.Style.NONE)
             .setOnClickListener(v -> transport(BT_NEXT));
@@ -127,6 +134,7 @@ public class BtMusicActivity extends Activity {
             }
             receiverRegistered = false;
         }
+        if (vinylSpin != null) vinylSpin.cancel();
         if (bt != null) bt.release();
         super.onDestroy();
     }
@@ -177,6 +185,7 @@ public class BtMusicActivity extends Activity {
             statusView.setText(R.string.media_bt_connecting_service);
             transport.setAlpha(0.4f);
             playBtn.set(IconView.Icon.PLAY, IconView.Style.OUTLINE_CIRCLE);
+            spinVinyl(false);
             return;
         }
         if (!a2dp) {
@@ -188,6 +197,7 @@ public class BtMusicActivity extends Activity {
             statusView.setText(R.string.media_bt_pair_hint);
             transport.setAlpha(0.35f);
             playBtn.set(IconView.Icon.PLAY, IconView.Style.OUTLINE_CIRCLE);
+            spinVinyl(false);
             return;
         }
 
@@ -197,6 +207,21 @@ public class BtMusicActivity extends Activity {
         deviceView.setText(deviceName.isEmpty() ? getString(R.string.media_bt_connected) : deviceName);
         statusView.setText(playing ? R.string.media_bt_playing : R.string.media_bt_paused);
         playBtn.set(playing ? IconView.Icon.PAUSE : IconView.Icon.PLAY, IconView.Style.OUTLINE_CIRCLE);
+        spinVinyl(playing);
+    }
+
+    /** Gira o vinil enquanto toca; pausa a animação (mantendo o ângulo) quando parado. */
+    private void spinVinyl(boolean spin) {
+        if (vinylSpin == null) return;
+        if (spin) {
+            if (vinylSpin.isStarted()) {
+                if (vinylSpin.isPaused()) vinylSpin.resume();
+            } else {
+                vinylSpin.start();
+            }
+        } else if (vinylSpin.isStarted() && !vinylSpin.isPaused()) {
+            vinylSpin.pause();
+        }
     }
 
     /** Pareamento e conexão ficam no app de telefone. */

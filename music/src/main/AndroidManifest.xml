@@ -72,5 +72,10 @@
                 <action android:name="com.nwd.ACTION_BACKGROUND_MEDIA_PLAY" />
             </intent-filter>
         </receiver>
+        <!-- ROM K4811: nome que o KernelService da NWD usa para abrir esta fonte (SourceConstant: botão MODE) -->
+        <activity-alias
+            android:name="com.nwd.android.music.ui.MusicBrowserActivity"
+            android:exported="true"
+            android:targetActivity=".MusicActivity" />
     </application>
 </manifest>

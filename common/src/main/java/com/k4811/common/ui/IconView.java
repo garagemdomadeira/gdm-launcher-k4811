@@ -20,7 +20,7 @@ public class IconView extends View {
         MENU, DIAG, POWER, EXIT, RADIO, CHEVRON_LEFT, CHEVRON_RIGHT, SKIP_PREV, SKIP_NEXT, KEYBOARD,
         MUSIC, BLUETOOTH, EQUALIZER, PLAY, PAUSE, PHONE, APPS, FAN, SETTINGS, HOME, BATTERY, VOLUME, VOLUME_MUTE, SCREEN_OFF, PLUS, MINUS,
         AUX, CAMERA_360, VIDEO, PHONE_LINK, CARPLAY, ANDROID_AUTO,
-        STEREO, TOWER_FAR, SUN, MOON, HELP
+        STEREO, TOWER_FAR, SUN, MOON, HELP, NAVIGATION, WIFI, SIGNAL, GPS, CLOUD, RAIN
     }
 
     public enum Style { NONE, CIRCLE, SQUARE, FLAT_CIRCLE, OUTLINE_CIRCLE }
@@ -36,6 +36,8 @@ public class IconView extends View {
     private Style style = Style.NONE;
     private int color = Ui.TEXT;
     private float iconScale = 0.55f;
+    /** Força do sinal para WIFI e SIGNAL (0 a 4); as partes acima do nível ficam apagadas. */
+    private int level = 4;
 
     public IconView(Context c) {
         this(c, null);
@@ -58,6 +60,16 @@ public class IconView extends View {
         this.style = style;
         iconScale = style == Style.CIRCLE ? 0.42f : style == Style.SQUARE ? 0.5f : style == Style.FLAT_CIRCLE ? 0.45f : style == Style.OUTLINE_CIRCLE ? 0.38f : 0.62f;
         invalidate();
+        return this;
+    }
+
+    /** Nível do sinal (0 a 4) dos ícones WIFI e SIGNAL. */
+    public IconView level(int level) {
+        int l = Math.max(0, Math.min(4, level));
+        if (l != this.level) {
+            this.level = l;
+            invalidate();
+        }
         return this;
     }
 
@@ -294,6 +306,64 @@ public class IconView extends View {
                 c.drawLine(7, 11.5f, 7, 15.5f, stroke);
                 c.drawLine(15, 13.5f, 19, 13.5f, stroke);
                 break;
+            case CLOUD:
+                cloud(c, 0);
+                break;
+            case RAIN:
+                // Nuvem mais alta com três gotas inclinadas embaixo.
+                cloud(c, -3);
+                c.drawLine(8.5f, 17.5f, 7.5f, 20.5f, stroke);
+                c.drawLine(12.5f, 17.5f, 11.5f, 20.5f, stroke);
+                c.drawLine(16.5f, 17.5f, 15.5f, 20.5f, stroke);
+                break;
+            case WIFI: {
+                // Ponto e três arcos; os arcos acima da força do sinal ficam apagados.
+                int base = stroke.getAlpha();
+                c.drawCircle(12, 19.5f, 1.7f, fill);
+                float[] radii = {5.5f, 10f, 14.5f};
+                for (int i = 0; i < radii.length; i++) {
+                    stroke.setAlpha(level >= i + 2 ? base : base * 30 / 100);
+                    rect.set(12 - radii[i], 19.5f - radii[i], 12 + radii[i], 19.5f + radii[i]);
+                    c.drawArc(rect, 225, 90, false, stroke);
+                }
+                stroke.setAlpha(base);
+                break;
+            }
+            case SIGNAL: {
+                // Quatro barras crescentes; as acima da força do sinal ficam só no contorno apagado.
+                int base = fill.getAlpha();
+                for (int i = 0; i < 4; i++) {
+                    float x = 3.5f + i * 5f;
+                    float top = 18.5f - (i + 1) * 3.6f;
+                    rect.set(x, top, x + 3f, 20.5f);
+                    fill.setAlpha(level > i ? base : base * 25 / 100);
+                    c.drawRoundRect(rect, 0.8f, 0.8f, fill);
+                }
+                fill.setAlpha(base);
+                break;
+            }
+            case GPS:
+                // Alfinete de localização com o miolo vazado.
+                path.reset();
+                path.moveTo(12, 21.5f);
+                path.cubicTo(7.5f, 16.5f, 4.5f, 13, 4.5f, 9.5f);
+                rect.set(4.5f, 2, 19.5f, 17);
+                path.arcTo(rect, 180, 180, false);
+                path.cubicTo(19.5f, 13, 16.5f, 16.5f, 12, 21.5f);
+                path.close();
+                c.drawPath(path, stroke);
+                c.drawCircle(12, 9.5f, 2.6f, stroke);
+                break;
+            case NAVIGATION:
+                // Seta de navegação (GPS): ponta para cima com o recorte embaixo.
+                path.reset();
+                path.moveTo(12, 2.5f);
+                path.lineTo(19.5f, 21);
+                path.lineTo(12, 16.8f);
+                path.lineTo(4.5f, 21);
+                path.close();
+                c.drawPath(path, stroke);
+                break;
             case HOME:
                 // Outlined house: roof, body and door.
                 polyline(c, 2.5f, 11.5f, 12, 3, 21.5f, 11.5f);
@@ -422,6 +492,21 @@ public class IconView extends View {
         c.drawLine(x, 3, x, knobY - 3.2f, stroke);
         c.drawLine(x, knobY + 3.2f, x, 21, stroke);
         c.drawCircle(x, knobY, 2.5f, stroke);
+    }
+
+    /** Contorno de nuvem (base reta, três bolhas), deslocado {@code dy} na vertical. */
+    private void cloud(Canvas c, float dy) {
+        path.reset();
+        path.moveTo(6.5f, 18);
+        path.cubicTo(3.5f, 18, 2.5f, 15.5f, 3.5f, 13.5f);
+        path.cubicTo(4.3f, 12, 5.8f, 11.4f, 7.2f, 11.8f);
+        path.cubicTo(7.6f, 8.5f, 10.2f, 6.5f, 13, 6.8f);
+        path.cubicTo(15.8f, 7.1f, 17.6f, 9.2f, 17.8f, 11.6f);
+        path.cubicTo(20.2f, 11.6f, 21.5f, 13.5f, 21, 15.6f);
+        path.cubicTo(20.6f, 17.2f, 19.4f, 18, 17.8f, 18);
+        path.close();
+        path.offset(0, dy);
+        c.drawPath(path, stroke);
     }
 
     private void drawBug(Canvas c) {

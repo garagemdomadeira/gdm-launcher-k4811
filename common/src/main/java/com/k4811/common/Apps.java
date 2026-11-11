@@ -17,11 +17,19 @@ public final class Apps {
     public static final String EQ = BuildConfig.PKG_EQ;
     /** Ventoinha. Aberta pelo bloco da ventoinha na tela inicial (fora do dock). */
     public static final String FAN = BuildConfig.PKG_FAN;
+    /** GDM Atualizações (OTA da suíte e da ROM pelo GitHub). */
+    public static final String UPDATER = BuildConfig.PKG_UPDATER;
     /** Configurações (launcher, dock, idioma e central). Aberto pela engrenagem da tela inicial. */
     public static final String SETTINGS = BuildConfig.PKG_CAR_SETTING;
 
     /** Gaveta de apps do launcher. */
     public static final String ACTION_APPS = "com.k4811.launcher.action.APPS";
+    /**
+     * Launcher → telefone: a tela inicial está mostrando o cartão da ligação ({@link #EXTRA_SHOWN}
+     * true) ou deixou de mostrar. Enquanto mostra, a janela flutuante da ligação fica escondida.
+     */
+    public static final String ACTION_HOME_CALL_CARD = "com.k4811.action.HOME_CALL_CARD";
+    public static final String EXTRA_SHOWN = "shown";
 
     /**
      * Enviado por um app antes de virar a fonte de áudio. Os players do suíte pausam ao receber,
