@@ -692,7 +692,9 @@ public class HomeActivity extends Activity {
         else if (s.kind == HomeSession.Kind.BT && s.btPlaying) label = "BT";
         else if (s.kind == HomeSession.Kind.APP && s.appPlaying) label = s.appLabel;
         if (label != null) sourceBadgeText.setText(label);
-        show(sourceBadge, label != null);
+        // Em pé o "o que está tocando" já aparece embaixo (tocando-agora): o badge de fonte aqui em cima é
+        // redundante e, na tela estreita, ficava por cima da barra de ícones (BT sobre a ventoinha). Esconde.
+        show(sourceBadge, label != null && !com.k4811.common.ui.Ui.isPortrait(this));
     }
 
     /** "Tocando agora": fonte, capa, faixa e controles (ver {@link NowPlaying}). */
