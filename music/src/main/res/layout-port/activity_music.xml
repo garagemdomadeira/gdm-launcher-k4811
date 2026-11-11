@@ -244,14 +244,31 @@
             style="@style/HairlineH"
             android:layout_marginTop="14dp" />
 
-        <ListView
-            android:id="@+id/music_list"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:divider="@color/hairline"
-            android:dividerHeight="1dp"
-            android:listSelector="@android:color/transparent"
-            android:scrollbars="none" />
+            android:layout_weight="1">
+
+            <!-- Disco de vinil girando (estilo HTG Play): fundo da parte de baixo, atrás da lista. -->
+            <ImageView
+                android:id="@+id/music_vinyl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:alpha="0.45"
+                android:contentDescription="@string/media_music_cover"
+                android:padding="24dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/vinyl" />
+
+            <ListView
+                android:id="@+id/music_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@color/hairline"
+                android:dividerHeight="1dp"
+                android:listSelector="@android:color/transparent"
+                android:scrollbars="none" />
+        </FrameLayout>
     </LinearLayout>
 </LinearLayout>
