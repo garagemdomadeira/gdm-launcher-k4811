@@ -51,10 +51,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingLeft="120dp"
-        android:paddingRight="120dp">
+        android:paddingRight="120dp"
+        android:paddingTop="56dp">
 
         <!-- Device: small icon + name, as a caption -->
         <LinearLayout
@@ -144,5 +145,17 @@
             android:layout_width="match_parent"
             android:layout_marginTop="18dp"
             android:gravity="center" />
+
+        <!-- Disco de vinil girando (estilo HTG Play): preenche a parte de baixo; gira enquanto toca. -->
+        <ImageView
+            android:id="@+id/bt_music_vinyl"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="16dp"
+            android:alpha="0.6"
+            android:contentDescription="@string/media_music_cover"
+            android:scaleType="fitCenter"
+            android:src="@drawable/vinyl" />
     </LinearLayout>
 </LinearLayout>
