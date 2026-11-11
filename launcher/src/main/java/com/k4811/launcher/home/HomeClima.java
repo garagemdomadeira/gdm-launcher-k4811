@@ -23,6 +23,8 @@ public final class HomeClima {
         icon = activity.findViewById(R.id.home_clima_icon);
         temp = activity.findViewById(R.id.home_clima_temp);
         temp.setTypeface(Ui.medium(activity));
+        // Escondido até o tempo carregar: sem isso o IconView mostra o ícone padrão (MENU, "3 barrinhas").
+        icon.setVisibility(View.INVISIBLE);
         weather = new Weather(activity, this::render);
     }
 
