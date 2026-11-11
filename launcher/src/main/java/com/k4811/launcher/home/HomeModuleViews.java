@@ -59,6 +59,7 @@ public final class HomeModuleViews {
             HomeGrid.Slot at = layout.get(m);
             if (at == null) {
                 root.setVisibility(View.GONE);
+                if (m == HomeGrid.Module.NOW_PLAYING) activity.findViewById(R.id.home_clima).setVisibility(View.GONE);
                 continue;
             }
             HomeGrid.Frame slot = grid.frame(at);
@@ -66,7 +67,22 @@ public final class HomeModuleViews {
             place(root, slot);
             switch (m) {
                 case NOW_PLAYING:
-                    fitNowPlaying(slot);
+                    if (grid.portrait) {
+                        // Em pé: o tempo (clima do ambiente) ocupa a esquerda e o tocando-agora a direita,
+                        // preenchendo o vão preto que ficava ao lado do player centralizado.
+                        int climaW = Math.round(slot.width * 0.30f);
+                        int gap = 16;
+                        View clima = activity.findViewById(R.id.home_clima);
+                        place(clima, HomeGrid.frameOf(slot.x, slot.y, climaW, slot.height, slot.size));
+                        clima.setVisibility(View.VISIBLE);
+                        HomeGrid.Frame np = HomeGrid.frameOf(slot.x + climaW + gap, slot.y,
+                            slot.width - climaW - gap, slot.height, slot.size);
+                        place(root, np);
+                        fitNowPlaying(np);
+                    } else {
+                        activity.findViewById(R.id.home_clima).setVisibility(View.GONE);
+                        fitNowPlaying(slot);
+                    }
                     break;
                 case CLOCK:
                     fitClock(slot);

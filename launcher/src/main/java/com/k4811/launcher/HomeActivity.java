@@ -125,6 +125,7 @@ public class HomeActivity extends Activity {
     private com.k4811.launcher.home.NowPlaying nowPlaying;
     private com.k4811.launcher.home.HomeExtras extras;
     private com.k4811.launcher.home.HomePip pip;
+    private com.k4811.launcher.home.HomeClima homeClima;
     private GpsClient gps;
     private TextView speedValue;
     private TextView speedUnit;
@@ -373,6 +374,7 @@ public class HomeActivity extends Activity {
             });
         extras = new com.k4811.launcher.home.HomeExtras(this, modules);
         pip = new com.k4811.launcher.home.HomePip(this, modules);
+        homeClima = new com.k4811.launcher.home.HomeClima(this);
 
         handler.postDelayed(this::checkDefaultLauncher, 800);
         Touch.install(findViewById(android.R.id.content));
@@ -513,6 +515,7 @@ public class HomeActivity extends Activity {
         if (nowPlaying != null) nowPlaying.resume();
         if (extras != null) extras.resume();
         if (pip != null) pip.resume();
+        if (homeClima != null) homeClima.resume();
         resumed = true;
         if (snap != null) announceCallCard(snap.call != HomeSession.CallPhase.NONE);
     }
@@ -546,6 +549,7 @@ public class HomeActivity extends Activity {
         if (nowPlaying != null) nowPlaying.pause();
         if (extras != null) extras.pause();
         if (pip != null) pip.pause();
+        if (homeClima != null) homeClima.pause();
         resumed = false;
         announceCallCard(false);
         super.onPause();

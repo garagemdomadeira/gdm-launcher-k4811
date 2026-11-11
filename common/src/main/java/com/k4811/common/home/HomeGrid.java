@@ -93,6 +93,11 @@ public final class HomeGrid {
         return new Frame(left.x, left.y, right.x + right.width - left.x, left.height, Size.LARGE);
     }
 
+    /** Sub-área solta, para dividir um slot (ex.: tempo à esquerda e tocando-agora à direita). */
+    public static Frame frameOf(int x, int y, int width, int height, Size size) {
+        return new Frame(x, y, width, height, size);
+    }
+
     /** The grid for one screen: its size in dp and each slot's frame. */
     public static final class Layout {
         public final boolean portrait;
