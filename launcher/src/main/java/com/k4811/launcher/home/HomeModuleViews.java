@@ -392,7 +392,10 @@ public final class HomeModuleViews {
         npExtras = tall || slot.size == HomeGrid.Size.LARGE;
         LinearLayout root = (LinearLayout) activity.findViewById(R.id.now_playing);
         root.setOrientation(tall ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
-        root.setGravity(tall ? Gravity.LEFT : Gravity.CENTER_VERTICAL);
+        // Na vertical o "tocando agora" fica embaixo (perto do dock): alinha o conteúdo ao rodapé do seu espaço
+        // em vez de centralizar, para descer mais. Em paisagem continua centralizado.
+        root.setGravity(tall ? Gravity.LEFT
+            : (Ui.isPortrait(activity) ? (Gravity.BOTTOM | Gravity.LEFT) : Gravity.CENTER_VERTICAL));
 
         View frame = activity.findViewById(R.id.np_art_frame);
         size(frame, art, art);

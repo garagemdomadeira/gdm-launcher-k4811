@@ -128,8 +128,8 @@ public final class AppCatalog {
             CharSequence title = info.loadLabel(pm);
             String label = title == null ? pkg : title.toString().trim();
             if (label.isEmpty()) label = pkg;
-            // Ícone personalizado (K4811/icons/<package>.png) na frente; senão o do app no formato escolhido.
-            Bitmap custom = CustomIcons.forPackage(pkg, size);
+            // Ícone personalizado (K4811/icons/<package>@<classe>.png ou <package>.png) na frente; senão o do app.
+            Bitmap custom = CustomIcons.forPackage(pkg, cls, size);
             Bitmap bmp = custom != null ? custom : icon(context, info, pm, size);
             apps.add(new Entry(label, pkg, cls, bmp, groupOf(info.activityInfo.applicationInfo, pkg)));
         }

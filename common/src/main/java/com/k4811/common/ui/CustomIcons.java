@@ -38,6 +38,19 @@ public final class CustomIcons {
     }
 
     /**
+     * Como {@link #forPackage(String, int)}, mas primeiro tenta um ícone por atividade
+     * {@code icons/<package>@<classe>.<ext>} (ex.: o toolallinone tem Reiniciar, Trava de tela, Volante e
+     * Ferramentas como entradas separadas, cada uma com o seu ícone). Cai em {@code icons/<package>} depois.
+     */
+    public static Bitmap forPackage(String pkg, String className, int sizePx) {
+        if (className != null && !className.isEmpty()) {
+            Bitmap byClass = load(pkg + "@" + className, sizePx);
+            if (byClass != null) return byClass;
+        }
+        return load(pkg, sizePx);
+    }
+
+    /**
      * Ícone de um item do dock: tenta {@code icons/dock_<id>} e, se não houver, {@code icons/<package>}.
      * @param dockId id do item no dock (ex.: {@code radio}); nunca null
      * @param pkg app que o item abre, ou null para itens sem app fixo (Início, Apps, 360, Z-Link)

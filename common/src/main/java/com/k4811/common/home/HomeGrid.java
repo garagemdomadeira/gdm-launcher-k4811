@@ -180,8 +180,10 @@ public final class HomeGrid {
         int available = content - BOTTOM - TOP_BAR - 2 * GAP;
         // Vertical mais equilibrado: o PIP (linha D, que com o espelho vai para o topo) deixa de ser uma faixa
         // fina (era 23%) e ganha altura; o "tocando agora" (linha A) continua grande, mas sem dominar a tela.
-        int rowA = Math.round(available * 0.38f);
-        int rowB = Math.round(available * 0.28f);
+        // D = PIP (topo) é o maior (metade da tela); B = carro + relógio/OBD2 (meio) desce com o PIP maior;
+        // A = "tocando agora" (embaixo, compacto, colado no dock). Tela em pé bem aproveitada.
+        int rowA = Math.round(available * 0.20f);
+        int rowB = Math.round(available * 0.30f);
         int rowD = available - rowA - rowB;
         int inner = w - 2 * GAP;
         int half = (inner - GAP) / 2;

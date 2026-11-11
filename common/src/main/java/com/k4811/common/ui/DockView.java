@@ -235,11 +235,12 @@ public class DockView extends LinearLayout {
                 if (pm.getLaunchIntentForPackage(pkg) == null) continue; // não instalado
                 labelText = appLabel(pm, pkg);
             }
+            // Item embutido: o dock mantém o ícone VETORIAL da suíte (estilo do Madeira). Só um PNG explícito
+            // "dock_<id>.png" troca; NÃO usa o "<pacote>.png" (esse é o ícone personalizado só da gaveta). App
+            // comum no dock: usa o PNG personalizado do pacote e, por fim, o ícone do app.
             Bitmap custom = item != null
-                ? CustomIcons.forDock(item.id, item.pkg, iconSize)
+                ? CustomIcons.forDock(item.id, null, iconSize)
                 : CustomIcons.forPackage(pkg, iconSize);
-            // Item embutido sem PNG personalizado: cai no ícone vetorial da suíte (buildSlot com bmp null) em vez do
-            // ícone do app — os apps da suíte compartilham o mesmo ícone, então usar o do app deixava todos iguais.
             if (custom == null && item == null) custom = CustomIcons.appIcon(c, pkg, iconSize);
 
             Slot slot = new Slot(i, token, item);
