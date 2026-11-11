@@ -395,7 +395,7 @@ public final class HomeModuleViews {
         // Na vertical o "tocando agora" fica embaixo (perto do dock): alinha o conteúdo ao rodapé do seu espaço
         // em vez de centralizar, para descer mais. Em paisagem continua centralizado.
         root.setGravity(tall ? Gravity.LEFT
-            : (Ui.isPortrait(activity) ? (Gravity.BOTTOM | Gravity.LEFT) : Gravity.CENTER_VERTICAL));
+            : (Ui.isPortrait(activity) ? (Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL) : Gravity.CENTER_VERTICAL));
 
         View frame = activity.findViewById(R.id.np_art_frame);
         size(frame, art, art);
@@ -403,11 +403,14 @@ public final class HomeModuleViews {
         int pad = dp(art / 3f);
         activity.findViewById(R.id.np_art_icon).setPadding(pad, pad, pad, pad);
 
+        // Na vertical o "tocando agora" fica centralizado: o info usa a largura do conteúdo (sem esticar), para o
+        // conjunto capa+texto centralizar de verdade (o gravity do root é CENTER_HORIZONTAL). Em paisagem estica.
+        boolean center = !tall && Ui.isPortrait(activity);
         View info = activity.findViewById(R.id.np_info);
         LinearLayout.LayoutParams infoLp = new LinearLayout.LayoutParams(
-            tall ? LinearLayout.LayoutParams.MATCH_PARENT : 0, LinearLayout.LayoutParams.WRAP_CONTENT);
+            tall || center ? LinearLayout.LayoutParams.WRAP_CONTENT : 0, LinearLayout.LayoutParams.WRAP_CONTENT);
         if (!tall) {
-            infoLp.weight = 1;
+            if (!center) infoLp.weight = 1;
             infoLp.leftMargin = dp(slot.size == HomeGrid.Size.SMALL ? 14 : 20);
         }
         info.setLayoutParams(infoLp);
@@ -419,12 +422,24 @@ public final class HomeModuleViews {
         TextView npLine1 = text(R.id.np_line1);
         npLine1.setTextSize(TypedValue.COMPLEX_UNIT_SP, line1);
         margins(npLine1, 0, tall ? 10 : label ? 8 : 2, 0, 0);
+        // No modo centralizado (vertical) o título/artista não esticam o bloco: largura limitada, corta com "…".
+        if (center) {
+            int tw = dp(Math.round(slot.width * 0.52f));
+            npLine1.setMaxWidth(tw);
+            npLine1.setSingleLine(true);
+            npLine1.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            TextView l2 = text(R.id.np_line2);
+            l2.setMaxWidth(tw);
+            l2.setSingleLine(true);
+            l2.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        }
         if (!npExtras) {
             text(R.id.np_extra).setVisibility(View.GONE);
             text(R.id.np_tags).setVisibility(View.GONE);
             activity.findViewById(R.id.np_times).setVisibility(View.GONE);
         }
-        int barWidth = tall ? slot.width - 28 : Math.max(150, slot.width - art - 60);
+        int barWidth = tall ? slot.width - 28
+            : center ? Math.round(slot.width * 0.52f) : Math.max(150, slot.width - art - 60);
         activity.findViewById(R.id.np_progress_track).getLayoutParams().width = dp(barWidth);
         activity.findViewById(R.id.np_times).getLayoutParams().width = dp(barWidth);
         text(R.id.np_line2).setTextSize(TypedValue.COMPLEX_UNIT_SP, line2);
