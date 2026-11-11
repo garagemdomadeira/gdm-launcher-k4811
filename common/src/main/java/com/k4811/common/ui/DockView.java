@@ -165,7 +165,7 @@ public class DockView extends LinearLayout {
     }
 
     /** Total height reserved by the dock (panel + margins), in design dp. */
-    public static final int HEIGHT_DP = 160;
+    public static final int HEIGHT_DP = 128;
 
     private final Paint panel = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint border = new Paint(Paint.ANTI_ALIAS_FLAG);
