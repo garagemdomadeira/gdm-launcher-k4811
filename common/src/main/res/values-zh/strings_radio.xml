@@ -27,6 +27,7 @@
     <!-- RDS 节目类型（PTY 0..31） -->
     <string name="radio_config_invalid">%1$s 无效：请修复该文件。在此之前，对预设的更改不会保存。</string>
     <string name="radio_stereo">立体声</string>
+    <string name="radio_search">搜索</string>
     <string name="radio_distant">远程</string>
     <string name="radio_power">收音机</string>
     <string name="radio_ams_started">正在搜索 %1$s 电台… 预设将被替换</string>

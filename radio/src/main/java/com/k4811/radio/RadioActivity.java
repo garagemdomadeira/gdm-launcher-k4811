@@ -254,6 +254,14 @@ public class RadioActivity extends Activity implements RadioClient.Listener {
             }, AMS_HOLD_MS - android.view.ViewConfiguration.getLongPressTimeout());
             return true; // no band change on release
         });
+        // Procurar: varre a faixa e salva as estações encontradas nas memórias (AMS), igual a segurar Banda.
+        toggleIcon(R.id.btn_search_icon, Icon.SIGNAL);
+        text(R.id.btn_search_text).setText(R.string.radio_search);
+        findViewById(R.id.btn_search).setOnClickListener(v -> {
+            ensureOn();
+            radio.autoStore();
+            Toast.makeText(this, getString(R.string.radio_ams_started, Band.label(state.band)), Toast.LENGTH_LONG).show();
+        });
         renderToggles();
         icon(R.id.btn_keypad, Icon.KEYBOARD, Style.NONE).setOnClickListener(v -> showKeypad());
 
