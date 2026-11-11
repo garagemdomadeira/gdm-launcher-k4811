@@ -48,46 +48,31 @@ public final class DockNavigator {
         DockView dock = new DockView(activity);
         column.addView(dock, new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, Math.round(Ui.dp(activity, DockView.HEIGHT_DP))));
-        // Central vertical com a barra da NWD à vista: ela fica por cima da parte de baixo, então o dock sobe.
-        // Em algumas centrais a janela já termina acima da barra: depois de medida, o espaço vira só o que a barra
-        // cobre de fato (senão o dock ficava 140 px acima do lugar).
-        int reserved = com.k4811.common.system.BottomBar.reservedPx(activity);
-        if (reserved > 0) {
-            View spacer = new View(activity);
-            spacer.setBackgroundColor(Ui.BG);
-            column.addView(spacer, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, reserved));
-            column.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
-                int need = com.k4811.common.system.BottomBar.reservedPx(activity, v);
-                ViewGroup.LayoutParams lp = spacer.getLayoutParams();
-                if (lp.height != need) {
-                    lp.height = need;
-                    v.post(spacer::requestLayout);
-                }
-            });
-        }
         root.addView(column, new ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         dock.setActive(current);
-        dock.setListener(item -> navigate(activity, current, item));
+        dock.setListener((item, pkg) -> {
+            if (item != null) navigate(activity, current, item);
+            else openApp(activity, pkg);
+        });
         return dock;
+    }
+
+    /** Atalho de app comum (arrastado para o dock): só abre o app, sem a lógica da suíte. */
+    public static void openApp(Activity from, String pkg) {
+        if (pkg == null) return;
+        Intent launch = from.getPackageManager().getLaunchIntentForPackage(pkg);
+        if (launch == null) {
+            Toast.makeText(from, from.getString(R.string.screen_app_missing, pkg), Toast.LENGTH_LONG).show();
+            return;
+        }
+        launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        switchTo(from, launch, R.anim.screen_swap_in, R.anim.screen_swap_out);
     }
 
     public static void navigate(Activity from, DockView.Item current, DockView.Item target) {
         if (target == current) return;
-        String swapped = target.swappedApp(from);
-        if (!swapped.isEmpty()) {
-            // Botão trocado por um app (ex.: Waze no lugar do Equalizador): abre o app.
-            Splash.cancel();
-            Intent launch = from.getPackageManager().getLaunchIntentForPackage(swapped);
-            if (launch == null) {
-                Toast.makeText(from, from.getString(R.string.screen_app_missing, swapped), Toast.LENGTH_LONG).show();
-                return;
-            }
-            launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            switchTo(from, launch, R.anim.screen_swap_in, R.anim.screen_swap_out);
-            return;
-        }
         Splash.cancel(); // outro item tocado enquanto um Splash estava na tela: vale o último
         if (Apps.LAUNCHER.equals(from.getPackageName())) {
             // Tela inicial: abre na hora. Os players já começam a parar agora.
@@ -128,9 +113,6 @@ public final class DockNavigator {
                 return;
             case ZLINK:
                 ExternalApps.openZlink(from);
-                return;
-            case NAV:
-                ExternalApps.openNav(from);
                 return;
             case CAMERA_360:
                 ExternalApps.open360(from);

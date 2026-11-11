@@ -57,7 +57,9 @@ Dock → apps (ver common). Engrenagem → `Apps.SETTINGS`. Bloco da ventoinha �
 
 ## Gaveta (`AppsActivity` + `home/AppCatalog`)
 
-Todos os apps numa grade de 5 colunas que rola para baixo até o último (sem páginas), com entrada em cascata, ícone que afunda ao toque e o app abrindo com zoom a partir do ícone. Esconde teclados, o próprio launcher e apps cujo hardware não existe (bits de `Settings.System factory_feature`).
+Todos os apps numa grade de 5 colunas que rola para baixo até o último (sem páginas), com entrada em cascata, ícone que afunda ao toque e o app abrindo com zoom a partir do ícone. Esconde teclados, o próprio launcher e apps cujo hardware não existe (bits de `Settings.System factory_feature`). O ícone de cada app vem de `K4811/icons/<package>.png` (`CustomIcons`) quando existe; senão, o do sistema. Ver "Ícones personalizados" no `common/SPEC.md`.
+
+A gaveta mostra o dock embaixo (`DockNavigator.attachDock`, item `APPS` ativo) e é onde se **monta o dock**. `DockView.setEditor(new DockEditor(...))` liga a edição (também na home); o `DockEditor` grava no `dock.json` (`DockConfig.insert`/`move`/`remove`, só o launcher grava) e atualiza o dock. Gestos: segurar um app da gaveta (`setOnItemLongClickListener` → `View.startDrag`, package no `ClipData`) e soltar num slot **adiciona** (até `DockConfig.MAX_ITEMS` = 7 no total); segurar um ícone do dock e arrastar **reordena**, ou **remove** se soltar fora do dock (o `DockView` marca a origem no `localState`). Início e Apps não se movem nem removem. É o único jeito de customizar o dock — não há mais tela disso nas Configurações.
 
 ## Por cima dos apps (`overlay/`)
 

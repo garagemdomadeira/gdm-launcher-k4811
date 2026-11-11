@@ -239,4 +239,9 @@
     <string name="settings_conn_mobile_settings_hint">Мобильные данные, роуминг и оператор</string>
     <string name="settings_conn_data_on">данные включены</string>
     <string name="settings_conn_data_off">данные выключены</string>
+    <string name="settings_reset_all">Сбросить всё</string>
+    <string name="settings_reset_all_hint">Удаляет все файлы и настройки K4811 и начинает заново</string>
+    <string name="settings_reset_all_button">Удалить всё</string>
+    <string name="settings_reset_all_confirm">Удалить все настройки и файлы в папке K4811? Отменить нельзя.</string>
+    <string name="settings_help_reset_all">Удаляет всё в папке K4811 (свои значки, изображения главного экрана, радиостанции, настройки MP3) и настройки набора (тема, язык, док). Приложения вернутся к значениям по умолчанию. Отменить нельзя.</string>
 </resources>

@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 
 import com.k4811.launcher.R;
+import com.k4811.common.ui.CustomIcons;
 import com.k4811.common.ui.Ui;
 
 import java.text.Collator;
@@ -127,8 +128,10 @@ public final class AppCatalog {
             CharSequence title = info.loadLabel(pm);
             String label = title == null ? pkg : title.toString().trim();
             if (label.isEmpty()) label = pkg;
-            apps.add(new Entry(label, pkg, cls, icon(context, info, pm, pkg, cls, size),
-                groupOf(info.activityInfo.applicationInfo, pkg)));
+            // Ícone personalizado (K4811/icons/<package>.png) na frente; senão o do app no formato escolhido.
+            Bitmap custom = CustomIcons.forPackage(pkg, size);
+            Bitmap bmp = custom != null ? custom : icon(context, info, pm, size);
+            apps.add(new Entry(label, pkg, cls, bmp, groupOf(info.activityInfo.applicationInfo, pkg)));
         }
         Collator order = Collator.getInstance(Locale.getDefault());
         order.setStrength(Collator.PRIMARY);
@@ -184,15 +187,15 @@ public final class AppCatalog {
         return names;
     }
 
-    /** Ícone trocado pela pessoa (GDM-icones) ou o do app, no formato escolhido nas Configurações. */
-    private static Bitmap icon(Context c, ResolveInfo info, PackageManager pm, String pkg, String cls, int size) {
-        Drawable custom = CustomIcons.get(c, pkg, cls);
+    /** Ícone do app no formato escolhido nas Configurações (IconStyle). O personalizado já vem antes. */
+    private static Bitmap icon(Context c, ResolveInfo info, PackageManager pm, int size) {
+        Drawable d = info.loadIcon(pm);
         Bitmap b = null;
         try {
-            b = IconStyle.render(c, custom != null ? custom : info.loadIcon(pm), size, custom != null);
+            b = IconStyle.render(c, d, size, false);
         } catch (Exception ignored) {
         }
-        return b != null ? b : icon(custom != null ? custom : info.loadIcon(pm), size);
+        return b != null ? b : icon(d, size);
     }
 
     private static Bitmap icon(Drawable drawable, int size) {

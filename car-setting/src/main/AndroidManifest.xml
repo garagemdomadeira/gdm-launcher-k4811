@@ -60,14 +60,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="nosensor" />
 
-        <!-- Customizar dock: ícones e nome do Z-Link. -->
-        <activity
-            android:name=".DockSettingsActivity"
-            android:configChanges="fontScale|keyboard|keyboardHidden|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|density"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:screenOrientation="nosensor" />
-
         <!-- Avançado (com senha): fábrica, desenvolvimento e menus da NWD. -->
         <activity
             android:name=".AdvancedActivity"

@@ -198,52 +198,6 @@ public final class LauncherConfig {
         return out;
     }
 
-    public static boolean setDockToggles(Context c, Set<DockView.Item> items) {
-        JSONArray ids = new JSONArray();
-        for (DockView.Item item : DockView.Item.values()) {
-            if (item.toggleable && items.contains(item)) ids.put(item.id);
-        }
-        return put(KEY_DOCK_TOGGLES, ids);
-    }
-
-    public static boolean resetDockToggles(Context c) {
-        put(KEY_DOCK_APPS, null);
-        return put(KEY_DOCK_TOGGLES, null);
-    }
-
-    /**
-     * App que ocupa o lugar de um botão do dock (ex.: o Waze no lugar do Equalizador), ou "" se o botão tem a função
-     * original (ou se o app foi desinstalado).
-     */
-    public static String dockApp(Context c, DockView.Item item) {
-        JSONObject j = json();
-        JSONObject map = j == null ? null : j.optJSONObject(KEY_DOCK_APPS);
-        String pkg = map == null ? "" : map.optString(item.id, "");
-        if (pkg.isEmpty() || !com.k4811.common.system.ExternalApps.installed(c, pkg)) return "";
-        return pkg;
-    }
-
-    /** Troca o botão {@code item} pelo app {@code pkg}; null ou "" volta à função original. */
-    public static boolean setDockApp(Context c, DockView.Item item, String pkg) {
-        JSONObject j = json();
-        JSONObject map = j == null ? null : j.optJSONObject(KEY_DOCK_APPS);
-        JSONObject out = new JSONObject();
-        try {
-            if (map != null) {
-                java.util.Iterator<String> keys = map.keys();
-                while (keys.hasNext()) {
-                    String k = keys.next();
-                    out.put(k, map.optString(k));
-                }
-            }
-            if (pkg == null || pkg.isEmpty()) out.remove(item.id);
-            else out.put(item.id, pkg);
-        } catch (Exception e) {
-            return false;
-        }
-        return put(KEY_DOCK_APPS, out);
-    }
-
     /** Índice em {@link #ZLINK_NAMES} do nome do Z-Link no dock; Z-Link por padrão. */
     public static int zlinkName(Context c) {
         int i = integer(KEY_ZLINK_NAME, 0);

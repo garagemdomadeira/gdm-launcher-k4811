@@ -2,6 +2,7 @@ package com.k4811.launcher;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -28,6 +29,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.k4811.launcher.home.AppCatalog;
+import com.k4811.launcher.home.DockEditor;
+import com.k4811.common.ui.DockNavigator;
+import com.k4811.common.ui.DockView;
 import com.k4811.common.ui.IconView;
 import com.k4811.common.ui.Touch;
 import com.k4811.common.ui.Ui;
@@ -78,6 +82,7 @@ public class AppsActivity extends Activity {
     private GridView grid;
     private TextView countView;
     private TextView empty;
+    private DockView dock;
     private AppsAdapter adapter;
     private int rowHeight;
     private int loadGen;
@@ -139,6 +144,38 @@ public class AppsActivity extends Activity {
         Touch.install(findViewById(R.id.apps_back));
         Touch.install(tabAll);
         Touch.install(tabFav);
+
+        // Dock embaixo da gaveta: alvo do arraste e também navega. Segurar um app começa o arraste.
+        dock = DockNavigator.attachDock(this, DockView.Item.APPS);
+        dock.setListener(this::onDockNav);
+        dock.setEditor(new DockEditor(this, dock));
+        grid.setOnItemLongClickListener((parent, view, position, id) -> startAppDrag(view, position));
+    }
+
+    /** Navegação pelo dock dentro da gaveta: Início/Apps fecham a gaveta; o resto abre e fecha. */
+    private void onDockNav(DockView.Item item, String pkg) {
+        if (item == DockView.Item.APPS) return; // já estamos na gaveta
+        if (item == DockView.Item.HOME) {
+            finish();
+            return;
+        }
+        if (item != null) DockNavigator.navigate(this, null, item);
+        else DockNavigator.openApp(this, pkg);
+        finish();
+    }
+
+    /** Segurar um app na gaveta começa o arraste; soltar sobre um slot do dock o substitui. */
+    private boolean startAppDrag(View cell, int position) {
+        if (position < 0 || position >= apps.size()) return false;
+        AppCatalog.Entry entry = apps.get(position);
+        cell.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
+        ClipData data = ClipData.newPlainText("app", entry.packageName);
+        try {
+            cell.startDrag(data, new View.DragShadowBuilder(cell), null, 0);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     @Override

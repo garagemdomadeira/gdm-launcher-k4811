@@ -239,4 +239,9 @@
     <string name="settings_conn_mobile_settings_hint">Datos móviles, roaming y operadora</string>
     <string name="settings_conn_data_on">datos activados</string>
     <string name="settings_conn_data_off">datos desactivados</string>
+    <string name="settings_reset_all">Restablecer todo</string>
+    <string name="settings_reset_all_hint">Borra todos los archivos y ajustes de K4811 y empieza de cero</string>
+    <string name="settings_reset_all_button">Borrar todo</string>
+    <string name="settings_reset_all_confirm">¿Borrar todos los ajustes y archivos de la carpeta K4811? No se puede deshacer.</string>
+    <string name="settings_help_reset_all">Borra todo en la carpeta K4811 (iconos personalizados, imágenes de inicio, emisoras de la radio, ajustes del MP3) y los ajustes de la suite (tema, idioma, dock). Las apps vuelven a sus valores por defecto. No se puede deshacer.</string>
 </resources>

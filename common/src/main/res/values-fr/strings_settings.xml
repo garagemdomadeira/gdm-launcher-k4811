@@ -239,4 +239,9 @@
     <string name="settings_conn_mobile_settings_hint">Données mobiles, itinérance et opérateur</string>
     <string name="settings_conn_data_on">données activées</string>
     <string name="settings_conn_data_off">données désactivées</string>
+    <string name="settings_reset_all">Tout réinitialiser</string>
+    <string name="settings_reset_all_hint">Efface tous les fichiers et réglages K4811 et repart de zéro</string>
+    <string name="settings_reset_all_button">Tout effacer</string>
+    <string name="settings_reset_all_confirm">Effacer tous les réglages et fichiers du dossier K4811 ? Action irréversible.</string>
+    <string name="settings_help_reset_all">Efface tout dans le dossier K4811 (icônes personnalisées, images d\'accueil, stations radio, réglages MP3) et les réglages de la suite (thème, langue, dock). Les apps reviennent à leurs valeurs par défaut. Action irréversible.</string>
 </resources>
