@@ -78,6 +78,8 @@ public class MusicActivity extends Activity {
     private TextView albumView;
     private TextView posView;
     private TextView durView;
+    private ImageView vinyl;
+    private android.animation.ObjectAnimator vinylSpin;
     private TextView statusView;
     private TextView listTitle;
     private TextView shuffleBtn;
@@ -142,6 +144,11 @@ public class MusicActivity extends Activity {
 
         playBtn = (IconView) findViewById(R.id.music_play);
         playBtn.set(IconView.Icon.PLAY, IconView.Style.OUTLINE_CIRCLE);
+        vinyl = (ImageView) findViewById(R.id.music_vinyl);
+        vinylSpin = android.animation.ObjectAnimator.ofFloat(vinyl, "rotation", 0f, 360f);
+        vinylSpin.setDuration(9000);
+        vinylSpin.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+        vinylSpin.setInterpolator(new android.view.animation.LinearInterpolator());
         ((IconView) findViewById(R.id.music_prev))
             .set(IconView.Icon.SKIP_PREV, IconView.Style.NONE)
             .setOnClickListener(v -> music.previous());
@@ -209,6 +216,7 @@ public class MusicActivity extends Activity {
     protected void onDestroy() {
         alive = false;
         artGen++;
+        if (vinylSpin != null) vinylSpin.cancel();
         artLoader.shutdownNow();
         if (dialog != null) dialog.dismiss();
         if (music != null) {
@@ -216,6 +224,17 @@ public class MusicActivity extends Activity {
             music.release();
         }
         super.onDestroy();
+    }
+
+    /** Gira o disco de vinil enquanto toca; pausa (mantendo o ângulo) quando pausa. */
+    private void spinVinyl(boolean playing) {
+        if (vinylSpin == null) return;
+        if (playing) {
+            if (!vinylSpin.isStarted()) vinylSpin.start();
+            else if (vinylSpin.isPaused()) vinylSpin.resume();
+        } else if (vinylSpin.isStarted()) {
+            vinylSpin.pause();
+        }
     }
 
     private void render(MusicState s) {
@@ -244,6 +263,7 @@ public class MusicActivity extends Activity {
         }
 
         playBtn.set(s.playing ? IconView.Icon.PAUSE : IconView.Icon.PLAY, IconView.Style.OUTLINE_CIRCLE);
+        spinVinyl(s.playing);
         shuffleBtn.setActivated(s.shuffle);
         repeatBtn.setActivated(s.repeat != MusicState.Repeat.OFF);
         if (s.repeat == MusicState.Repeat.ONE) repeatBtn.setText(R.string.media_music_repeat_one);

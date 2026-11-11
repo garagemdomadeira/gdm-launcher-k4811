@@ -239,6 +239,16 @@
                         android:layout_height="40dp" />
                     <TextView android:id="@+id/btn_band_text" style="@style/ToggleBoxText" />
                 </LinearLayout>
+
+                <!-- Procurar: varre a faixa e salva as estações encontradas nas memórias (AMS) -->
+                <LinearLayout android:id="@+id/btn_search" style="@style/ToggleBox"
+                    android:contentDescription="@string/radio_search">
+                    <com.k4811.common.ui.IconView
+                        android:id="@+id/btn_search_icon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp" />
+                    <TextView android:id="@+id/btn_search_text" style="@style/ToggleBoxText" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout

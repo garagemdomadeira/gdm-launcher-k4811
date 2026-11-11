@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,12 +32,14 @@ import com.k4811.common.bt.BtClient;
 import com.k4811.common.home.GpsClient;
 import com.k4811.common.home.HomeGrid;
 import com.k4811.common.home.HomeImage;
+import com.k4811.launcher.home.DockEditor;
 import com.k4811.launcher.home.HomeModuleViews;
 import com.k4811.launcher.home.HomeSession;
 import com.k4811.common.config.LauncherConfig;
 import com.k4811.common.config.NwdConfigs;
 import com.k4811.common.system.BottomBar;
 import com.k4811.launcher.home.MuteClient;
+import com.k4811.launcher.home.StatusStrip;
 import com.k4811.common.audio.PlayerHandoff;
 import com.k4811.launcher.home.VolumeClient;
 import com.k4811.common.music.AlbumArt;
@@ -111,12 +114,18 @@ public class HomeActivity extends Activity {
     private int volumeValue;
     private boolean muted;
     private boolean fanOn;
+    /** Ícones de estado no alto (ventoinha, Wi-Fi, rede móvel, GPS, Bluetooth, tempo lá fora). */
+    private StatusStrip strip;
     private boolean btHfp;
     private String btDevice = "";
 
     private View screenOffOverlay;
     private DockView dock;
     private HomeModuleViews modules;
+    private com.k4811.launcher.home.NowPlaying nowPlaying;
+    private com.k4811.launcher.home.HomeExtras extras;
+    private com.k4811.launcher.home.HomePip pip;
+    private com.k4811.launcher.home.HomeClima homeClima;
     private GpsClient gps;
     private TextView speedValue;
     private TextView speedUnit;
@@ -282,6 +291,7 @@ public class HomeActivity extends Activity {
         Ui.applyFont(findViewById(R.id.home_root));
         // On the home screen the dock always highlights Home; what is playing shows in the top bar.
         dock = DockNavigator.attachDock(this, DockView.Item.HOME);
+        dock.setEditor(new DockEditor(this, dock)); // segurar p/ reordenar; soltar fora remove
         bindViews();
         modules = new HomeModuleViews(this);
         modules.apply(LauncherConfig.homeLayout(this));
@@ -345,6 +355,27 @@ public class HomeActivity extends Activity {
         });
         radio.connect(false);
 
+        nowPlaying = new com.k4811.launcher.home.NowPlaying(this, session, radio,
+            new com.k4811.launcher.home.NowPlaying.Room() {
+                @Override
+                public boolean line2() {
+                    return modules.nowPlayingLine2();
+                }
+
+                @Override
+                public boolean progress() {
+                    return modules.nowPlayingProgress();
+                }
+
+                @Override
+                public boolean extras() {
+                    return modules.nowPlayingExtras();
+                }
+            });
+        extras = new com.k4811.launcher.home.HomeExtras(this, modules);
+        pip = new com.k4811.launcher.home.HomePip(this, modules);
+        homeClima = new com.k4811.launcher.home.HomeClima(this);
+
         handler.postDelayed(this::checkDefaultLauncher, 800);
         Touch.install(findViewById(android.R.id.content));
     }
@@ -385,6 +416,17 @@ public class HomeActivity extends Activity {
         fanIcon.setClickable(false);
         fanIcon.color(Ui.TEXT_MUTED);
         findViewById(R.id.fan_status).setOnClickListener(v -> openApp(Apps.FAN));
+        strip = new StatusStrip(this, (LinearLayout) findViewById(R.id.status_bar), new StatusStrip.Actions() {
+            @Override
+            public void openFan() {
+                openApp(Apps.FAN);
+            }
+
+            @Override
+            public void openBluetooth() {
+                openDock(DockView.Item.PHONE);
+            }
+        });
 
         npLabel = text(R.id.np_label);
         npLine1 = text(R.id.np_line1);
@@ -469,6 +511,13 @@ public class HomeActivity extends Activity {
         readFan();
         queryBt();
         applyPrefs();
+        strip.resume();
+        if (nowPlaying != null) nowPlaying.resume();
+        if (extras != null) extras.resume();
+        if (pip != null) pip.resume();
+        if (homeClima != null) homeClima.resume();
+        resumed = true;
+        if (snap != null) announceCallCard(snap.call != HomeSession.CallPhase.NONE);
     }
 
     /** Settings screen options: home modules and voltmeter. */
@@ -496,6 +545,13 @@ public class HomeActivity extends Activity {
         handler.removeCallbacks(voltageTick);
         handler.removeCallbacks(autoScreenOff);
         gps.stop();
+        strip.pause();
+        if (nowPlaying != null) nowPlaying.pause();
+        if (extras != null) extras.pause();
+        if (pip != null) pip.pause();
+        if (homeClima != null) homeClima.pause();
+        resumed = false;
+        announceCallCard(false);
         super.onPause();
     }
 
@@ -505,6 +561,7 @@ public class HomeActivity extends Activity {
         handler.removeCallbacksAndMessages(null);
         gps.stop();
         gps.setListener(null);
+        strip.pause();
         try {
             unregisterReceiver(btReceiver);
         } catch (Exception ignored) {
@@ -535,6 +592,9 @@ public class HomeActivity extends Activity {
             radio.release();
         }
         if (dialog != null) dialog.dismiss();
+        if (nowPlaying != null) nowPlaying.release();
+        if (extras != null) extras.release();
+        if (pip != null) pip.release();
         artLoader.shutdownNow();
         super.onDestroy();
     }
@@ -570,12 +630,29 @@ public class HomeActivity extends Activity {
         boolean calling = s.call != HomeSession.CallPhase.NONE;
         show(cardCall, calling);
         if (modules.slotOf(HomeGrid.Module.NOW_PLAYING) != null) {
-            findViewById(R.id.now_playing).setVisibility(calling ? View.INVISIBLE : View.VISIBLE);
+            // Com o cartão na coluna da direita, o "tocando agora" continua à vista.
+            boolean covered = calling && !modules.callOnRight();
+            findViewById(R.id.now_playing).setVisibility(covered ? View.INVISIBLE : View.VISIBLE);
         }
+        announceCallCard(calling && resumed);
         renderNowPlaying();
         renderSourceBadge(s);
         renderCall(s);
         renderBt();
+    }
+
+    private boolean resumed;
+    private boolean cardAnnounced;
+
+    /** Avisa o telefone se o cartão da ligação está à vista, para ele esconder a janela flutuante. */
+    private void announceCallCard(boolean shown) {
+        if (shown == cardAnnounced) return;
+        cardAnnounced = shown;
+        Intent i = new Intent(Apps.ACTION_HOME_CALL_CARD).setPackage(Apps.PHONE).putExtra(Apps.EXTRA_SHOWN, shown);
+        try {
+            sendBroadcast(i);
+        } catch (Exception ignored) {
+        }
     }
 
     private void renderClock() {
@@ -615,146 +692,15 @@ public class HomeActivity extends Activity {
         else if (s.kind == HomeSession.Kind.BT && s.btPlaying) label = "BT";
         else if (s.kind == HomeSession.Kind.APP && s.appPlaying) label = s.appLabel;
         if (label != null) sourceBadgeText.setText(label);
-        show(sourceBadge, label != null);
+        // Em pé o "o que está tocando" já aparece embaixo (tocando-agora): o badge de fonte aqui em cima é
+        // redundante e, na tela estreita, ficava por cima da barra de ícones (BT sobre a ventoinha). Esconde.
+        show(sourceBadge, label != null && !com.k4811.common.ui.Ui.isPortrait(this));
     }
 
-    /** "Now playing": radio, USB/SD or Bluetooth music, depending on the current source. */
+    /** "Tocando agora": fonte, capa, faixa e controles (ver {@link NowPlaying}). */
     private void renderNowPlaying() {
-        if (snap == null) return;
-        HomeSession.Snapshot s = snap;
-        boolean controls = true;
-        float progress = -1f; // < 0 hides the bar
-        String sub = "";
-        switch (s.kind) {
-            case RADIO: {
-                boolean live = s.source == SOURCE_RADIO;
-                npLabel.setText(R.string.home_now_playing_radio);
-                if (!radioReady) {
-                    npLine1.setText(radioState.connection == RadioState.Connection.NOT_FOUND
-                        ? R.string.home_radio_unavailable : R.string.home_radio);
-                } else {
-                    boolean fm = Band.isFm(radioState.band);
-                    String freq = Band.formatValue(radioState.frequency, fm) + " " + Band.unit(fm);
-                    boolean named = radioState.psName != null && !radioState.psName.isEmpty();
-                    npLine1.setText(named ? radioState.psName : freq);
-                    sub = Band.label(radioState.band) + (named ? "  ·  " + freq : "");
-                }
-                // On the radio the center button toggles on/off.
-                npPlay.set(IconView.Icon.POWER, IconView.Style.NONE);
-                npPlay.color(live ? Ui.TEXT : Ui.TEXT_MUTED);
-                npPlay.setContentDescription(getString(live ? R.string.home_radio_turn_off : R.string.home_radio_turn_on));
-                break;
-            }
-            case USB:
-                npLabel.setText(R.string.home_now_playing_mp3);
-                npLine1.setText(s.title.isEmpty() ? getString(R.string.home_music) : s.title);
-                sub = s.artist.isEmpty() ? "USB / SD" : s.artist;
-                progress = s.durationMs > 0 ? Math.min(1f, s.positionMs / (float) s.durationMs) : 0f;
-                setPlay(s.playing);
-                break;
-            case BT: {
-                npLabel.setText(R.string.home_now_playing_bt);
-                boolean named = !s.btTitle.isEmpty();
-                if (s.a2dpKnown && !s.a2dpConnected && !named) {
-                    npLine1.setText(R.string.home_phone_disconnected);
-                } else {
-                    npLine1.setText(named ? s.btTitle : getString(R.string.home_bt_music));
-                    sub = s.btArtist;
-                }
-                setPlay(s.btPlaying);
-                break;
-            }
-            case APP: {
-                // Spotify, Deezer, YouTube Music… — o nome do app vai no rótulo de cima.
-                npLabel.setText(s.appLabel);
-                npLine1.setText(s.appTitle.isEmpty() ? getString(R.string.home_music) : s.appTitle);
-                sub = s.appArtist;
-                setPlay(s.appPlaying);
-                break;
-            }
-            default:
-                npLabel.setText(""); // nothing playing: no source to show
-                npLine1.setText(R.string.home_nothing_playing);
-                controls = false;
-                progress = 0f; // empty bar, as in the design
-                break;
-        }
-        renderArt(s);
-        npLine2.setText(sub);
-        npLine2.setVisibility(sub.isEmpty() || !modules.nowPlayingLine2() ? View.GONE : View.VISIBLE);
-        npControls.setVisibility(controls ? View.VISIBLE : View.GONE);
-        npProgressTrack.setVisibility(progress < 0 || !modules.nowPlayingProgress() ? View.GONE : View.VISIBLE);
-        if (progress >= 0) {
-            npProgress.setPivotX(0f);
-            npProgress.setScaleX(progress);
-        }
-    }
-
-    /**
-     * Track cover for MP3, station art for the radio (K4811/radio/FM_104.5.jpg, as on the radio
-     * screen); otherwise, or without a picture, the source icon in the frame.
-     */
-    private void renderArt(HomeSession.Snapshot s) {
-        // Mídia de app (Spotify…): a capa vem pronta no snapshot (bitmap do MediaMetadata).
-        if (s.kind == HomeSession.Kind.APP) {
-            npArtIcon.set(IconView.Icon.MUSIC, IconView.Style.NONE);
-            npArtIcon.color(Ui.TEXT_DIM);
-            String key = "app:" + s.appPackage + ":" + s.appTitle;
-            if (s.appArt == null) {
-                clearArt();
-            } else if (!key.equals(artKey)) {
-                artGen++;
-                artKey = key;
-                npArt.setImageBitmap(s.appArt);
-                npArt.setVisibility(View.VISIBLE);
-                npArtIcon.setVisibility(View.GONE);
-                Touch.fadeIn(npArt);
-            }
-            return;
-        }
-        IconView.Icon icon = s.kind == HomeSession.Kind.RADIO ? IconView.Icon.RADIO
-            : s.kind == HomeSession.Kind.BT ? IconView.Icon.BLUETOOTH : IconView.Icon.MUSIC;
-        npArtIcon.set(icon, IconView.Style.NONE);
-        npArtIcon.color(Ui.TEXT_DIM);
-
-        long id = 0;
-        if (s.kind == HomeSession.Kind.USB && s.mediaId != null) {
-            try {
-                id = Long.parseLong(s.mediaId.trim());
-            } catch (NumberFormatException ignored) {
-            }
-        }
-        String path = s.kind == HomeSession.Kind.USB ? s.path : null;
-        boolean station = s.kind == HomeSession.Kind.RADIO && radioReady && radioState.frequency > 0;
-        int band = radioState.band;
-        int frequency = radioState.frequency;
-        String key = station ? "radio:" + StationArt.baseName(band, frequency)
-            : id > 0 ? "id:" + id : path != null ? "path:" + path : null;
-        if (key == null) {
-            clearArt();
-            return;
-        }
-        if (key.equals(artKey)) return;
-        clearArt();
-        artKey = key;
-        int gen = ++artGen;
-        long mediaId = id;
-        int size = npArt.getWidth() > 0 ? npArt.getWidth() : Math.round(Ui.dp(this, 216));
-        try {
-            artLoader.execute(() -> {
-                Bitmap bmp = station ? StationArt.load(band, frequency, size)
-                    : AlbumArt.decode(getApplicationContext(), mediaId, path);
-                handler.post(() -> {
-                    if (isFinishing() || gen != artGen || bmp == null) return;
-                    npArt.setImageBitmap(bmp);
-                    npArt.setVisibility(View.VISIBLE);
-                    npArtIcon.setVisibility(View.GONE);
-                    Touch.fadeIn(npArt);
-                });
-            });
-        } catch (Exception ignored) {
-            // Executor already shut down (screen leaving).
-        }
+        if (snap == null || nowPlaying == null) return;
+        nowPlaying.update(snap, radioState, radioReady);
     }
 
     /** Image module: (re)loads the chosen picture when it changed or the module moved to another slot. */
@@ -794,6 +740,7 @@ public class HomeActivity extends Activity {
         }
     }
 
+
     /** Optional home background: (re)loads the chosen picture when it changed; hidden when none or missing. */
     private void renderBackground() {
         ImageView view = (ImageView) findViewById(R.id.home_bg);
@@ -828,20 +775,6 @@ public class HomeActivity extends Activity {
         } catch (Exception ignored) {
             // Executor already shut down (screen leaving).
         }
-    }
-
-    private void clearArt() {
-        artGen++;
-        artKey = null;
-        npArt.setImageDrawable(null);
-        npArt.setVisibility(View.GONE);
-        npArtIcon.setVisibility(View.VISIBLE);
-    }
-
-    private void setPlay(boolean playing) {
-        npPlay.set(playing ? IconView.Icon.PAUSE : IconView.Icon.PLAY, IconView.Style.NONE);
-        npPlay.color(Ui.TEXT);
-        npPlay.setContentDescription(getString(playing ? R.string.home_pause : R.string.home_play));
     }
 
     private void renderCall(HomeSession.Snapshot s) {
@@ -934,6 +867,7 @@ public class HomeActivity extends Activity {
     }
 
     private void renderFan() {
+        if (strip != null) strip.setFan(fanOn);
         if (fanText == null) return;
         fanDot.setActivated(fanOn);
         fanText.setText(fanOn ? R.string.home_fan_on : R.string.home_fan_off);
@@ -954,6 +888,7 @@ public class HomeActivity extends Activity {
         if (btText == null) return;
         boolean a2dp = snap != null && snap.a2dpKnown && snap.a2dpConnected;
         boolean connected = btHfp || a2dp;
+        if (strip != null) strip.setBluetooth(connected);
         btText.setText(connected ? R.string.home_bt_connected : R.string.home_bt_disconnected);
         btText.setTextColor(Ui.TEXT);
         btIcon.color(connected ? Ui.TEXT : Ui.TEXT_MUTED);
@@ -1003,47 +938,11 @@ public class HomeActivity extends Activity {
 
     /** −1 previous, 0 play/pause (on the radio: on/off), +1 next. */
     private void transport(int what) {
-        if (snap == null) return;
-        switch (snap.kind) {
-            case RADIO:
-                if (what == 0) toggleRadio();
-                else tuneRadio(what > 0);
-                break;
-            case USB:
-                session.usbTransport(what < 0 ? HomeSession.USB_PREV
-                    : what > 0 ? HomeSession.USB_NEXT : HomeSession.USB_TOGGLE);
-                break;
-            case BT:
-                if (what < 0) session.btTransport(HomeSession.BT_PREV);
-                else if (what > 0) session.btTransport(HomeSession.BT_NEXT);
-                else session.btTransport(snap.btPlaying ? HomeSession.BT_PAUSE : HomeSession.BT_PLAY);
-                break;
-            case APP:
-                session.appTransport(what);
-                break;
-            default:
-                break;
-        }
+        if (nowPlaying != null) nowPlaying.transport(what);
     }
 
     private void openNowPlaying() {
-        if (snap == null) return;
-        switch (snap.kind) {
-            case RADIO:
-                openDock(DockView.Item.RADIO);
-                break;
-            case USB:
-                openDock(DockView.Item.MUSIC);
-                break;
-            case BT:
-                openDock(DockView.Item.BT_MUSIC);
-                break;
-            case APP:
-                if (snap.appPackage != null) openApp(snap.appPackage);
-                break;
-            default:
-                break;
-        }
+        if (nowPlaying != null) nowPlaying.openCurrent();
     }
 
     /** Previous/next memory. If the radio isn't the source, turns it on first — the tap is what turns it on. */
@@ -1119,7 +1018,8 @@ public class HomeActivity extends Activity {
     /** Idioma, tema, modo escuro e fonte em uso nesta tela; se mudarem nas Configurações (outro app), recria. */
     private String lookKey() {
         return LauncherConfig.language(this) + "|" + LauncherConfig.theme(this)
-            + "|" + LauncherConfig.darkMode(this) + "|" + LauncherConfig.font(this);
+            + "|" + LauncherConfig.darkMode(this) + "|" + LauncherConfig.font(this)
+            + "|" + com.k4811.common.system.BottomBar.reservedPx(this) + "|" + LauncherConfig.homeMirrored(this);
     }
 
     private void openDateSettings() {

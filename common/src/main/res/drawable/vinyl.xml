@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Disco de vinil: corpo preto com sulcos concêntricos bem visíveis, um realce de luz e o selo central
+     (azul, com um risco/marca pra dar pra ver o giro) e o furo. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp"
+    android:height="240dp"
+    android:viewportWidth="240"
+    android:viewportHeight="240">
+
+    <!-- corpo do disco -->
+    <path
+        android:pathData="M120,8 a112,112 0 1,0 0.1,0 z"
+        android:fillColor="#FF0C0C0F" />
+    <path
+        android:pathData="M120,8 a112,112 0 1,0 0.1,0 z"
+        android:strokeColor="#FF34343C"
+        android:strokeWidth="2.4"
+        android:fillColor="#00000000" />
+
+    <!-- sulcos concêntricos (mais evidentes) -->
+    <path android:pathData="M120,20 a100,100 0 1,0 0.1,0 z" android:strokeColor="#FF34343C" android:strokeWidth="2" android:fillColor="#00000000" />
+    <path android:pathData="M120,30 a90,90 0 1,0 0.1,0 z"  android:strokeColor="#FF2A2A30" android:strokeWidth="2" android:fillColor="#00000000" />
+    <path android:pathData="M120,40 a80,80 0 1,0 0.1,0 z"  android:strokeColor="#FF34343C" android:strokeWidth="2" android:fillColor="#00000000" />
+    <path android:pathData="M120,50 a70,70 0 1,0 0.1,0 z"  android:strokeColor="#FF2A2A30" android:strokeWidth="2" android:fillColor="#00000000" />
+    <path android:pathData="M120,60 a60,60 0 1,0 0.1,0 z"  android:strokeColor="#FF34343C" android:strokeWidth="2" android:fillColor="#00000000" />
+    <path android:pathData="M120,72 a48,48 0 1,0 0.1,0 z"  android:strokeColor="#FF2A2A30" android:strokeWidth="2" android:fillColor="#00000000" />
+
+    <!-- brilho (reflexo) de um lado -->
+    <path
+        android:pathData="M120,12 a108,108 0 0,1 76,32 l-10,10 a94,94 0 0,0 -66,-28 z"
+        android:fillColor="#1F2B6CFF" />
+
+    <!-- selo central -->
+    <path
+        android:pathData="M120,86 a34,34 0 1,0 0.1,0 z"
+        android:fillColor="#FF2B6CFF" />
+    <path
+        android:pathData="M120,86 a34,34 0 1,0 0.1,0 z"
+        android:strokeColor="#FF1E53CC"
+        android:strokeWidth="2"
+        android:fillColor="#00000000" />
+    <!-- anel interno do selo + risco (pra ver o giro) -->
+    <path android:pathData="M120,96 a24,24 0 1,0 0.1,0 z" android:strokeColor="#3FFFFFFF" android:strokeWidth="1.6" android:fillColor="#00000000" />
+    <path android:pathData="M120,88 L120,104" android:strokeColor="#CCFFFFFF" android:strokeWidth="3" android:strokeLineCap="round" />
+
+    <!-- furo central -->
+    <path
+        android:pathData="M120,114 a6,6 0 1,0 0.1,0 z"
+        android:fillColor="#FF0C0C0F" />
+</vector>

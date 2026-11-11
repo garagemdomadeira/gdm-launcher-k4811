@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- App de clima (ar-condicionado). A/C, AUTO, DUAL, MAX e as setas de direcao ficam no codigo (universais). -->
+<resources>
+    <string name="clima_app_name">जलवायु</string>
+    <string name="clima_title">जलवायु</string>
+    <string name="clima_zone_left">बाएँ</string>
+    <string name="clima_zone_right">दाएँ</string>
+    <string name="clima_defog_front">आगे डिफ़ॉग</string>
+    <string name="clima_defog_rear">पीछे डिफ़ॉग</string>
+    <string name="clima_recirc">रीसर्क</string>
+    <string name="clima_status_connecting">कनेक्ट हो रहा…</string>
+    <string name="clima_status_waiting">कनेक्टेड · वाहन की प्रतीक्षा</string>
+    <string name="clima_status_offline">वाहन A/C से कनेक्शन नहीं</string>
+</resources>

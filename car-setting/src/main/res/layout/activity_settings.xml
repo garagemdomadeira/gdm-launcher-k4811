@@ -61,6 +61,11 @@
             android:text="@string/settings_group_customize" />
 
         <TextView
+            android:id="@+id/settings_tab_connections"
+            style="@style/SettingsTab"
+            android:text="@string/settings_group_connections" />
+
+        <TextView
             android:id="@+id/settings_tab_assists"
             style="@style/SettingsTab"
             android:text="@string/settings_group_assists" />

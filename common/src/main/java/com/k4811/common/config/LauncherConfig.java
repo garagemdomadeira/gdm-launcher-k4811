@@ -50,11 +50,20 @@ public final class LauncherConfig {
     private static final String KEY_MEDIA_APPS = "media_app_controls";
     private static final String KEY_HIDE_BOTTOM_BAR = "hide_bottom_bar";
     private static final String KEY_ZLINK_NAME = "zlink_name";
+    /** Package do app de navegação do botão Navegação do dock ("" = o primeiro instalado). */
+    private static final String KEY_NAV_APP = "nav_app";
     private static final String KEY_ASK_DEFAULT = "ask_default_launcher";
     private static final String KEY_VOLUME_OVERLAY = "show_volume_overlay";
     /** Antigo liga/desliga do menu da borda; só lido quando ainda não há {@link #KEY_EDGE_MENU_SIDE}. */
     private static final String KEY_EDGE_MENU = "edge_menu";
     private static final String KEY_EDGE_MENU_SIDE = "edge_menu_side";
+    /** Formato dos ícones dos apps (0 original, 1 redondo, 2 quadrado arredondado) e tamanho na gaveta (0–2). */
+    private static final String KEY_ICON_SHAPE = "icon_shape";
+    private static final String KEY_ICON_SIZE = "icon_size";
+    /** Tela inicial espelhada: esquerda ⇄ direita (em pé, cima ⇄ baixo). */
+    private static final String KEY_HOME_MIRROR = "home_mirror";
+    /** Botões do dock trocados por um app: {"eq": "com.waze", ...}. */
+    private static final String KEY_DOCK_APPS = "dock_apps";
 
     /** Launcher original da NWD (valor de fábrica de persist.nwd.launcher.default). */
     public static final String ORIGINAL_LAUNCHER = "com.android.launcher";
@@ -87,7 +96,7 @@ public final class LauncherConfig {
     };
 
     private static final String DEFAULT_HOME_LAYOUT =
-        "now_playing:left,clock:center_top,volume:center_bottom,fan:right_top,bluetooth:right_middle";
+        "now_playing:left,car:center_top,obd:center_bottom,pip:right_top";
 
     private static JSONObject cached;
     private static long cachedModified = -1;
@@ -123,11 +132,17 @@ public final class LauncherConfig {
 
     /** Idioma escolhido; inglês quando nada foi escolhido ou o gravado não existe mais. */
     public static String language(Context c) {
-        String tag = string(KEY_LANGUAGE, DEFAULT_LANGUAGE);
+        // ROM K4811: sem escolha gravada, segue o idioma do sistema (pt na ROM brasileira) se for um dos conhecidos.
+        String sys = java.util.Locale.getDefault().getLanguage();
+        String def = DEFAULT_LANGUAGE;
+        for (String known : LANGUAGES) {
+            if (known.equals(sys)) def = sys;
+        }
+        String tag = string(KEY_LANGUAGE, def);
         for (String known : LANGUAGES) {
             if (known.equals(tag)) return tag;
         }
-        return DEFAULT_LANGUAGE;
+        return def;
     }
 
     public static boolean setLanguage(Context c, String tag) {
@@ -183,18 +198,6 @@ public final class LauncherConfig {
         return out;
     }
 
-    public static boolean setDockToggles(Context c, Set<DockView.Item> items) {
-        JSONArray ids = new JSONArray();
-        for (DockView.Item item : DockView.Item.values()) {
-            if (item.toggleable && items.contains(item)) ids.put(item.id);
-        }
-        return put(KEY_DOCK_TOGGLES, ids);
-    }
-
-    public static boolean resetDockToggles(Context c) {
-        return put(KEY_DOCK_TOGGLES, null);
-    }
-
     /** Índice em {@link #ZLINK_NAMES} do nome do Z-Link no dock; Z-Link por padrão. */
     public static int zlinkName(Context c) {
         int i = integer(KEY_ZLINK_NAME, 0);
@@ -203,6 +206,22 @@ public final class LauncherConfig {
 
     public static boolean setZlinkName(Context c, int index) {
         return put(KEY_ZLINK_NAME, index);
+    }
+
+    /**
+     * App de navegação do botão Navegação do dock: o escolhido nas Configurações, se ainda
+     * estiver instalado; senão o primeiro instalado ({@link com.k4811.common.system.ExternalApps#navApps}).
+     * "" se não houver nenhum.
+     */
+    public static String navApp(Context c) {
+        String chosen = string(KEY_NAV_APP, "");
+        java.util.List<String> apps = com.k4811.common.system.ExternalApps.navApps(c);
+        if (!chosen.isEmpty() && apps.contains(chosen)) return chosen;
+        return apps.isEmpty() ? "" : apps.get(0);
+    }
+
+    public static boolean setNavApp(Context c, String pkg) {
+        return put(KEY_NAV_APP, pkg);
     }
 
     /** Esconder a barra flutuante da NWD enquanto um app da suíte está na frente. Desligado por padrão. */
@@ -258,11 +277,12 @@ public final class LauncherConfig {
         Map<HomeGrid.Module, HomeGrid.Slot> out = new EnumMap<>(HomeGrid.Module.class);
         String raw = string(KEY_HOME_LAYOUT, null);
         if (raw == null) {
+            // Tocando agora à esquerda; no meio o carro e o OBD2 com o relógio; à direita o PIP (coluna inteira).
+            // Volume, relógio grande, ventoinha e Bluetooth continuam disponíveis nas Configurações.
             out.put(HomeGrid.Module.NOW_PLAYING, HomeGrid.Slot.LEFT);
-            out.put(HomeGrid.Module.CLOCK, HomeGrid.Slot.CENTER_TOP);
-            if (bool(KEY_VOLUME, true)) out.put(HomeGrid.Module.VOLUME, HomeGrid.Slot.CENTER_BOTTOM);
-            out.put(HomeGrid.Module.FAN, HomeGrid.Slot.RIGHT_TOP);
-            out.put(HomeGrid.Module.BLUETOOTH, HomeGrid.Slot.RIGHT_MIDDLE);
+            out.put(HomeGrid.Module.CAR, HomeGrid.Slot.CENTER_TOP);
+            out.put(HomeGrid.Module.OBD, HomeGrid.Slot.CENTER_BOTTOM);
+            out.put(HomeGrid.Module.PIP, HomeGrid.Slot.RIGHT_TOP);
             return out;
         }
         for (String pair : raw.split(",")) {
@@ -301,6 +321,32 @@ public final class LauncherConfig {
             sb.append(e.getKey().id).append(':').append(e.getValue().id);
         }
         return put(KEY_HOME_LAYOUT, sb.toString());
+    }
+
+    public static boolean homeMirrored(Context c) {
+        return bool(KEY_HOME_MIRROR, false);
+    }
+
+    public static boolean setHomeMirrored(Context c, boolean on) {
+        return put(KEY_HOME_MIRROR, on);
+    }
+
+    public static int iconShape(Context c) {
+        int v = integer(KEY_ICON_SHAPE, 0);
+        return v >= 0 && v <= 2 ? v : 0;
+    }
+
+    public static boolean setIconShape(Context c, int shape) {
+        return put(KEY_ICON_SHAPE, shape);
+    }
+
+    public static int iconSize(Context c) {
+        int v = integer(KEY_ICON_SIZE, 1);
+        return v >= 0 && v <= 2 ? v : 1;
+    }
+
+    public static boolean setIconSize(Context c, int size) {
+        return put(KEY_ICON_SIZE, size);
     }
 
     /** Mostrar o volume por cima de qualquer app quando ele muda (VolumeOverlayService do launcher). */

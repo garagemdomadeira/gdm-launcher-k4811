@@ -27,6 +27,7 @@
     <!-- RDS programme types (PTY 0..31) -->
     <string name="radio_config_invalid">Файл %1$s повреждён: исправьте его. До этого изменения памяти не сохраняются.</string>
     <string name="radio_stereo">Стерео</string>
+    <string name="radio_search">Поиск</string>
     <string name="radio_distant">Дальний</string>
     <string name="radio_power">Радио</string>
     <string name="radio_ams_started">Поиск станций в %1$s… память будет заменена</string>

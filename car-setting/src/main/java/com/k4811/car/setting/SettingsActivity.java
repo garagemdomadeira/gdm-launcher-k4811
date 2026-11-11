@@ -17,7 +17,10 @@ import android.widget.TextView;
 
 import com.k4811.common.audio.AudioGains;
 import com.k4811.car.setting.audio.AudioPanel;
+import com.k4811.common.config.DockConfig;
 import com.k4811.common.config.LauncherConfig;
+import com.k4811.common.config.NwdConfigs;
+import com.k4811.common.home.HomeImage;
 import com.k4811.common.media.AppMediaClient;
 import com.k4811.common.system.BottomBar;
 import com.k4811.common.system.CrashLog;
@@ -26,8 +29,11 @@ import com.k4811.common.system.ExternalApps;
 import com.k4811.common.system.NwdSettings;
 import com.k4811.car.setting.system.PlatformCompat;
 import com.k4811.common.system.SystemProps;
+import com.k4811.common.ui.DockView;
 import com.k4811.common.ui.IconView;
 import com.k4811.car.setting.ui.InputDialog;
+
+import java.io.File;
 import com.k4811.car.setting.ui.OptionList;
 import com.k4811.car.setting.ui.ThemeSwatches;
 import com.k4811.common.ui.Touch;
@@ -50,11 +56,13 @@ public class SettingsActivity extends Activity {
     private static final int PANEL_CUSTOMIZE = 1;
     private static final int PANEL_SYSTEM = 2;
     private static final int PANEL_AUDIO = 3;
+    private static final int PANEL_CONNECTIONS = 4;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private final LinearLayout[] panels = new LinearLayout[4];
-    private final TextView[] tabs = new TextView[4];
+    private final LinearLayout[] panels = new LinearLayout[5];
+    private final TextView[] tabs = new TextView[5];
     private AudioPanel audio;
+    private ConnectionsPanel connections;
     private OptionList list;
     private Dialog dialog;
 
@@ -91,6 +99,9 @@ public class SettingsActivity extends Activity {
         list.into(panels[PANEL_CUSTOMIZE]);
         buildAppearance();
         buildHomeScreen();
+        list.into(panels[PANEL_CONNECTIONS]);
+        connections = new ConnectionsPanel(this, list);
+        connections.build();
         list.into(panels[PANEL_SYSTEM]);
         buildDevice();
         buildAbout();
@@ -115,7 +126,7 @@ public class SettingsActivity extends Activity {
         findViewById(R.id.settings_sidebar).setVisibility(View.VISIBLE);
         findViewById(R.id.settings_tab_assists).setVisibility(View.GONE);
         int[] ids = {R.id.settings_tab_main, R.id.settings_tab_customize,
-            R.id.settings_tab_system, R.id.settings_tab_audio};
+            R.id.settings_tab_system, R.id.settings_tab_audio, R.id.settings_tab_connections};
         for (int i = 0; i < tabs.length; i++) {
             int panel = i;
             tabs[i] = (TextView) findViewById(ids[i]);
@@ -203,6 +214,15 @@ public class SettingsActivity extends Activity {
                 LauncherConfig.setFont(this, LauncherConfig.FONTS[i]);
                 restartScreens();
             }).local().help(getString(R.string.settings_help_font));
+        // Ícones dos apps na gaveta (e no seletor da fonte do "tocando agora"): formato e tamanho.
+        list.choice(getString(R.string.settings_icon_shape), getString(R.string.settings_icon_shape_hint),
+            new String[] {getString(R.string.settings_icon_shape_original), getString(R.string.settings_icon_shape_round),
+                getString(R.string.settings_icon_shape_squircle)}, new int[] {0, 1, 2},
+            () -> LauncherConfig.iconShape(this), i -> LauncherConfig.setIconShape(this, i));
+        list.choice(getString(R.string.settings_icon_size), getString(R.string.settings_icon_size_hint),
+            new String[] {getString(R.string.settings_icon_size_small), getString(R.string.settings_icon_size_normal),
+                getString(R.string.settings_icon_size_large)}, new int[] {0, 1, 2},
+            () -> LauncherConfig.iconSize(this), i -> LauncherConfig.setIconSize(this, i));
     }
 
     private void pickTheme(int theme) {
@@ -225,13 +245,22 @@ public class SettingsActivity extends Activity {
         list.action(getString(R.string.settings_customize_home), getString(R.string.settings_customize_home_hint),
             getString(R.string.settings_open), () -> startActivity(new Intent(this, HomeSettingsActivity.class)))
             .help(getString(R.string.settings_help_customize_home));
-        list.action(getString(R.string.settings_customize_dock), getString(R.string.settings_customize_dock_hint),
-            getString(R.string.settings_open), () -> startActivity(new Intent(this, DockSettingsActivity.class)))
-            .help(getString(R.string.settings_help_customize_dock));
+        // O dock agora é montado arrastando apps da gaveta para ele; aqui fica só o nome do Z-Link.
+        int[] zlinkValues = new int[LauncherConfig.ZLINK_NAMES.length];
+        for (int i = 0; i < zlinkValues.length; i++) zlinkValues[i] = i;
+        list.choice(getString(R.string.settings_zlink_name), getString(R.string.settings_zlink_name_hint),
+            LauncherConfig.ZLINK_NAMES, zlinkValues,
+            () -> LauncherConfig.zlinkName(this),
+            i -> LauncherConfig.setZlinkName(this, i))
+            .local().help(getString(R.string.settings_help_zlink_name))
+            .visibleWhen(() -> DockView.Item.ZLINK.isAvailable(this));
     }
 
     private void buildMainHome() {
         list.section(getString(R.string.settings_home_section));
+        list.toggle(getString(R.string.settings_home_mirror), getString(R.string.settings_home_mirror_hint),
+            () -> LauncherConfig.homeMirrored(this),
+            on -> LauncherConfig.setHomeMirrored(this, on));
         list.toggle(getString(R.string.settings_show_day_night),
             getString(R.string.settings_show_day_night_hint),
             () -> LauncherConfig.showDayNight(this),
@@ -300,6 +329,40 @@ public class SettingsActivity extends Activity {
             .local()
             .visibleWhen(() -> BottomBar.available(this))
             .help(getString(R.string.settings_help_hide_bottom_bar));
+        // GDM Atualizações (vem na ROM): apps da suíte e a ROM pelo GitHub, sempre perguntando antes.
+        list.action(getString(R.string.home_dash_updates), getString(R.string.home_dash_updates_sub),
+            getString(R.string.ota_open), () -> {
+                Intent i = getPackageManager().getLaunchIntentForPackage(com.k4811.common.Apps.UPDATER);
+                if (i != null) startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            })
+            .visibleWhen(() -> com.k4811.common.system.ExternalApps.installed(this, com.k4811.common.Apps.UPDATER));
+        list.action(getString(R.string.settings_reset_all), getString(R.string.settings_reset_all_hint),
+            getString(R.string.settings_reset_all_button), this::confirmResetAll)
+            .help(getString(R.string.settings_help_reset_all));
+    }
+
+    /** Pergunta antes de apagar tudo (ação destrutiva): só reseta se confirmar. */
+    private void confirmResetAll() {
+        list.showChoices(getString(R.string.settings_reset_all_confirm),
+            new String[]{getString(R.string.settings_reset_all_button), getString(R.string.settings_home_cancel)},
+            null, -1, index -> {
+                if (index == 0) resetAll();
+            });
+    }
+
+    /** Apaga tudo em K4811/ (todas as raízes) e os configs do suíte (launcher.json, dock.json). */
+    private void resetAll() {
+        for (File root : HomeImage.roots()) deleteTree(root);
+        NwdConfigs.file(LauncherConfig.FILE).delete();
+        NwdConfigs.file(DockConfig.FILE).delete();
+        recreate(); // volta aos padrões (tema, idioma, dock); os outros apps releem ao abrir
+    }
+
+    private static void deleteTree(File f) {
+        if (f == null || !f.exists()) return;
+        File[] children = f.listFiles();
+        if (children != null) for (File c : children) deleteTree(c);
+        f.delete();
     }
 
     private String yesNo(boolean v) {
@@ -386,6 +449,7 @@ public class SettingsActivity extends Activity {
         handler.removeCallbacksAndMessages(null);
         list.release();
         if (audio != null) audio.release();
+        if (connections != null) connections.release();
         if (dialog != null) dialog.dismiss();
         super.onDestroy();
     }

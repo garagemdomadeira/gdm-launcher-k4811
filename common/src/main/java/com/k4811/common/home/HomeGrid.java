@@ -12,7 +12,7 @@ import com.k4811.common.ui.DockView;
  * Invisible grid of the home screen, in dp, with six slots (A–F); each holds at most one
  * {@link Module}. Where the slots sit depends on the screen ({@link #layout}):
  * <ul>
- * <li>Landscape (1280×720 design): below the top bar a 1232×444 area split into three columns —
+ * <li>Landscape (1280×720 design): below the top bar a 1232×476 area split into three columns —
  * left with one tall slot (A), center with a large slot over a wide one (B, C), right with three
  * small slots (D, E, F).</li>
  * <li>Portrait (e.g. 768×1024 units): the columns become rows — A across the whole width, then B and
@@ -32,13 +32,13 @@ public final class HomeGrid {
 
     /** Shape of a slot: every module has a layout for each one. */
     public enum Size {
-        /** Narrower than tall (landscape A: 400×444). */
+        /** Narrower than tall (landscape A: 380×476). */
         TALL,
-        /** Big and wide (landscape B: 494×260; portrait A, B, C). */
+        /** Big and wide (landscape B: 372×282; portrait A, B, C). */
         LARGE,
-        /** Wide and short (landscape C: 494×160). */
+        /** Wide and short (landscape C: 372×170). */
         WIDE,
-        /** The small ones (landscape D–F: 290×132; portrait D–F). */
+        /** The small ones (landscape D–F: 432×142; portrait D–F). */
         SMALL
     }
 
@@ -83,6 +83,21 @@ public final class HomeGrid {
         }
     }
 
+    /** Área que vai do alto de {@code top} ao pé de {@code bottom} (mesma coluna), tratada como alta. */
+    public static Frame span(Frame top, Frame bottom) {
+        return new Frame(top.x, top.y, top.width, bottom.y + bottom.height - top.y, Size.TALL);
+    }
+
+    /** Linha inteira de {@code left} até o fim de {@code right} (mesma altura), tratada como grande. */
+    public static Frame row(Frame left, Frame right) {
+        return new Frame(left.x, left.y, right.x + right.width - left.x, left.height, Size.LARGE);
+    }
+
+    /** Sub-área solta, para dividir um slot (ex.: tempo à esquerda e tocando-agora à direita). */
+    public static Frame frameOf(int x, int y, int width, int height, Size size) {
+        return new Frame(x, y, width, height, size);
+    }
+
     /** The grid for one screen: its size in dp and each slot's frame. */
     public static final class Layout {
         public final boolean portrait;
@@ -103,6 +118,22 @@ public final class HomeGrid {
         public Frame frame(Slot slot) {
             return frames[slot.ordinal()];
         }
+
+        /**
+         * A mesma grade espelhada (Configurações › "Inverter os lados"): deitada, o que estava à esquerda vai para a
+         * direita (o "tocando agora" à direita e o PIP à esquerda); em pé, o de cima vai para baixo.
+         */
+        Layout mirrored() {
+            Frame[] out = new Frame[frames.length];
+            int areaEnd = contentHeight - BOTTOM;
+            for (int i = 0; i < frames.length; i++) {
+                Frame f = frames[i];
+                out[i] = portrait
+                    ? new Frame(f.x, TOP_BAR + areaEnd - f.y - f.height, f.width, f.height, f.size)
+                    : new Frame(screenWidth - f.x - f.width, f.y, f.width, f.height, f.size);
+            }
+            return new Layout(portrait, screenWidth, screenHeight, out);
+        }
     }
 
     /**
@@ -121,20 +152,30 @@ public final class HomeGrid {
             wPx = size.x;
             hPx = size.y;
         }
+        // barra da NWD na vertical (o dock fica acima dela): só a parte que cai sobre a área do app
+        hPx -= com.k4811.common.system.BottomBar.reservedPx(a, content != null && content.getHeight() > 0 ? content : null);
         float density = a.getResources().getDisplayMetrics().density;
         int w = Math.round(wPx / density);
         int h = Math.round(hPx / density);
-        return h > w ? portrait(w, h) : landscape();
+        // Tela física em pé = sempre a grade em linhas: a horizontal (1280 de largura) não cabe numa tela de 768.
+        Display d = a.getWindowManager().getDefaultDisplay();
+        Point real = new Point();
+        d.getRealSize(real);
+        boolean screenPortrait = real.y > real.x;
+        Layout l = h > w || screenPortrait ? portrait(w, h) : landscape();
+        return com.k4811.common.config.LauncherConfig.homeMirrored(a) ? l.mirrored() : l;
     }
 
     private static Layout landscape() {
         return new Layout(false, 1280, 720, new Frame[]{
-            new Frame(24, 100, 400, 444, Size.TALL),
-            new Frame(448, 100, 494, 260, Size.LARGE),
-            new Frame(448, 384, 494, 160, Size.WIDE),
-            new Frame(966, 100, 290, 132, Size.SMALL),
-            new Frame(966, 256, 290, 132, Size.SMALL),
-            new Frame(966, 412, 290, 132, Size.SMALL),
+            // dock de 128: a área vai de 100 a 576 (476 de altura). Centro mais estreito (372) e a coluna da
+            // direita mais larga (432), para o PIP caber nela inteira.
+            new Frame(24, 100, 380, 476, Size.TALL),
+            new Frame(428, 100, 372, 282, Size.LARGE),
+            new Frame(428, 406, 372, 170, Size.WIDE),
+            new Frame(824, 100, 432, 142, Size.SMALL),
+            new Frame(824, 267, 432, 142, Size.SMALL),
+            new Frame(824, 434, 432, 142, Size.SMALL),
         });
     }
 
@@ -142,8 +183,12 @@ public final class HomeGrid {
     private static Layout portrait(int w, int h) {
         int content = h - DockView.HEIGHT_DP;
         int available = content - BOTTOM - TOP_BAR - 2 * GAP;
-        int rowA = Math.round(available * 0.46f);
-        int rowB = Math.round(available * 0.31f);
+        // Vertical mais equilibrado: o PIP (linha D, que com o espelho vai para o topo) deixa de ser uma faixa
+        // fina (era 23%) e ganha altura; o "tocando agora" (linha A) continua grande, mas sem dominar a tela.
+        // D = PIP (topo) é o maior (metade da tela); B = carro + relógio/OBD2 (meio) desce com o PIP maior;
+        // A = "tocando agora" (embaixo, compacto, colado no dock). Tela em pé bem aproveitada.
+        int rowA = Math.round(available * 0.20f);
+        int rowB = Math.round(available * 0.30f);
         int rowD = available - rowA - rowB;
         int inner = w - 2 * GAP;
         int half = (inner - GAP) / 2;
@@ -171,7 +216,16 @@ public final class HomeGrid {
         /** GPS speed (see {@link GpsClient}). */
         SPEED("speed", R.string.settings_home_module_speed),
         /** Latitude, longitude, altitude and heading. */
-        GPS("gps", R.string.settings_home_module_gps);
+        GPS("gps", R.string.settings_home_module_gps),
+        /** O carro em 3D (modelo, cor e placa) ou uma foto dele. */
+        CAR("car", R.string.settings_home_module_car),
+        /** Velocidade e vitais do motor pelo OBD2 (ELM327 Bluetooth); sem ele, a velocidade do GPS. */
+        OBD("obd", R.string.settings_home_module_obd),
+        /**
+         * Um app rodando dentro da tela inicial (Waze, Maps…). Na coluna da direita com as outras áreas dela livres,
+         * ocupa a coluna inteira.
+         */
+        PIP("pip", R.string.settings_home_module_pip);
 
         /** Id stored in launcher_prefs (home_layout). */
         public final String id;

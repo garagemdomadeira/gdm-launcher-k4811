@@ -237,6 +237,10 @@ public final class Ui {
             flags |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         }
         window.getDecorView().setSystemUiVisibility(flags);
+        // FLAG_FULLSCREEN esconde a barra de status no nível da janela, de forma persistente: o SYSTEM_UI_FLAG
+        // sozinho cai quando a janela perde o foco (ex.: um app abrindo no display virtual do PIP), e a barra do
+        // Android voltava por cima da barra da suíte.
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     /**

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- App de clima (ar-condicionado). A/C, AUTO, DUAL, MAX e as setas de direcao ficam no codigo (universais). -->
+<resources>
+    <string name="clima_app_name">Климат</string>
+    <string name="clima_title">Климат</string>
+    <string name="clima_zone_left">ЛЕВАЯ</string>
+    <string name="clima_zone_right">ПРАВАЯ</string>
+    <string name="clima_defog_front">Обогр. пер.</string>
+    <string name="clima_defog_rear">Обогр. задн.</string>
+    <string name="clima_recirc">Рецирк.</string>
+    <string name="clima_status_connecting">Подключение…</string>
+    <string name="clima_status_waiting">Подключено · ожидание авто</string>
+    <string name="clima_status_offline">Нет связи с климат-системой</string>
+</resources>

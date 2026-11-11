@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GDM Atualizações (updater) e a linha dele nas configurações do launcher. -->
+<resources>
+    <string name="ota_app_name">Mises à jour GDM</string>
+    <string name="ota_check_now">Rechercher</string>
+    <string name="ota_checking">Recherche des mises à jour…</string>
+    <string name="ota_last_check">Dernière recherche : %1$s</string>
+    <string name="ota_never">jamais</string>
+    <string name="ota_up_to_date">Tout est à jour.</string>
+    <string name="ota_offline">Pas d’internet. Nouvel essai à la prochaine recherche.</string>
+    <string name="ota_bad_sig">La liste des mises à jour n’est pas signée par GDM. Rien n’a été installé.</string>
+    <string name="ota_app_line">%1$s : %2$s → %3$s</string>
+    <string name="ota_confirm">Confirmer la mise à jour</string>
+    <string name="ota_later">Plus tard</string>
+    <string name="ota_installing">Installation de %1$s…</string>
+    <string name="ota_downloading">Téléchargement de %1$s… %2$d %%</string>
+    <string name="ota_done">Terminé : %1$d app(s) mise(s) à jour.</string>
+    <string name="ota_failed">%1$s : %2$s</string>
+    <string name="ota_prompt_title">Mises à jour GDM</string>
+    <string name="ota_rom_line">ROM %1$s (%2$d Mo)</string>
+    <string name="ota_rom_install">Installer la ROM</string>
+    <string name="ota_rom_confirm_title">Installer la ROM %1$s ?</string>
+    <string name="ota_rom_confirm_msg">Télécharge %1$d Mo, puis l’autoradio redémarre et écrit la ROM (environ 10 minutes). Vos données et apps sont conservées. N’éteignez pas la voiture pendant l’écriture.</string>
+    <string name="ota_rom_metered">Attention : vous utilisez les données mobiles.</string>
+    <string name="ota_rom_no_channel">Cette ROM n’indique pas de canal de mise à jour : seules les apps sont mises à jour ici.</string>
+    <string name="ota_rom_blocked_key">Cette ROM a une autre clé et effacerait vos données : installez-la par clé USB.</string>
+    <string name="ota_rom_blocked_cache">Pas d’accès à /cache : installez-la par clé USB.</string>
+    <string name="ota_rom_blocked_system">La ROM ne s’installe ici qu’avec le GDM Mises à jour inclus dans la ROM.</string>
+    <string name="ota_rom_no_space">Pas assez d’espace dans /cache pour la ROM.</string>
+    <string name="ota_rom_rebooting">ROM prête. L’autoradio va redémarrer et l’écrire.</string>
+    <string name="home_dash_updates">Mises à jour</string>
+    <string name="home_dash_updates_sub">Apps et ROM depuis GitHub, recherche hebdomadaire</string>
+</resources>

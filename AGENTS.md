@@ -64,9 +64,10 @@ Nada roda no emulador de forma útil: os serviços da NWD (rádio, BT, SettingSe
 
 Cada app tem seu package, então SharedPreferences não é compartilhável. As configurações que todos seguem ficam num JSON em disco:
 
-- **Só o car-setting grava** (`LauncherConfig.set…`). O launcher e os apps só leem. Não chame `LauncherConfig.set…` fora do car-setting.
+- **Só o car-setting grava o `launcher.json`** (`LauncherConfig.set…`). O launcher e os apps só leem. Não chame `LauncherConfig.set…` fora do car-setting.
+- **Exceção — `dock.json`:** o layout do dock fica num arquivo à parte (`/sdcard/nwd-configs/dock.json`, `DockConfig`), gravado **só pelo launcher** (o usuário arrasta apps da gaveta para o dock). Um escritor por arquivo, sem corrida; os outros apps só leem. Não grave `dock.json` fora do launcher.
 - Gravação atômica (`NwdConfigs.write`: `.tmp` + `renameTo`). Leitura com cache por `lastModified()`.
-- Chaves (versão 2): `language`, `theme`, `dark_mode`, `font`, `dock_toggles`, `zlink_name`, `hide_bottom_bar`, `home_layout`, `home_image`, `home_bg_image`, `media_app_controls`, `show_voltmeter`, `show_day_night`, `screen_off_after`, `ask_default_launcher`. Detalhes em `common/SPEC.md`.
+- Chaves do `launcher.json` (versão 2): `language`, `theme`, `dark_mode`, `font`, `dock_toggles` (legado — só semeia o `dock.json` padrão), `zlink_name`, `hide_bottom_bar`, `home_layout`, `home_image`, `home_bg_image`, `media_app_controls`, `show_voltmeter`, `show_day_night`, `screen_off_after`, `ask_default_launcher`. O `dock.json` tem a chave `slots` (tokens do dock). Detalhes em `common/SPEC.md`.
 - Preferência que só um app usa fica no SharedPreferences dele (ex.: o EQ em `EqStore`). Rádio e MP3 guardam as delas em JSON editável em `K4811/<app>/` (`PresetStore`, `MusicConfig`).
 
 ## Contratos entre os apps (broadcasts da suíte)
@@ -118,6 +119,7 @@ Com targetSdk 19, broadcast implícito ainda chega em receiver declarado no mani
 | Tabela de packages, assinatura | `build.gradle.kts` |
 | Packages no código, actions da suíte | `common/.../Apps.java` |
 | Configuração compartilhada | `common/.../config/LauncherConfig.java`, `NwdConfigs.java` |
+| Layout do dock (arrastar: adicionar/reordenar/remover, máx. 7) | `common/.../config/DockConfig.java` (`dock.json`), `common/.../ui/DockView.java` (gestos), `launcher/.../home/DockEditor.java`, `AppsActivity.java`, `HomeActivity.java` |
 | Dock e navegação | `common/.../ui/DockView.java`, `DockNavigator.java`, `Splash.java` |
 | Tema, fonte, idioma, densidade | `common/.../ui/Ui.java`, `Palette.java`, `ThemeInflater.java`, `ThemeDrawables.java` |
 | Uma fonte por vez | `common/.../audio/PlayerHandoff.java` |

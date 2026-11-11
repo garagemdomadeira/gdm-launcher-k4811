@@ -50,5 +50,10 @@
         <service
             android:name=".BtResumeService"
             android:exported="false" />
+        <!-- ROM K4811: nome que o KernelService da NWD usa para abrir esta fonte (SourceConstant: botão MODE) -->
+        <activity-alias
+            android:name="com.nwd.bt.music.BTMusicActivity"
+            android:exported="true"
+            android:targetActivity=".BtMusicActivity" />
     </application>
 </manifest>

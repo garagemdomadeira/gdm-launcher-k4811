@@ -119,4 +119,20 @@
     <!-- Menu da borda de baixo (EdgeMenuService) -->
     <string name="overlay_back">पीछे</string>
     <string name="overlay_home">होम</string>
+    <string name="home_dock_nav">नेविगेशन</string>
+    <string name="home_dock_nav_title">नेविगेशन (Waze, Maps…)</string>
+    <string name="home_apps_tab_all">सभी</string>
+    <string name="home_apps_tab_fav">पसंदीदा</string>
+    <string name="home_apps_cat_all">सभी</string>
+    <string name="home_apps_cat_car">हेड यूनिट</string>
+    <string name="home_apps_cat_nav">नेविगेशन</string>
+    <string name="home_apps_cat_media">संगीत और वीडियो</string>
+    <string name="home_apps_cat_social">सोशल</string>
+    <string name="home_apps_cat_tools">टूल</string>
+    <string name="home_apps_cat_games">गेम</string>
+    <string name="home_apps_cat_other">अन्य</string>
+    <string name="home_apps_fav_add">पसंदीदा में जोड़ें</string>
+    <string name="home_apps_fav_remove">पसंदीदा से हटाएँ</string>
+    <string name="home_apps_fav_empty">अभी कोई पसंदीदा नहीं।\nजोड़ने के लिए ऐप को दबाकर रखें।</string>
+    <string name="home_apps_info">ऐप की जानकारी</string>
 </resources>

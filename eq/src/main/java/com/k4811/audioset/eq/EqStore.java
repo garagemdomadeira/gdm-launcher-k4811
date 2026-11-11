@@ -53,9 +53,13 @@ public final class EqStore {
         if (q != null) d.armQ = q;
         List<EqModel.Channel> channels = loadChannels();
         if (channels != null) d.channels = channels;
+        loadCrossovers(d.crossovers);
+        loadBassBoosts(d.bassBoosts);
+        d.round3d = prefs.getBoolean("round_3d", false);
+        d.customName = prefs.getString("custom_name", null);
         d.applyOnBoot = prefs.getBoolean("apply_on_boot", false);
         d.influence = prefs.getBoolean("influence", true);
-        d.armSimple = prefs.getBoolean("arm_simple", true);
+        d.armSimple = prefs.getBoolean("arm_simple", false);
         return d;
     }
 
@@ -71,6 +75,10 @@ public final class EqStore {
             .putString("arm_freqs", join(s.armFrequencies))
             .putString("arm_q", join(s.armQ))
             .putString("channels", joinChannels(s.channels))
+            .putString("crossovers", joinCrossovers(s.crossovers))
+            .putString("bass_boosts", joinBassBoosts(s.bassBoosts))
+            .putBoolean("round_3d", s.round3d)
+            .putString("custom_name", s.customName)
             .putBoolean("apply_on_boot", s.applyOnBoot)
             .putBoolean("influence", s.influence)
             .putBoolean("arm_simple", s.armSimple)
@@ -146,6 +154,56 @@ public final class EqStore {
             }
         }
         return list;
+    }
+
+    /** "hpf,hpfQ,lpf,lpfQ;…" por área; valor estranho deixa o padrão. */
+    private void loadCrossovers(List<EqModel.Crossover> into) {
+        String raw = prefs.getString("crossovers", null);
+        if (raw == null) return;
+        String[] parts = raw.split(";");
+        for (int a = 0; a < parts.length && a < into.size(); a++) {
+            String[] p = parts[a].split(",");
+            if (p.length != 4) continue;
+            try {
+                into.set(a, new EqModel.Crossover(Integer.parseInt(p[0]), Integer.parseInt(p[1]),
+                    Integer.parseInt(p[2]), Integer.parseInt(p[3])));
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    /** "freq,ganho;…" por área. */
+    private void loadBassBoosts(List<EqModel.BassBoost> into) {
+        String raw = prefs.getString("bass_boosts", null);
+        if (raw == null) return;
+        String[] parts = raw.split(";");
+        for (int a = 0; a < parts.length && a < into.size(); a++) {
+            String[] p = parts[a].split(",");
+            if (p.length != 2) continue;
+            try {
+                into.set(a, new EqModel.BassBoost(Integer.parseInt(p[0]), Integer.parseInt(p[1])));
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    private static String joinCrossovers(List<EqModel.Crossover> list) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            if (i > 0) sb.append(';');
+            EqModel.Crossover x = list.get(i);
+            sb.append(x.hpf).append(',').append(x.hpfQ).append(',').append(x.lpf).append(',').append(x.lpfQ);
+        }
+        return sb.toString();
+    }
+
+    private static String joinBassBoosts(List<EqModel.BassBoost> list) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            if (i > 0) sb.append(';');
+            sb.append(list.get(i).freq).append(',').append(list.get(i).gain);
+        }
+        return sb.toString();
     }
 
     private static String join(int[] values) {

@@ -14,6 +14,10 @@ public class CallReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent == null || intent.getAction() == null) return;
+        if (com.k4811.common.Apps.ACTION_HOME_CALL_CARD.equals(intent.getAction())) {
+            CallFloatService.setHomeCard(context, intent.getBooleanExtra(com.k4811.common.Apps.EXTRA_SHOWN, false));
+            return;
+        }
         if (PhoneActivity.isInFront()) {
             Intent open = new Intent(context, PhoneActivity.class);
             open.setAction(intent.getAction());

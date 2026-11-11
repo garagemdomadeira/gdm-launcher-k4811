@@ -71,4 +71,63 @@
     <string name="eq_info_path">経路: %1$s</string>
     <string name="eq_info_chip">チップ: %1$s · DTS %2$s</string>
     <string name="eq_info_method">方式: %1$s · 最大 %2$d/%3$d</string>
+    <!-- Aba Graves (Bass do DspAdjust3): divisor de frequência, reforço de graves e 3D -->
+    <string name="eq_tab_bass">低音</string>
+    <string name="eq_crossover">クロスオーバー</string>
+    <string name="eq_hpf">ハイパス (HPF)</string>
+    <string name="eq_lpf">ローパス (LPF)</string>
+    <string name="eq_slope">スロープ</string>
+    <string name="eq_area_front">フロント</string>
+    <string name="eq_area_rear">リア</string>
+    <string name="eq_area_center">センター</string>
+    <string name="eq_area_sub">サブウーファー</string>
+    <string name="eq_area_sub_center">サブ/センター</string>
+    <string name="eq_bass_boost">低音ブースト</string>
+    <string name="eq_bass_freq">周波数</string>
+    <string name="eq_bass_gain">強さ</string>
+    <string name="eq_3d">3D サウンド</string>
+    <string name="eq_3d_hint">音場を広げます</string>
+    <string name="eq_reset_area">エリアをリセット</string>
+    <string name="eq_bass_off">オフ</string>
+
+    <!-- Meus EQs -->
+    <string name="eq_tab_saved">マイEQ</string>
+    <string name="eq_saved_title">保存したEQ</string>
+    <string name="eq_save_current">現在のEQを保存</string>
+    <string name="eq_name_hint">名前（英数字）</string>
+    <string name="eq_save">保存</string>
+    <string name="eq_replace">上書き？</string>
+    <string name="eq_use">使用</string>
+    <string name="eq_export">書き出し</string>
+    <string name="eq_delete">削除</string>
+    <string name="eq_confirm_delete">削除？</string>
+    <string name="eq_usb">USBメモリ</string>
+    <string name="eq_usb_hint">USBメモリの EQ_Setup フォルダを使います（純正アプリと同じ）。</string>
+    <string name="eq_import">読み込み</string>
+    <string name="eq_export_all">すべて書き出し</string>
+    <string name="eq_saved_empty">保存したEQはまだありません。</string>
+    <string name="eq_saved_ok">%1$s を保存しました</string>
+    <string name="eq_saved_fail">完了できませんでした</string>
+    <string name="eq_name_invalid">英字、数字、_ と - のみ使えます</string>
+    <string name="eq_no_usb">USBメモリが見つかりません</string>
+    <string name="eq_no_usb_folder">USBメモリにファイル入りの EQ_Setup フォルダがありません</string>
+    <string name="eq_in_use">使用中</string>
+    <string name="eq_usb_write_fail">USBメモリに書き込めません</string>
+    <string name="eq_use_fail">このEQを読み込めません</string>
+    <plurals name="eq_exported">
+        <item quantity="other">%1$d 件のEQを書き出しました</item>
+    </plurals>
+    <plurals name="eq_imported">
+        <item quantity="other">%1$d 件のEQを読み込みました</item>
+    </plurals>
+    <string name="eq_tab_gain">ソース別音量</string>
+    <string name="eq_gain_hint">DSP で各ソースの音量をそろえます。ヘッドユニットの再起動後に有効になります。</string>
+    <string name="eq_gain_radio">ラジオ</string>
+    <string name="eq_gain_android">Android（Spotify、アプリ、ナビ）</string>
+    <string name="eq_gain_others">Bluetooth、AUX、SYNC ほか</string>
+    <string name="eq_gain_save">保存</string>
+    <string name="eq_gain_reset">すべて最大（10）</string>
+    <string name="eq_gain_saved">保存しました。再起動して適用してください。</string>
+    <string name="eq_gain_failed">工場設定ファイルを書き込めませんでした。</string>
+    <string name="eq_simple">7 バンド</string>
 </resources>

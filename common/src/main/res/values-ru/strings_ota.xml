@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GDM Atualizações (updater) e a linha dele nas configurações do launcher. -->
+<resources>
+    <string name="ota_app_name">Обновления GDM</string>
+    <string name="ota_check_now">Проверить</string>
+    <string name="ota_checking">Проверка обновлений…</string>
+    <string name="ota_last_check">Последняя проверка: %1$s</string>
+    <string name="ota_never">никогда</string>
+    <string name="ota_up_to_date">Всё обновлено.</string>
+    <string name="ota_offline">Нет интернета. Повторим при следующей проверке.</string>
+    <string name="ota_bad_sig">Список обновлений не подписан GDM. Ничего не установлено.</string>
+    <string name="ota_app_line">%1$s: %2$s → %3$s</string>
+    <string name="ota_confirm">Подтвердить обновление</string>
+    <string name="ota_later">Не сейчас</string>
+    <string name="ota_installing">Установка %1$s…</string>
+    <string name="ota_downloading">Загрузка %1$s… %2$d%%</string>
+    <string name="ota_done">Готово: обновлено приложений: %1$d.</string>
+    <string name="ota_failed">%1$s: %2$s</string>
+    <string name="ota_prompt_title">Обновления GDM</string>
+    <string name="ota_rom_line">ROM %1$s (%2$d МБ)</string>
+    <string name="ota_rom_install">Установить ROM</string>
+    <string name="ota_rom_confirm_title">Установить ROM %1$s?</string>
+    <string name="ota_rom_confirm_msg">Загрузит %1$d МБ, затем магнитола перезагрузится и запишет ROM (около 10 минут). Данные и приложения сохранятся. Не выключайте машину во время записи.</string>
+    <string name="ota_rom_metered">Внимание: используется мобильный интернет.</string>
+    <string name="ota_rom_no_channel">Эта ROM не сообщает канал обновлений: здесь обновляются только приложения.</string>
+    <string name="ota_rom_blocked_key">У этой ROM другой ключ, и она сотрёт данные: установите её с флешки.</string>
+    <string name="ota_rom_blocked_cache">Нет доступа к /cache: установите с флешки.</string>
+    <string name="ota_rom_blocked_system">ROM устанавливается здесь только через «Обновления GDM» из состава ROM.</string>
+    <string name="ota_rom_no_space">Недостаточно места в /cache для ROM.</string>
+    <string name="ota_rom_rebooting">ROM готова. Магнитола перезагрузится и запишет её.</string>
+    <string name="home_dash_updates">Обновления</string>
+    <string name="home_dash_updates_sub">Приложения и ROM с GitHub, проверка раз в неделю</string>
+</resources>

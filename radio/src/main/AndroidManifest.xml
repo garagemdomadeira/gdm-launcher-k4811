@@ -12,6 +12,12 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <!-- Arte das estações (K4811/radio/) e /sdcard/nwd-configs/launcher.json. -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Logo da estação baixado da internet (StationLogos): rede, gravar em K4811/radio e a localização
+         para escolher a rádio do mesmo estado. Com targetSdk < 23 são concedidas na instalação. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".RadioApp"
@@ -45,5 +51,10 @@
             android:exported="true"
             android:targetActivity=".RadioActivity" />
 
+        <!-- ROM K4811: nome que o KernelService da NWD usa para abrir esta fonte (SourceConstant: botão MODE) -->
+        <activity-alias
+            android:name="com.nwd.radio.RadioActivity"
+            android:exported="true"
+            android:targetActivity=".RadioActivity" />
     </application>
 </manifest>

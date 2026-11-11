@@ -27,6 +27,7 @@
     <!-- RDS programme types (PTY 0..31) -->
     <string name="radio_config_invalid">%1$s invalide : corrigez le fichier. D\'ici là, les changements de mémoires ne seront pas enregistrés.</string>
     <string name="radio_stereo">Stéréo</string>
+    <string name="radio_search">Rechercher</string>
     <string name="radio_distant">Distant</string>
     <string name="radio_power">Radio</string>
     <string name="radio_ams_started">Recherche des stations sur %1$s… les mémoires seront remplacées</string>

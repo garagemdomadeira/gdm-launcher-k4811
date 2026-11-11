@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  GDM Atualizações: procura uma vez por semana no GitHub (releases do gdm-k4811-ota) versões novas dos apps e da ROM,
+  pergunta e instala. Roda como sistema (sharedUserId android.uid.system, assinado com a chave de plataforma da ROM):
+  instala APK sem a tela do Android, grava /cache/update.zip e manda o MASTER_CLEAR do jeito do atualizador da NWD,
+  com extra_wipe_data=false (não apaga os dados).
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:sharedUserId="android.uid.system">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.MASTER_CLEAR" />
+    <uses-permission android:name="android.permission.ACCESS_CACHE_FILESYSTEM" />
+
+    <application
+        android:name="com.k4811.common.SuiteApp"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/ota_app_name"
+        android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="3.0" />
+
+        <activity
+            android:name=".UpdatesActivity"
+            android:configChanges="fontScale|keyboard|keyboardHidden|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|density"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="nosensor">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Ligou a central ou o alarme diário: agenda e, se já passou uma semana, procura. -->
+        <receiver
+            android:name=".CheckReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.k4811.updater.action.CHECK" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".CheckService"
+            android:exported="false" />
+    </application>
+</manifest>
