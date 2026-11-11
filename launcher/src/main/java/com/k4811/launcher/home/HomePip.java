@@ -107,7 +107,22 @@ public final class HomePip {
         render();
         if (app == null || !ready) return;
         Intent i = launchIntent(app);
-        if (i == null || !pip.launch(i)) pip.showEmpty(true);
+        if (i == null || !pip.launch(i)) {
+            pip.showEmpty(true);
+            return;
+        }
+        // O app abre no display virtual do PIP e rouba o foco (a barra de status do Android aparece por cima da
+        // barra da suíte). Traz a tela inicial de volta ao foco; o app continua renderizando no quadro do PIP.
+        handler.postDelayed(() -> {
+            try {
+                android.app.ActivityManager am = (android.app.ActivityManager)
+                    activity.getSystemService(android.content.Context.ACTIVITY_SERVICE);
+                am.moveTaskToFront(activity.getTaskId(), 0);
+            } catch (Exception ignored) {
+            }
+            activity.getWindow().getDecorView().post(
+                () -> com.k4811.common.ui.Ui.hideSystemBars(activity.getWindow()));
+        }, 500);
     }
 
     private void openFull() {
