@@ -93,7 +93,10 @@ public final class HomePip {
 
     private void render() {
         String app = app();
-        pip.showEmpty(app == null || !ready);
+        // Com um app escolhido, a superfície fica visível mesmo antes de "ready": a SurfaceView só cria a superfície
+        // (surfaceCreated → cria o display → ready) quando está VISÍVEL. Esconder enquanto !ready travava o PIP em
+        // "Abrindo…" (a superfície nunca era criada). Sem app, esconde para mostrar o quadro vazio.
+        pip.showEmpty(app == null);
         empty.setText(app == null ? R.string.home_pip_empty : R.string.home_pip_unavailable);
         activity.findViewById(R.id.pip_full).setVisibility(app == null ? android.view.View.GONE : android.view.View.VISIBLE);
     }
