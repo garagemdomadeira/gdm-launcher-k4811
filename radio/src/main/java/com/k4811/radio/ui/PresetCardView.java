@@ -3,9 +3,11 @@ package com.k4811.radio.ui;
 import com.k4811.common.ui.Ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -23,13 +25,19 @@ public class PresetCardView extends View {
     private final Paint glowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint indexPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint freqPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint bitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Path shape = new Path();
+    private final Path logoClip = new Path();
     private final RectF rect = new RectF();
+    private final RectF logoRect = new RectF();
+    private final Rect logoSrc = new Rect();
 
     private int index;
     private String freq = "";
     private boolean empty = true;
     private boolean selectedCard;
+    private Bitmap logo;
+    private String logoKey = "";
 
     public PresetCardView(Context c) {
         this(c, null);
@@ -48,6 +56,20 @@ public class PresetCardView extends View {
         indexPaint.setTextSize(Ui.dp(c, 15));
         freqPaint.setTypeface(Ui.semiBold(c));
         freqPaint.setTextAlign(Paint.Align.CENTER);
+        bitmapPaint.setFilterBitmap(true);
+    }
+
+    /** Logo da estacao desta memoria (ou null). A key identifica a estacao (ex.: FM_98.5) e evita recarregar. */
+    public void setLogo(String key, Bitmap bmp) {
+        this.logoKey = key == null ? "" : key;
+        if (this.logo == bmp) return;
+        this.logo = bmp;
+        invalidate();
+    }
+
+    /** Estacao cujo logo esta (ou esta sendo) carregado, para o chamador nao recarregar o mesmo. */
+    public String logoKey() {
+        return logoKey;
     }
 
     /** @param freqText frequency text ("98.5") or empty if the preset is unused */
@@ -99,13 +121,36 @@ public class PresetCardView extends View {
         }
         c.drawPath(shape, borderPaint);
 
-        // Top-left corner: the memory number, tiny.
         float pad = Ui.dp(ctx, 12);
-        indexPaint.setColor(selectedCard ? Ui.ACCENT : Ui.TEXT_DIM);
-        c.drawText(String.valueOf(index + 1), l + pad, t + pad - indexPaint.ascent(), indexPaint);
 
-        // Middle: the frequency, as large as fits.
-        float width = r - l - pad * 2;
+        // Logo da estacao (se houver): quadrado arredondado a esquerda; a frequencia vai para a direita.
+        boolean hasLogo = logo != null && !empty;
+        float freqL = l;
+        if (hasLogo) {
+            float m = Ui.dp(ctx, 9);
+            float side = (b - t) - m * 2;
+            float lx = l + m;
+            float ly = t + m;
+            logoRect.set(lx, ly, lx + side, ly + side);
+            logoClip.reset();
+            logoClip.addRoundRect(logoRect, round * 0.7f, round * 0.7f, Path.Direction.CW);
+            int bw = logo.getWidth(), bh = logo.getHeight(), s = Math.min(bw, bh);
+            logoSrc.set((bw - s) / 2, (bh - s) / 2, (bw + s) / 2, (bh + s) / 2);
+            c.save();
+            c.clipPath(logoClip);
+            c.drawBitmap(logo, logoSrc, logoRect, bitmapPaint);
+            c.restore();
+            freqL = lx + side;
+        }
+
+        // Canto superior esquerdo: o numero da memoria, pequeno (com sombra quando sobre o logo).
+        indexPaint.setColor(selectedCard ? Ui.ACCENT : Ui.TEXT_DIM);
+        indexPaint.setShadowLayer(hasLogo ? Ui.dp(ctx, 3) : 0, 0, 0, 0xFF000000);
+        c.drawText(String.valueOf(index + 1), l + pad, t + pad - indexPaint.ascent(), indexPaint);
+        indexPaint.clearShadowLayer();
+
+        // Frequencia, a maior que couber na regiao (toda a largura, ou so a direita do logo).
+        float width = r - freqL - pad * 2;
         if (width <= 0) return;
         float size = Math.min((b - t) * 0.48f, Ui.dp(ctx, 52));
         freqPaint.setTextSize(size);
@@ -113,6 +158,6 @@ public class PresetCardView extends View {
         if (fw > width) freqPaint.setTextSize(size * width / fw);
         freqPaint.setColor(selectedCard ? Ui.ACCENT : empty ? Ui.TEXT_MUTED : Ui.TEXT);
         float base = (t + b) / 2f - (freqPaint.descent() + freqPaint.ascent()) / 2f;
-        c.drawText(freq, (l + r) / 2f, base, freqPaint);
+        c.drawText(freq, (freqL + r) / 2f, base, freqPaint);
     }
 }

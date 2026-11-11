@@ -65,6 +65,7 @@ public class RadioActivity extends Activity implements RadioClient.Listener {
     private final ExecutorService artLoader = Executors.newSingleThreadExecutor();
     /** Logos baixados da internet (StationLogos): fila própria, a rede não segura a arte local. */
     private final ExecutorService logoLoader = Executors.newSingleThreadExecutor();
+    private final ExecutorService presetLogoLoader = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
     private TunerDialView dial;
     private View toggleSt, toggleLoc;
@@ -147,6 +148,7 @@ public class RadioActivity extends Activity implements RadioClient.Listener {
         artGen++;
         artLoader.shutdownNow();
         logoLoader.shutdownNow();
+        presetLogoLoader.shutdownNow();
         super.onDestroy();
     }
 
@@ -414,10 +416,31 @@ public class RadioActivity extends Activity implements RadioClient.Listener {
     private void renderPresets(RadioState s) {
         Preset[] presets = s.currentPresets();
         boolean fm = s.isFm();
+        int logoSize = Math.round(Ui.dp(this, 96));
         for (int i = 0; i < PRESET_SLOTS; i++) {
             Preset p = i < presets.length ? presets[i] : null;
             boolean empty = p == null || p.isEmpty();
             cards[i].bind(i, empty ? "" : Band.formatValue(p.frequency, fm), empty, s.presetIndex == i + 1);
+            if (empty) {
+                cards[i].setLogo("", null);
+            } else {
+                // Mesma arte do quadro central (K4811/radio/<FM|AM>_<freq>): carrega do cache em background.
+                // So mostra se o arquivo existe; nao dispara download (isso fica so para a estacao sintonizada).
+                String key = StationArt.baseName(p.band, p.frequency);
+                if (!key.equals(cards[i].logoKey())) {
+                    final int slot = i;
+                    final int band = p.band;
+                    final int freq = p.frequency;
+                    cards[i].setLogo(key, null);
+                    presetLogoLoader.execute(() -> {
+                        Bitmap bmp = StationArt.load(band, freq, logoSize);
+                        if (bmp == null) return;
+                        handler.post(() -> {
+                            if (key.equals(cards[slot].logoKey())) cards[slot].setLogo(key, bmp);
+                        });
+                    });
+                }
+            }
         }
     }
 
