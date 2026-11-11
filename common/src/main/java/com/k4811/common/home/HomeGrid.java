@@ -178,8 +178,10 @@ public final class HomeGrid {
     private static Layout portrait(int w, int h) {
         int content = h - DockView.HEIGHT_DP;
         int available = content - BOTTOM - TOP_BAR - 2 * GAP;
-        int rowA = Math.round(available * 0.46f);
-        int rowB = Math.round(available * 0.31f);
+        // Vertical mais equilibrado: o PIP (linha D, que com o espelho vai para o topo) deixa de ser uma faixa
+        // fina (era 23%) e ganha altura; o "tocando agora" (linha A) continua grande, mas sem dominar a tela.
+        int rowA = Math.round(available * 0.38f);
+        int rowB = Math.round(available * 0.28f);
         int rowD = available - rowA - rowB;
         int inner = w - 2 * GAP;
         int half = (inner - GAP) / 2;
