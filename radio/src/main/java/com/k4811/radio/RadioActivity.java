@@ -276,28 +276,55 @@ public class RadioActivity extends Activity implements RadioClient.Listener {
      * rest scroll sideways). Tap to listen, hold to save.
      */
     private void buildPresetGrid() {
-        LinearLayout row = (LinearLayout) findViewById(R.id.presets_grid);
+        LinearLayout container = (LinearLayout) findViewById(R.id.presets_grid);
         int gap = Math.round(Ui.dp(this, 10));
         int width = getResources().getDisplayMetrics().widthPixels - Math.round(Ui.dp(this, 32));
-        int cardW = Math.round((width - 6 * gap) / 6.4f);
-        int cardH = Math.round(cardW * 0.62f);
-        for (int i = 0; i < PRESET_SLOTS; i++) {
-            int index = i;
-            PresetCardView card = new PresetCardView(this);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(cardW, cardH);
-            if (i > 0) lp.leftMargin = gap;
-            row.addView(card, lp);
-            card.setOnClickListener(v -> {
-                ensureOn();
-                playPreset(index);
-            });
-            card.setOnLongClickListener(v -> {
-                radio.savePreset(index);
-                Toast.makeText(this, getString(R.string.radio_preset_saved, index + 1), Toast.LENGTH_SHORT).show();
-                return true;
-            });
-            cards[index] = card;
+        // Na vertical o presets_grid vem como LinearLayout vertical (layout-port): montamos uma grade
+        // de 3 colunas (todas as 12 memorias visiveis, sem arrastar pro lado). Na horizontal fica a fila
+        // unica que rola de lado (6 e um pedaco da 7a cabem).
+        if (container.getOrientation() == LinearLayout.VERTICAL) {
+            int cols = 3;
+            int cardW = Math.round((width - (cols - 1) * gap) / (float) cols);
+            int cardH = Math.round(cardW * 0.46f);
+            LinearLayout rowView = null;
+            for (int i = 0; i < PRESET_SLOTS; i++) {
+                if (i % cols == 0) {
+                    rowView = new LinearLayout(this);
+                    rowView.setOrientation(LinearLayout.HORIZONTAL);
+                    LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    if (i > 0) rlp.topMargin = gap;
+                    container.addView(rowView, rlp);
+                }
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(cardW, cardH);
+                if (i % cols != 0) lp.leftMargin = gap;
+                rowView.addView(makePresetCard(i), lp);
+            }
+        } else {
+            int cardW = Math.round((width - 6 * gap) / 6.4f);
+            int cardH = Math.round(cardW * 0.62f);
+            for (int i = 0; i < PRESET_SLOTS; i++) {
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(cardW, cardH);
+                if (i > 0) lp.leftMargin = gap;
+                container.addView(makePresetCard(i), lp);
+            }
         }
+    }
+
+    /** Cria um card de memoria (indice 0..PRESET_SLOTS-1) com toque (tocar) e toque-longo (salvar). */
+    private PresetCardView makePresetCard(final int index) {
+        PresetCardView card = new PresetCardView(this);
+        card.setOnClickListener(v -> {
+            ensureOn();
+            playPreset(index);
+        });
+        card.setOnLongClickListener(v -> {
+            radio.savePreset(index);
+            Toast.makeText(this, getString(R.string.radio_preset_saved, index + 1), Toast.LENGTH_SHORT).show();
+            return true;
+        });
+        cards[index] = card;
+        return card;
     }
 
     private IconView icon(int id, Icon icon, Style style) {

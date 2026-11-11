@@ -31,4 +31,5 @@
     <string name="radio_distant">Дальний</string>
     <string name="radio_power">Радио</string>
     <string name="radio_ams_started">Поиск станций в %1$s… память будет заменена</string>
+    <string name="radio_title">Радио</string>
 </resources>

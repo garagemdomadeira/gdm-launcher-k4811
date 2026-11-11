@@ -31,4 +31,5 @@
     <string name="radio_distant">दूर</string>
     <string name="radio_power">रेडियो</string>
     <string name="radio_ams_started">%1$s पर स्टेशन खोजे जा रहे हैं… मेमोरी बदल दी जाएगी</string>
+    <string name="radio_title">रेडियो</string>
 </resources>

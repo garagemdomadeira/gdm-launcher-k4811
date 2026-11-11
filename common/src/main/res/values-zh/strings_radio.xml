@@ -31,4 +31,5 @@
     <string name="radio_distant">远程</string>
     <string name="radio_power">收音机</string>
     <string name="radio_ams_started">正在搜索 %1$s 电台… 预设将被替换</string>
+    <string name="radio_title">收音机</string>
 </resources>

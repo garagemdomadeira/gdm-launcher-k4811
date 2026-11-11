@@ -31,4 +31,5 @@
     <string name="radio_distant">遠距離</string>
     <string name="radio_power">ラジオ</string>
     <string name="radio_ams_started">%1$s で局を検索中… メモリーは置き換えられます</string>
+    <string name="radio_title">ラジオ</string>
 </resources>

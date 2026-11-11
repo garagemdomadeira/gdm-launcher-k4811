@@ -31,4 +31,5 @@
     <string name="radio_distant">Distante</string>
     <string name="radio_power">Rádio</string>
     <string name="radio_ams_started">Procurando estações em %1$s… as memórias serão substituídas</string>
+    <string name="radio_title">Rádio</string>
 </resources>
