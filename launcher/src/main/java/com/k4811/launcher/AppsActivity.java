@@ -135,7 +135,11 @@ public class AppsActivity extends Activity {
             int h = b - t;
             if (h <= 0 || h == ob - ot) return;
             int usable = h - grid.getPaddingTop() - Math.round(Ui.dp(this, 8)) * 2;
-            int next = Math.round(usable / VISIBLE_ROWS);
+            // Na vertical a tela é alta: a linha segue a altura do conteúdo (ícone + nome), compacta, em vez de
+            // esticar para caber só 2,5 linhas (o que deixava vãos enormes entre os apps). Horizontal fica igual.
+            int next = Ui.isPortrait(this)
+                ? Math.round(Ui.dp(this, 168))
+                : Math.round(usable / VISIBLE_ROWS);
             if (next != rowHeight) {
                 rowHeight = next;
                 v.post(adapter::notifyDataSetChanged);
