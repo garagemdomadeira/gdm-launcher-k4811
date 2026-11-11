@@ -127,7 +127,10 @@ public class PhoneActivity extends Activity {
         Ui.applyDesignDensity(this);
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setContentView(R.layout.activity_phone);
+        // Na central vertical (768x1024) usamos um layout proprio: teclado no alto e a tela de
+        // chamada como painel de baixo. O qualificador -port nao e confiavel aqui, entao decidimos
+        // por Ui.isPortrait (altura > largura), que nesta central ja reporta portrait no onCreate.
+        setContentView(Ui.isPortrait(this) ? R.layout.activity_phone_port : R.layout.activity_phone);
         Ui.applyFont(findViewById(R.id.phone_root));
         DockNavigator.attachDock(this, DockView.Item.PHONE);
         bindViews();

@@ -60,6 +60,19 @@ public class ClimaActivity extends Activity implements CanClient.Listener {
         can.setListener(this);
         can.connect();
         render(can.state());
+        Ui.hideSystemBars(getWindow());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Ui.hideSystemBars(getWindow());
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) Ui.hideSystemBars(getWindow());
     }
 
     private View buildUi() {

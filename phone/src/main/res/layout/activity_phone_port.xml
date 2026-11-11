@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Telefone Bluetooth, versao retrato (768x1024): mesmos ids de activity_phone.xml.
+    Na aba Discagem o numero e o teclado ficam no alto; a tela de chamada (call_overlay)
+    aparece como um painel de baixo, estilo celular, ao receber ou fazer uma ligacao.
+    Escolhido em codigo por Ui.isPortrait (o qualificador -port nao e confiavel nesta central).
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/phone_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="24dp"
+        android:paddingTop="16dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.k4811.common.ui.IconView
+                android:id="@+id/phone_back"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:contentDescription="@string/media_back" />
+
+            <TextView
+                android:id="@+id/phone_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                android:text="@string/media_phone_title"
+                android:textColor="@color/text"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/phone_status"
+                style="@style/Caption"
+                android:text="Bluetooth" />
+        </LinearLayout>
+
+        <!-- Tabs -->
+        <LinearLayout
+            android:id="@+id/phone_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tab_dial"
+                style="@style/LineTab"
+                android:text="@string/media_phone_tab_dial" />
+
+            <TextView
+                android:id="@+id/tab_contacts"
+                style="@style/LineTab"
+                android:text="@string/media_phone_tab_contacts" />
+
+            <TextView
+                android:id="@+id/tab_logs"
+                style="@style/LineTab"
+                android:text="@string/media_phone_tab_logs" />
+
+            <TextView
+                android:id="@+id/tab_settings"
+                style="@style/LineTab"
+                android:text="@string/media_phone_tab_settings" />
+        </LinearLayout>
+
+        <View
+            style="@style/HairlineH"
+            android:layout_marginLeft="8dp" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingLeft="8dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="12dp">
+
+            <!-- ===== Discagem: numero + teclado no alto, contatos correspondentes abaixo ===== -->
+            <LinearLayout
+                android:id="@+id/panel_dial"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Caption"
+                    android:text="@string/media_phone_number_caption" />
+
+                <!-- Numero digitado + apagar + ligar -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/dial_number"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:ellipsize="start"
+                        android:gravity="center_vertical"
+                        android:singleLine="true"
+                        android:textColor="@color/text"
+                        android:textSize="40sp" />
+
+                    <TextView
+                        android:id="@+id/dial_backspace"
+                        style="@style/LineButton"
+                        android:layout_width="130dp"
+                        android:layout_height="56dp"
+                        android:text="@string/media_phone_delete" />
+
+                    <TextView
+                        android:id="@+id/dial_call"
+                        style="@style/LineButton"
+                        android:layout_width="130dp"
+                        android:layout_height="56dp"
+                        android:layout_marginLeft="12dp"
+                        android:text="@string/media_phone_call" />
+                </LinearLayout>
+
+                <View
+                    style="@style/HairlineH"
+                    android:layout_marginTop="8dp" />
+
+                <!-- Teclado em grade, subido -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/grid_frame"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <include
+                            android:id="@+id/key_1"
+                            layout="@layout/phone_key" />
+
+                        <include
+                            android:id="@+id/key_2"
+                            layout="@layout/phone_key" />
+
+                        <include
+                            android:id="@+id/key_3"
+                            layout="@layout/phone_key" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <include
+                            android:id="@+id/key_4"
+                            layout="@layout/phone_key" />
+
+                        <include
+                            android:id="@+id/key_5"
+                            layout="@layout/phone_key" />
+
+                        <include
+                            android:id="@+id/key_6"
+                            layout="@layout/phone_key" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <include
+                            android:id="@+id/key_7"
+                            layout="@layout/phone_key" />
+
+                        <include
+                            android:id="@+id/key_8"
+                            layout="@layout/phone_key" />
+
+                        <include
+                            android:id="@+id/key_9"
+                            layout="@layout/phone_key" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <include
+                            android:id="@+id/key_star"
+                            layout="@layout/phone_key" />
+
+                        <include
+                            android:id="@+id/key_0"
+                            layout="@layout/phone_key" />
+
+                        <include
+                            android:id="@+id/key_hash"
+                            layout="@layout/phone_key" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Contatos cujo numero contem o que foi digitado: toque para ligar -->
+                <ListView
+                    android:id="@+id/dial_matches"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_weight="1"
+                    android:divider="@color/hairline"
+                    android:dividerHeight="1dp"
+                    android:listSelector="@android:color/transparent"
+                    android:scrollbars="none" />
+            </LinearLayout>
+
+            <!-- ===== Contatos ===== -->
+            <LinearLayout
+                android:id="@+id/panel_contacts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/contacts_search"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/field_line"
+                        android:hint="@string/media_phone_search_hint"
+                        android:imeOptions="actionSearch|flagNoExtractUi"
+                        android:inputType="textNoSuggestions"
+                        android:singleLine="true"
+                        android:textColor="@color/text"
+                        android:textColorHint="@color/text_dim"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/contacts_sync"
+                        style="@style/LineButton"
+                        android:text="@string/media_phone_sync" />
+                </LinearLayout>
+
+                <View
+                    style="@style/HairlineH"
+                    android:layout_marginTop="12dp" />
+
+                <ListView
+                    android:id="@+id/contacts_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:divider="@color/hairline"
+                    android:dividerHeight="1dp"
+                    android:listSelector="@android:color/transparent"
+                    android:scrollbars="none" />
+            </LinearLayout>
+
+            <!-- ===== Chamadas ===== -->
+            <LinearLayout
+                android:id="@+id/panel_logs"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/logs_missed"
+                        style="@style/LineButton"
+                        android:layout_marginLeft="0dp"
+                        android:text="@string/media_phone_logs_missed" />
+
+                    <TextView
+                        android:id="@+id/logs_received"
+                        style="@style/LineButton"
+                        android:text="@string/media_phone_logs_received" />
+
+                    <TextView
+                        android:id="@+id/logs_dialed"
+                        style="@style/LineButton"
+                        android:text="@string/media_phone_logs_dialed" />
+                </LinearLayout>
+
+                <View
+                    style="@style/HairlineH"
+                    android:layout_marginTop="14dp" />
+
+                <ListView
+                    android:id="@+id/logs_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:divider="@color/hairline"
+                    android:dividerHeight="1dp"
+                    android:listSelector="@android:color/transparent"
+                    android:scrollbars="none" />
+            </LinearLayout>
+
+            <!-- ===== Ajustes ===== -->
+            <ScrollView
+                android:id="@+id/panel_settings"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Dispositivo -->
+                    <TextView
+                        style="@style/Caption"
+                        android:text="@string/media_phone_bt_name" />
+
+                    <EditText
+                        android:id="@+id/settings_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:background="@drawable/field_line"
+                        android:singleLine="true"
+                        android:textColor="@color/text"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        style="@style/Caption"
+                        android:layout_marginTop="22dp"
+                        android:text="PIN" />
+
+                    <EditText
+                        android:id="@+id/settings_pin"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:background="@drawable/field_line"
+                        android:inputType="numberPassword"
+                        android:singleLine="true"
+                        android:textColor="@color/text"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:id="@+id/settings_save"
+                        style="@style/LineButton"
+                        android:layout_height="52dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="26dp"
+                        android:paddingLeft="32dp"
+                        android:paddingRight="32dp"
+                        android:text="@string/media_phone_save" />
+
+                    <View
+                        style="@style/HairlineH"
+                        android:layout_marginTop="26dp" />
+
+                    <!-- Automacoes -->
+                    <TextView
+                        style="@style/Caption"
+                        android:layout_marginTop="22dp"
+                        android:text="@string/media_phone_automatic" />
+
+                    <TextView
+                        android:id="@+id/settings_auto_answer"
+                        android:layout_width="match_parent"
+                        android:layout_height="64dp"
+                        android:background="@drawable/list_row"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="16dp"
+                        android:text="@string/media_phone_auto_answer_off"
+                        android:textColor="@color/line_text"
+                        android:textSize="20sp" />
+
+                    <View style="@style/HairlineH" />
+
+                    <TextView
+                        android:id="@+id/settings_auto_connect"
+                        android:layout_width="match_parent"
+                        android:layout_height="64dp"
+                        android:background="@drawable/list_row"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="16dp"
+                        android:text="@string/media_phone_auto_connect_off"
+                        android:textColor="@color/line_text"
+                        android:textSize="20sp" />
+
+                    <View style="@style/HairlineH" />
+                </LinearLayout>
+            </ScrollView>
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- ===== Chamada (painel de baixo, estilo celular) ===== -->
+    <LinearLayout
+        android:id="@+id/call_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="640dp"
+        android:layout_gravity="bottom"
+        android:background="#FA070A0E"
+        android:clickable="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
+        android:paddingTop="40dp"
+        android:paddingBottom="40dp"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="64dp"
+            android:layout_height="4dp"
+            android:background="@color/hairline_strong" />
+
+        <TextView
+            android:id="@+id/call_state"
+            style="@style/Caption"
+            android:layout_marginTop="28dp"
+            android:text="@string/media_phone_call_caption" />
+
+        <TextView
+            android:id="@+id/call_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxWidth="680dp"
+            android:singleLine="true"
+            android:textColor="@color/text"
+            android:textSize="46sp" />
+
+        <TextView
+            android:id="@+id/call_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:textColor="@color/text_muted"
+            android:textSize="26sp" />
+
+        <View
+            android:layout_width="96dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="40dp"
+            android:background="@color/hairline_strong" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/call_answer"
+                style="@style/LineButton"
+                android:layout_width="220dp"
+                android:layout_height="84dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="20dp"
+                android:textColor="#FF36D27A"
+                android:textSize="26sp"
+                android:text="@string/media_phone_answer" />
+
+            <TextView
+                android:id="@+id/call_hangup"
+                style="@style/LineButton"
+                android:layout_width="220dp"
+                android:layout_height="84dp"
+                android:layout_marginLeft="0dp"
+                android:textColor="#FFFF6B6B"
+                android:textSize="26sp"
+                android:text="@string/media_phone_hang_up" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/call_mute"
+                style="@style/LineButton"
+                android:layout_width="180dp"
+                android:layout_height="64dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="20dp"
+                android:text="@string/media_phone_mute" />
+
+            <TextView
+                android:id="@+id/call_channel"
+                style="@style/LineButton"
+                android:layout_width="180dp"
+                android:layout_height="64dp"
+                android:layout_marginLeft="0dp"
+                android:text="@string/media_phone_audio" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
