@@ -238,7 +238,9 @@ public class DockView extends LinearLayout {
             Bitmap custom = item != null
                 ? CustomIcons.forDock(item.id, item.pkg, iconSize)
                 : CustomIcons.forPackage(pkg, iconSize);
-            if (custom == null) custom = CustomIcons.appIcon(c, pkg, iconSize);
+            // Item embutido sem PNG personalizado: cai no ícone vetorial da suíte (buildSlot com bmp null) em vez do
+            // ícone do app — os apps da suíte compartilham o mesmo ícone, então usar o do app deixava todos iguais.
+            if (custom == null && item == null) custom = CustomIcons.appIcon(c, pkg, iconSize);
 
             Slot slot = new Slot(i, token, item);
             buildSlot(c, slot, labelText, custom, iconSize);
