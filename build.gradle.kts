@@ -28,6 +28,8 @@ val packages = linkedMapOf(
     "phone" to "com.nwd.android.phone",
     "eq" to "com.nwd.audioset",
     "fan" to "com.nwd.cpumonitor",
+    // Clima: controla o ar-condicionado pelo CAN (substitui o pedaço de A/C da barra inferior da NWD).
+    "clima" to "com.nwd.climate",
     // GDM Atualizações: busca semanal no GitHub (gdm-k4811-ota); sharedUserId de sistema, chave de plataforma da ROM.
     "updater" to "com.garagemdomadeira.nwd.updater",
 )

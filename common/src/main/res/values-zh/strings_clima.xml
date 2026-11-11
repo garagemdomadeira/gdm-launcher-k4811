@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- App de clima (ar-condicionado). A/C, AUTO, DUAL, MAX e as setas de direcao ficam no codigo (universais). -->
+<resources>
+    <string name="clima_app_name">空调</string>
+    <string name="clima_title">空调</string>
+    <string name="clima_zone_left">左</string>
+    <string name="clima_zone_right">右</string>
+    <string name="clima_defog_front">前除雾</string>
+    <string name="clima_defog_rear">后除雾</string>
+    <string name="clima_recirc">内循环</string>
+    <string name="clima_status_connecting">连接中…</string>
+    <string name="clima_status_waiting">已连接 · 等待车辆</string>
+    <string name="clima_status_offline">未连接到车辆空调</string>
+</resources>

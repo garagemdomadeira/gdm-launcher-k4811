@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Floco de neve (ar-condicionado): 3 eixos cruzados com ramos nas pontas. Área segura 72dp central. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:pathData="M54,24 L54,84" android:strokeColor="#FFE9EBEE" android:strokeWidth="4" android:strokeLineCap="round" />
+    <path android:pathData="M28,39 L80,69" android:strokeColor="#FFE9EBEE" android:strokeWidth="4" android:strokeLineCap="round" />
+    <path android:pathData="M80,39 L28,69" android:strokeColor="#FFE9EBEE" android:strokeWidth="4" android:strokeLineCap="round" />
+    <path android:pathData="M46,32 L54,24 L62,32" android:strokeColor="#FFE9EBEE" android:strokeWidth="3" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" />
+    <path android:pathData="M46,76 L54,84 L62,76" android:strokeColor="#FFE9EBEE" android:strokeWidth="3" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" />
+    <path android:pathData="M34,31 L28,39 L37,43" android:strokeColor="#FFE9EBEE" android:strokeWidth="3" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" />
+    <path android:pathData="M71,65 L80,69 L74,77" android:strokeColor="#FFE9EBEE" android:strokeWidth="3" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" />
+    <path android:pathData="M74,31 L80,39 L71,43" android:strokeColor="#FFE9EBEE" android:strokeWidth="3" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" />
+    <path android:pathData="M37,65 L28,69 L34,77" android:strokeColor="#FFE9EBEE" android:strokeWidth="3" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" />
+    <path android:pathData="M54,54 m-5,0 a5,5 0 1,0 10,0 a5,5 0 1,0 -10,0" android:fillColor="#FFE9EBEE" />
+</vector>
