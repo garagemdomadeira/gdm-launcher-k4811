@@ -118,11 +118,13 @@ def main():
                     help='ROMs no Google Drive (rclone, remoto "gdrive:"), não na release do GitHub')
     ap.add_argument('--remover', action='append', default=[],
                     help='tira um app da lista (pacote); as centrais param de receber atualização dele')
+    ap.add_argument('--remover-rom', action='append', default=[],
+                    help='tira uma ROM da lista (canal); junto com --rom do mesmo canal, republica no mesmo número')
     ap.add_argument('--republicar', action='store_true',
                     help='nova release com todos os apps já publicados (sem app novo)')
     a = ap.parse_args()
-    if not a.apps and not a.rom and not a.republicar and not a.remover:
-        sys.exit('nada para publicar (--apps / --rom / --republicar)')
+    if not a.apps and not a.rom and not a.republicar and not a.remover and not a.remover_rom:
+        sys.exit('nada para publicar (--apps / --rom / --republicar / --remover / --remover-rom)')
     if not os.path.isfile(KEY):
         sys.exit('sem a chave ' + KEY)
 
@@ -146,6 +148,12 @@ def main():
                      'certificado': cert_sha256(path)}
         assets.append((path, asset))
         changelog.append('- %s %s%s' % (label, name, (': ' + notes[pkg]) if pkg in notes else ''))
+
+    for canal in a.remover_rom:
+        if roms.pop(canal, None) is not None:
+            changelog.append('- ROM do canal %s saiu da lista' % canal)
+        else:
+            print('aviso: ROM %s não estava na lista' % canal)
 
     for spec in a.rom:
         canal, versao, codigo, path = spec.split(':', 3)
