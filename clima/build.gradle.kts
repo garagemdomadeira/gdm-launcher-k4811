@@ -10,8 +10,8 @@ android {
         // applicationId: tabela de packages do build.gradle.kts da raiz (com.nwd.climate)
         minSdk = 17
         targetSdk = 19
-        versionCode = 20271300
-        versionName = "2.1.3"
+        versionCode = 20271400
+        versionName = "2.1.4"
     }
 
     buildFeatures {
